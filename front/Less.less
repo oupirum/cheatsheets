@@ -1,0 +1,277 @@
+
+// CSS preprocessor
+// v2.7.2
+
+// CDN:
+	//cdnjs.cloudflare.com/ajax/libs/less.js/2.7.2/less.min.js
+
+================================================================================
+Install & run ================================================================={
+	
+	$ npm i -g less
+	
+	// Compile .less to .css in command line
+		
+		$ lessc source.less dest.css
+			// options:
+			--lint
+			-s  // silent
+			-x  // minify
+			--source-map
+			--include-path path  // add locations to search by @import
+			--relative-urls  // resolve relative urls when import
+			-sm --strict-math off|on  // arithmetic expr only in parentheses
+			-su --strict-units off|on
+			--global-var 'name=val'
+			--modify-var 'name=val'
+			--line-numbers comments|mediaquery|all
+	
+	// Compile in browser
+		// Not recommended for production
+		
+		<link rel="stylesheet/less" type="text/css" href="styles.less"/>
+		<script src="less.js" type="text/javascript"></script>
+		
+		// Options can be defined as global object:
+			<script>  // before less.js script
+				less = {
+					env: 'development',
+					async: false,
+					fileAsync: false,
+					poll: 1000,
+					functions: {},
+					dumpLineNumbers: 'comments',
+					relativeUrls: false,
+					rootpath: ':/a.com/'
+				};
+			</script>
+}
+================================================================================
+Variables ====================================================================={
+	
+	@nice-blue: #5B83AD;
+	@light-blue: @nice-blue + #111;  // #6c94be
+		// operation applied to each color dimension
+	.one {
+		color: @light-blue;
+	}
+	
+	@some-selec: some-cls;
+	.@{some-selec} {}  // selector interpolation
+	
+	// Scopes can be nested.
+	
+	// Excaping:
+		~"something"  // something will be used as is
+}
+================================================================================
+Mixins ========================================================================{
+	
+	// Include one ruleset into another.
+	
+	selec {}
+		// selec - plain selector
+	selec(@arg1; @arg2: defVal; ...) {}
+		// with parentheses original mixin will not appear in result css
+	selec(token) {}
+		// token - non variable arg, uses for exact matching
+		// Variables match and bind to any value, anything other than
+		// variable matches only with value equal to itself.
+	// Variables defined inside mixin are accessible from caller's scope.
+	
+	// Call:
+		selec();  // include here rules from mixin
+			// parentheses are optional
+	
+	// Ex:
+		.one(@w: 1px; @h: 1px) {}
+		.one(@w; @h) {}
+		
+		.two(small; @w) {}
+		.two(big; @w) {}
+		
+		#use {
+			.one;  // matches first
+			.one(2px; 2px);  // both first and second
+			
+			.two(small; 2px);
+			.two(big; 2px);
+		}
+	
+	// Namespace
+		// group mixins
+		
+		#bundle() {
+			// with parentheses original bundle will not appear in result css
+			mixin {...}
+			...
+		}
+		
+		// Include:
+			#bundle > mixin;  // include rules from bundle
+		
+		// Ex:
+			#bundle() {
+				.one {
+					@name: bundle;
+					a: one;
+				}
+			}
+			.two {
+				#bundle > .one;  // will be "a: one;" rule in result css
+				name: @name;
+			}
+}
+================================================================================
+Nested, extending ============================================================={
+	
+	// Nested rules
+		
+		selec1 {
+			selec2 {}  // produce "selec1 selec2" ruleset
+			&:pseudo {}  // "selec1:pseudo"
+				// & - placeholder for parent selector
+		}
+	
+	// Extend
+		
+		selec2:extend(selec1) {...}  // produce "selec1, selec2" ruleset
+			// containing rules from selec1 (exact matching)
+		selec2 {
+			&:extend(selec1);  // same
+			...
+		}
+		
+		selec2:extend(selec1 all) {}  // non-exact matching, matches all
+			// rulesets that contain selec1
+		
+		// Extend looks at compiled css when matching, not the original less.
+		
+		// Ex:
+			.one {
+				a: one;
+			}
+			.two:extend(.one) {
+				a: two;
+				b: two;
+			}
+			// will produce css:
+				.one,
+				.two {
+					a: one;
+				}
+				.two {
+					a: two;
+					b: two;
+				}
+}
+================================================================================
+Import ========================================================================{
+	
+	@import "path";
+	@import (keyword) "path";
+		// keyword:
+			once  // import once, subsequent inports will be ignored
+				// (default)
+			multiple  // allow import file multiple times
+			optional  // dont throw FileError if file not exists
+			reference  // import without adding imported styles to output
+				// unless referenced
+			inline  // include file, but not process
+			less  // treat as less, regardless of file extension
+			css  // treat as css
+}
+================================================================================
+Guard ========================================================================={
+	
+	// Switch mixins.
+	
+	mixin() when (cond) {}  // mixin or child mixins will be accessible
+		// only if guard condition returns true
+		// cond - `@var = val`, >, =>, <, <=
+		// available keyword true
+	mixin() when not (cond) {}  // logical NOT
+	mixin() when (cond1) and (cond2) {}  // logical AND
+	mixin() when (cond1), (cond2) {}  // logical OR
+	mixin() when (default()) {}  // like else
+	
+	// Guards can be used to create iterative structures.
+	// Ex:
+		.generate-columns(4);  // will generate four columns with width
+			// from 25% to 100%
+		
+		.generate-columns(@n; @i: 1) when (@i <= @n) {
+			.column-@{i} {
+				width: (@i * 100% / @n);
+			}
+			.generate-columns(@n; (@i + 1));
+		}
+}
+================================================================================
+Merge rules ==================================================================={
+	
+	// Merge multiple values of rule into one separated by comma or space.
+	
+	prop+: one;
+	prop+: two;
+	// produce "prop: one, two;"
+	
+	prop+_: one;
+	prop+_: two;
+	// produce "prop: one two;"
+}
+================================================================================
+Functions ====================================================================={
+	
+	image-size(file) : dimension  // "Npx Mpx"
+	image-width(file) : dimension  // "Npx"
+	image-height(file) : dimension  // "Npx"
+	
+	convert(dimension, unit) : dimension
+	unit(number|dimension [, unit]) : dimension|number  // remove or change unit
+	get-unit(dimension) : unit
+	
+	data-uri([mimetype], file) : url  // url('data:image/png;base64,bm90...
+	svg-gradient(direction, point, ...) : url
+		// direction: to bottom|to bottom right|ellipse
+		// point - color or color + percentage for position,
+			// e.g. to right, white, red 50%, black
+	
+	escape(str) : str  // url-encode
+	
+	length(list) : number  // count space or comma separated items
+	extract(list, n) : val  // get item at pos n (from 1)
+	
+	percentage(float) : percentage
+	
+	ceil(float) : number
+	floor(float) : number
+	round(float) : number
+	
+	sqrt(number|dimen) : number|dimen
+	pow(number|dimen, exp) : number|dimen
+	sin(number) : number
+	mod(number|dimen, number) : number|dimen
+	min(number|dimen, ...) : number|dimen
+	
+	isnumber(val) : bool  // true if val is number, dimension or percentage
+	ispixel(val) : bool  // true if dimension in px
+	isem(val) : bool
+	ispercentage(val) : bool
+	isunit(val, unit) : bool
+	
+	isstring(val) : bool  // true if val is quoted string
+	iscolor(val) : bool
+	isurl(val) : bool  // true if value is url (url('data:...)
+	
+	color(rgbHexStr) : color
+	rgb(red, green, blue) : color
+	rgba(red, green, blue, alpha) : color
+	mix(color1, color2, weight) : color
+		// weight - percentage
+	
+	fade(color, amount) : color  // set opacity
+		// amount - percentage
+	fadein(color, amount) : color  // increase opacity
+	fadeout(color, amount) : color  // decrease opacity
+}

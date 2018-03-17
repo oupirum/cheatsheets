@@ -1,0 +1,507 @@
+
+// Framework for building responsive mobile first UI.
+// Provides CSS, templates and plugins.
+
+// CDN:
+	//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css
+	//ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js
+	//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js
+
+// from node_modules:
+	import 'bootstrap/dist/css/bootstrap.css';
+
+----------------------
+	// Page must have viewport meta:
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+	// Content must be wrapped to container element. One of:
+		.container  // fixed width container
+		.container-fluid  // full width container, spanning the entire width
+			// of the viewport
+
+----------------------
+// Grid layout
+{
+	<div class="row">
+		<div class="col-*-*"></div>
+	</div>
+	<div class="row">
+		<div class="col-*-*"></div>
+		<div class="col-*-*"></div>
+		<div class="col-*-*"></div>
+	</div>
+	
+	// where asteriscs in col-*-*:
+		// 1. device, one of:
+			xs  // phones (extra small, screen <768px,   container auto)
+			sm  // tablets (small,      screen >=768px,  container 750px)
+			md  // desktops (medium,    screen >=992px,  container 970px)
+			lg  // larger (large,       screen >=1200px, container 1170px)
+		// 2. column type|size, one of:
+			//      full        width
+			| 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |  // 12 max
+			|       4       |       4       |       4       |
+			|       4       |               8               |
+			|           6           |           6           |
+			|                       12                      |
+		// e.g.: "col-sm-4" - 1/3 of container width
+	
+	// E.g.:
+		<div class="row">
+			<div class="col-sm-4">
+				...
+			</div>
+			<div class="col-sm-8">
+				...
+			</div>
+		</div>
+		// will result in 33.3%/66.6% split on small (-sm-) and larger devices, 
+		// on extra small it will stack vertically (100% width).
+}
+----------------------
+// Typography
+{
+	.lead  // makes paragraph stand out
+	.small  // 85% of parent
+	.text-muted, .text-primary, .text-success, .text-info, .text-warning, .text-danger
+	.bg-primary, .bg-success, .bg-info, .bg-warning, .bg-danger
+	.text-left, .text-center, .text-right
+	.text-nowrap
+	.text-lowercase, .text-uppercase, .text-capitalize
+	.list-unstyled
+	.list-inline
+	.pre-scrollable
+}
+----------------------
+// Header
+{
+	.jumbotron  // grey back and rounded corners
+	.page-header  // horizontal line under and vertical extra space
+}
+----------------------
+// Image
+{
+	.img-rounded
+	.img-circle
+	.img-thumbnail
+	.img-responsive
+}
+----------------------
+// Table
+{
+	.table  // basic. Light padding and only horizontal dividers.
+		
+		.table-striped
+		.table-bordered
+		.table-hover
+		.table-condensed
+	
+	// rows and cells (<tr>, <td>):
+		.active
+		.success
+		.info
+		.warning
+		.danger
+	
+	// E.g.:
+		<div class="container">
+			<table class="table table-bordered">
+				<tr><td class="danger">...<td></tr>
+			</table>
+		</div>
+}
+----------------------
+// Message box
+{
+	.alert
+		
+		.alert-success
+		.alert-info
+		.alert-warning
+		.alert-danger
+	
+	.close
+	data-dismiss="alert"
+	
+	// E.g.:
+		<div class="alert alert-danger">
+			Danger mess
+			<a ... class="close" data-dismiss="alert">Close</a>
+		</div>
+}
+----------------------
+// Button
+{
+	.btn
+		
+		.btn-default
+		.btn-primary
+		.btn-success
+		.btn-info
+		.btn-warning
+		.btn-danger
+		.btn-link
+		
+		.btn-xs
+		.btn-sm
+		.btn-md
+		.btn-lg
+		
+		.btn-block  // spans entire parent width
+		
+		.active
+		.disabled
+	
+	// Group:
+		.btn-group  // horizontal by default
+		.btn-group-vertical
+		.btn-group-justified
+		
+		// E.g.:
+			<div class="btn-group">
+				<button ... class="btn btn-primary">...</button>
+				<button ... class="btn btn-primary">...</button>
+			</div>
+}
+----------------------
+// Dropdown menu
+{
+	.dropdown-toggle
+	data-toggle="dropdown"
+	.dropdown-menu
+	.divider
+	.dropdown-header
+		
+		.active
+		.disabled
+	
+	// E.g.:
+		<div class="btn-group">
+			<button ... class="btn dropdown-toggle" data-toggle="dropdown">
+				Select... <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				<li><a href="#">Item 1</a></li>
+				<li class="divider"></li>
+				<li class="dropdown-header">sublist header</li>
+				<li class="disabled"><a href="#">Item 2</a></li>
+			</ul>
+		</div>
+}
+----------------------
+// Label
+{
+	// hightlighted text
+	
+	.label
+		
+		.label-default
+		.label-primary
+		.label-success
+		.label-info
+		.label-warning
+		.label-danger
+}
+----------------------
+// Pagination
+{
+	.pagination
+		
+		.pagination-sm
+		.pagination-lg
+		
+		.active
+		.disabled
+	
+	.breadcrumb
+	
+	.pager
+	.previous
+	.next
+}
+----------------------
+// List group
+{
+	.list-group
+	.list-group-item
+	.list-group-item-heading
+	.list-group-item-text
+		
+		.list-group-item-success
+		.list-group-item-info
+		.list-group-item-warning
+		.list-group-item-danger
+		
+		.active
+		.disabled
+	
+	// E.g.:
+		<ul class="list-group">
+			<li class="list-group-item"><span class="badge">12</span>New</li>
+			<li class="list-group-item"><span class="badge">5</span>Deleted</li>
+		</ul>
+}
+----------------------
+// Panel
+{
+	// bordered block with optional header and footer
+	
+	.panel
+	.panel-heading
+	.panel-body
+	.panel-footer
+		
+		.panel-default
+		.panel-primary
+		.panel-succeess
+		.panel-info
+		.panel-warning
+		.panel-danger
+	
+	.panel-group  // vertical list of panels
+}
+----------------------
+// Collapse
+{
+	// block hidden by default and appears on click
+	
+	data-toggle="collapse"
+	data-target="<hidden_block_selector>"
+	.collapse
+		
+		.in  // show by default
+		.panel-collapse  // to make panel collapsible
+	
+	// E.g.:
+		// Simple block:
+			<button ... data-toggle="collapse" data-target="#content_id">Btn</button>
+			<div id="content_id" class="collapse">
+				Collapsed content
+			</div>
+		
+		// Panel:
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<a href="#" data-toggle="collapse" data-target="#id1">Collapsible panel</a>
+				</div>
+				<div id="id1" class="collapse panel-collapse">
+					<div class="panel-body">Panel Body</div>
+					<div class="panel-footer">Panel Footer</div>
+				</div>
+			</div>
+}
+----------------------
+// Tab pane
+{
+	.nav
+	data-toggle="tab|pill"
+	data-target="<tab_content_selector>"
+	.tab-content
+	.tab-pane
+		
+		.nav-tabs
+		.nav-pills
+		.nav-stacked  // vertical pills
+		.nav-justified
+		
+		.active
+	
+	// E.g.:
+		<ul class="nav nav-tabs">
+			<li class="active">
+				<a href="#" data-toggle="tab" data-target="#tab1_id">Home</a></li>
+			<li>
+				<a href="#" data-toggle="tab" data-target="#tab2_id">Menu 1</a></li>
+		</ul>
+		<div class="tab-content">
+			<div id="tab1_id" class="tab-pane active">
+				Tab 1 content
+			</div>
+			<div id="tab2_id" class="tab-pane">
+				Tab 2 content
+			</div>
+		</div>
+		// .nav-pills and data-toggle="pill" - for pills pane.
+}
+----------------------
+// Navbar
+{
+	.navbar
+	.navbar-header
+	.navbar-brand
+	.navbar-nav
+	
+	.navbar-toggle
+	data-toggle="collapse"
+	data-target="<navbar_selector>"
+	.navbar-collapse
+		
+		.navbar-default
+		.navbar-inverse
+		.navbar-fixed-top
+		.navbar-fixed-bottom
+		.navbar-right
+	
+	// E.g.:
+		// With subnavs:
+			<nav class="navbar navbar-default">
+				<div class="container">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="#">WebSiteName</a>
+					</div>
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Home</a></li>
+						<li><a href="#">Page 1</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="#">
+							<span class="glyphicon glyphicon-user"></span>
+							Sign Up</a></li>
+						<li><a href="#">
+							<span class="glyphicon glyphicon-log-in"></span>
+							Login</a></li>
+					</ul>
+				</div>
+			</nav>
+		
+		// Toggleable:
+			<nav class="navbar navbar-default">
+				<div class="container">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="#">WebSiteName</a>
+						<button class="navbar-toggle"
+							data-toggle="collapse" data-target="#nb_id">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="nb_id" class="collapse navbar-collapse">
+						<ul class="nav navbar-nav">
+							<li class="active"><a href="#">Home</a></li>
+							<li><a href="#">Page 1</a></li>
+							<li><a href="#">Page 2</a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+}
+----------------------
+// Form
+{
+	.form-inline
+	.form-group  // around input with label and feedback
+	.form-control
+	.form-control-static
+	.checkbox
+	.radio
+	.help-block
+	
+	// form-group:
+		.has-success
+		.has-warning
+		.has-error
+		.has-feedback
+		
+		.form-group-sm
+		.form-group-lg
+	
+	// form-control:
+		.input-sm
+		.input-lg
+	
+	// E.g.:
+		<form role="form">
+			<div class="form-group">
+				<label for="email">Email address:</label>
+				<input type="email" class="form-control" id="email">
+				<span class="help-block">Help text here</span>
+			</div>
+			<div class="form-group has-warning">
+				<label for="pwd">Password:</label>
+				<input type="password" class="form-control" id="pwd">
+			</div>
+			<div class="checkbox">
+				<label><input type="checkbox"/>Remember me</label>
+			</div>
+			<button type="submit" class="btn btn-default">Submit</button>
+		</form>
+}
+----------------------
+// Modal
+{
+	// popup message box
+	
+	data-toggle="modal"
+	data-target="<modal_selector>"
+	.modal
+	.modal-dalog
+	.modal-content
+	.modal-header
+	.modal-body
+	.modal-footer
+	
+	.close
+	data-dissmiss="modal"
+	
+	// modal-dialog:
+		.modal-sm
+		.modal-lg
+	
+	// E.g.:
+		<button ... data-toggle="modal" data-target="#modal_id">Open Modal</button>
+		
+		<div id="modal_id" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Modal Header</h4>
+						<button type="button"
+							class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<p>Some text in the modal.</p>
+					</div>
+					<div class="modal-footer">
+						<button ... data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+}
+----------------------
+// Tooltip
+{
+	// hint that appears on mouseover
+	
+	data-toggle="tooltip"
+	title="<tooltip_content>"
+	data-placement="top|bottom|left|right|auto"  // top by default
+	
+	// Tooltips must be initialized manually:
+		<script>
+			$(document).ready(function() {
+				$('[data-toggle="tooltip"]').tooltip(); 
+			});
+		</script>
+}
+----------------------
+// Popover
+{
+	// hint that appears on click
+	
+	data-toggle="popover"
+	title="<head_of_popover>"
+	data-content="<popover_content>"
+	data-placement="top|bottom|left|right|auto"  // top by default
+	
+	data-trigger="focus"  // show|hide popover on receive|lose focus
+	data-trigger="hover"  // show|hide popover on mouseover|out
+	
+	// Popovers must be initialized manually:
+		<script>
+			$(document).ready(function() {
+				$('[data-toggle="popover"]').popover(); 
+			});
+		</script>
+}
