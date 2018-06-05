@@ -4,22 +4,25 @@
 # Image - read-only template with instructions for creating a docker container.
 # Container - runnable instance of an image.
 
+# After installation need to add user to docker group
+sudo usermod -aG docker $(whoami)
+
 ################################################################################
 # Dockerfile - config defining the steps needed to create the image and run it.
 # Each instruction in a Dockerfile creates a layer in the image. When you change
 # the Dockerfile and rebuild the image, only those layers which have changed
 # are rebuilt.
 
-FROM <parent_image>:<version>
+FROM <parent_image>:<version>  # specify parent layer
 RUN <shellstr>  # run command (shell form)
 RUN [<cmdarg>...]  # exec form
 
 ARG <name>=<default>  # variable that can be passed at build time
 	# using `--build-arg <name>=<value>` and can be used inside
 	# Dockerfile as `$name`
-ENV <name> <value>
+ENV <name> <value>  # environment variable
 
-EXPOSE <port>...  # local ports
+EXPOSE <port>...  # make port available inside container
 
 WORKDIR /<path>       # set cwd
 COPY <path> /<path>   # copy files into container
@@ -29,7 +32,7 @@ CMD [<cmdarg>...]  # exec form
 
 ################################################################################
 
-docker info
+docker info  # show details about installed docker, images, containers
 
 docker build -t <name>:<tag> <src_path>  # build new image with version <tag>
 
@@ -48,30 +51,30 @@ docker run <image> [<cmd arg...>]  # run new container
 	--rm  # automatically remove when exits
 
 docker ps  # list running containers
-docker start <container>
+docker start <container>  # run stopper container
 	-i  # interactive
 	-a  # attach stdout and stderr and forward signals
 docker attach <container>  # back to foreground
 docker exec <container> <cmd arg...>  # execute in running container
-docker stop <container>
-docker kill <container>
+docker stop <container>  # gracefully stop running container
+docker kill <container>  # force stop
 
-docker image ls
+docker image ls  # list images
 	-a  # all (default hides intermediate images)
-docker image rm <image>
-docker image prune  # remove all dangling images
+docker image rm <image>  # remove image
+docker image prune       # remove all dangling images
 	-f  # without prompt
 
-docker container ls
+docker container ls  # list containers
 	-a  # all (default hides stopped)
-docker container rm <container>
-docker container prune  # remove all stopped containers
+docker container rm <container>  # remove container
+docker container prune           # remove all stopped containers
 	-f
 
-docker volume create <volume>
+docker volume create <volume>  # create storage
 	# volumes stored in /var/lib/docker/volumes/<volume-name>
-docker volume ls
-docker volume rm <volume>
+docker volume ls  # list volumes
+docker volume rm <volume>  # remove volume
 
 docker cp <path>/. <container>:/<path>  # copy files from host to container
 

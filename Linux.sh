@@ -1,22 +1,22 @@
 ================================================================================
 Terminal hotkeys ===============================================================
-	
+
 	Ctrl+U  # cut all before cursor
 	Ctrl+K  # cut all after cursor
 	Ctrl+W  # cut word before cursor
 	Ctrl+Y  # paste
-	
+
 	Ctrl+L  # clear screen
 	Ctrl+S  # freeze output
 	Ctrl+Q  # unfreeze
-	
+
 	Ctrl+C  # SIGINT - interrupt current task
 	Ctrl+Z  # SIGTSTP - pause current task
 	Ctrl+D  # EOF, exit
 
 ================================================================================
 FHS ============================================================================
-	
+
 	boot/  # boot loaders
 		vmlinuz-x.x.x-x
 		grub/grub.conf
@@ -24,7 +24,7 @@ FHS ============================================================================
 	proc/  # virtual filesystem providing info about processes and kernel info
 	mnt/   # temporarily mounted filesystems
 	media/ # mount points for removable media
-	
+
 	bin/   # essential command binaries available for single user mode
 	sbin/  # same for root
 	lib/   # libraries for /bin and /sbin
@@ -42,19 +42,19 @@ FHS ============================================================================
 		crontab
 		cron.d/
 		fstab  # filesystems table
-		
+
 		hostname
 		hosts
 		network/
 			interfaces
 		resolv.conf
-		
+
 		passwd   # list of users
 		shadow   # passwords
 		group    # list of groups
 		gshadow  # group passwords
 		sudoers
-		
+
 		skel/  # default user's configs
 		apt/
 			sources.list
@@ -64,7 +64,7 @@ FHS ============================================================================
 		lib/
 		include/
 		local/  # tertiary hierarchy for local data specific to this host
-	
+
 	tmp/  # temp files (usually removed on reboot (see $TMPTIME env var))
 	var/  # variable files (logs, spool files, emails, etc.)
 		cache/
@@ -82,34 +82,34 @@ FHS ============================================================================
 			auth.log
 			messages
 			syslog
-	
+
 	root/  # root's home directory
 	home/  # users' home directories
 
 ================================================================================
 Miscellaneous ==================================================================
-	
+
 	while ( nc -l 80 < $some_response_file > : ) ; do $some_cmd ; done
 		# simple server
-	
+
 	while true; do
 		inotifywait -r -e MODIFY $some_dir && $some_cmd
 	done  # watch on directory and run command when any file changed
-	
+
 	date +%T  # print time (%H:%M:%S)
 	date +%s  # print timestamp
 	date -d "12/31/2016 23:59:59" +%s  # date to timestamp
-	
+
 	cat url.txt | xargs wget  # pass stdout to argument
 	cat url.txt | xargs -i wget "{} something"  # with placeholder
-	
+
 	which $name    # search executable in PATH
 	whereis $name  # search executable in system dirs
 	locate $name   # search file using precompiled index
-	
+
 	whoami  # current username
 	id $username  # user id and groups
-	
+
 	useradd $username  # create user
 		-d  $dir  # set home directory
 		-m  # create home if not exists
@@ -118,19 +118,19 @@ Miscellaneous ==================================================================
 	passwd $username  # change password
 	userdel $username
 		-r  # delete home dir
-	
+
 	crontab  # view|edit user's crontab
 		-u $username  # for specified user
 		-e  # edit
 		-l  # print content
 		-r  # remove
-	
+
 	service $name start|stop|status
-	
+
 	update-rc.d $name enable|disable|remove|defaults  # install and remove
 		# init script links
 		-n  # just show what would do
-	
+
 	lscpu  # display info about cpu
 	lshw  # display info about hardware
 		-short
@@ -139,13 +139,13 @@ Miscellaneous ==================================================================
 
 ================================================================================
 Package management =============================================================
-	
+
 	dpkg  # debian package manager
 		-i $deb_file  # install
 		-r $package     # remove package
 		--purge $package  # remove package and its dependencies
 		-s  # print package status details
-	
+
 	apt-get  # APT package handling utility
 		update    # update index
 		upgrade    # install newest versions of all packages
@@ -154,16 +154,16 @@ Package management =============================================================
 		remove $package
 		purge $package
 		-y  # automatic "yes" to prompts
-	
+
 	apt-cache
 		show $package  # print package records
 		search $regex  # search package in index
 
 ================================================================================
 Basics =========================================================================
-	
+
 	# Bash is a dialect of Shell.
-	
+
 	# To make file an executable bash script:
 		# 1. Add at first line shebang ("#!") with path to bash interpreter:
 			#!/bin/bash
@@ -172,16 +172,16 @@ Basics =========================================================================
 			# or:
 			#!/bin/sh    # for posix shell compatible scripts
 		# 2. Set executable permission for file
-	
+
 	#	comment
 	;  # statements delimeter
-	
+
 	# 0 - success exit code.
 	# true (or :) is NOP command that always returns 0.
 	# false - command that always returns 1.
-	
-	# Bash has no types. Any command is a string. 
-	
+
+	# Bash has no types. Any command is a string.
+
 	# Command and arguments separates by whitespaces.
 	# Command becomes meaningful because how it uses.
 		# Ex:
@@ -194,7 +194,7 @@ Basics =========================================================================
 
 ================================================================================
 Statements groups ==============================================================
-	
+
 	{ statement1; statement2; ...; }  # statements group
 		# Group interpretes as one command and returns output, so can be used
 		# for IO redirection.
@@ -206,7 +206,7 @@ Statements groups ==============================================================
 	( statement1; statement2; ...; )  # statements group
 		# Executes in a subshell (child process). Has local scope, so vars
 		# will not be available in parent scope.
-	
+
 	$( command1; command2; ...; )  # command substitution
 		# Executes commands and substitutes result.
 		# Ex:
@@ -215,10 +215,10 @@ Statements groups ==============================================================
 				ls -l
 			)
 			echo "$a"  # quoted to save whitespaces
-	
+
 	command1 && command2  # reduced logical AND by exitcode
 	command1 || command2  # OR
-	
+
 	{$val1,$val2}  # variants substitution
 	{$m..$n}  # by range
 		# Command will be interpreted as command with list of arguments
@@ -228,7 +228,7 @@ Statements groups ==============================================================
 			v=2
 			mkdir ./d{"1"," $v", " 3 "}
 				# same as `mkdir "./d1" "./d 2" "./d 3 "`
-	
+
 	(( expr1, expr2, ... ))  # arithmetic expressions group
 	$(( expr1, expr2, ... ))  # arith expr substitution (returns result of last)
 		# Ex:
@@ -238,13 +238,13 @@ Statements groups ==============================================================
 ================================================================================
 Variables ======================================================================
 	# (!) Always quote variable substitution!
-	
+
 	varname=some_value  # put|set value
 		# Without spaces!
-	
+
 	$varname  # substitution of value
 	${varname}  # same
-	
+
 	${varname:-default}  # value if defined and not empty, default otherwise
 	${#varname}  # length
 	${varname:offset:length}  # substring
@@ -254,67 +254,42 @@ Variables ======================================================================
 	${varname##pattern}  # delete longest match
 	${varname%pattern}  # delete shortest match from end
 	${varname%%pattern}  # delete longest match from end
-	
+
 	unset varname  # delete variable
 
 ================================================================================
 Arrays =========================================================================
-	
+
 	arr=()  # new empty array
 	arr=($val1 $val2 ...)  # create and fill
 	declare -A arr=([$key]=$val1 ...)  # associative array
-	
+
 	arr[$key]=$value  # put|set value
 	arr+=($value)  # append value
-	
+
 	${arr[$key]}  # get item by index|key
 	${#arr[@]}  # get length
-	
+
 	${arr[*]}  # join values. Uses IFS as delimeter.
 	${!arr[*]}  # join indexes|keys
 	${arr[@]}  # iterate by values
 	${!arr[@]}  # iterate by indexes|keys
-	
+
 	# Ex:
 		files=(./*.txt)  # get filenames by glob pattern
-	
+
 	# Iterate:
 		for val in "${arr[@]}"; do  # remember to quote!
 			echo "$val"
 		done
-	
+
 	seq $end   # generate sequence of numbers [1; $end]
 	seq $start $end  # [$start; $end]
 	seq $start $step $end  # [$start; $end] with step $step
 
 ================================================================================
-Functions ======================================================================
-	
-	function func_name() {    # declare function
-		# func body
-		echo $1  # first argument
-	}
-	
-	func_name  # invoke
-	func_name $arg1 $arg2 ...  # invoke with arguments
-	
-	unset func_name  # delete function
-	
-	# Inside function are available:
-		$FUNCNAME
-		$1, $2, ...  # arguments
-		$#    # number of args
-	
-	local varname=$value  # define local variable
-		# By default all variables defined inside function are available
-		# in caller's scope and can overwrite existing vars.
-	
-	return $n  # return from function
-		# Function can return only number, it's like an exitcode.
-
-================================================================================
 Control statements =============================================================
-	
+
 	if command; then
 		...
 	elif command; then
@@ -322,14 +297,14 @@ Control statements =============================================================
 	else
 		...
 	fi
-	
+
 	case $str in
 		pattern1) command1 ;;
 		pattern2) command2 ;;
 		...
 		*) commandDefault ;;
 	esac
-	
+
 	while command; do
 		...
 	done
@@ -342,11 +317,11 @@ Control statements =============================================================
 				echo "iter $n"
 				[ $n -ge 5 ] && cancel=true
 			done
-	
+
 	until command; do
 		...
 	done
-	
+
 	for item in $range; do
 		...
 	done
@@ -354,11 +329,11 @@ Control statements =============================================================
 			for v in "one" "two" "three"; do
 				echo "$v"
 			done
-	
+
 	for (( init; check; step; )); do
 		...
 	done
-	
+
 	select selected in item1 item2 ...; do
 		# will ask user to select item
 		# uses PS3 as prompt
@@ -367,16 +342,16 @@ Control statements =============================================================
 		...
 		break  # will ask again without break
 	done
-	
+
 	# Cancel loop:
 	break
-	
+
 	# Cancel current iteration:
 	continue
 
 ================================================================================
 Test command ===================================================================
-	
+
 	[ expr ]  # test command. Unix-shell-compatible.
 		# [] operators:
 			-e $path  # is exists
@@ -385,21 +360,21 @@ Test command ===================================================================
 			-d $path  # is dir
 			-h $path  # is symlink
 			-r|-w|-x $path  # is readable|writable|executable
-			
+
 			-t $fd  # is file descriptor opened on a terminal
 				# e.g. [ -t 0 ] - true if it's an interactive shell
-			
+
 			-z $str  # is string empty
 			-n $str  # not empty
 			$str1 = $str2
 			$str1 != $str2
 			$str1 \< $str2  # ascii sorting
 			$str \> $str2
-			
+
 			! expr  # NOT
 			expr1 -a expr2  # AND (not reduced)
 			expr1 -o expr2  # OR (not reduced)
-			
+
 			$num1 -eq $num2  # is numbers are equal
 			$num1 -ne $num2  # not equal
 			$num1 -lt $num2  # less than
@@ -408,7 +383,7 @@ Test command ===================================================================
 			$num1 -ge $num2  # greater or equal
 		# Ex:
 			if [ $a = "a" ]; then ...
-	
+
 	[[ expr ]]  # test keyword. It's more powerful but not shell-compatible.
 		# [[]] operators (additional to []):
 			$str1 = glob_pattern  # dont quote!
@@ -416,15 +391,15 @@ Test command ===================================================================
 			$str1 =~ regex_pattern  # dont quote!
 			$str1 < $str2  # ascii sorting
 			$str > $str2
-			
+
 			expr1 && expr2  # AND (reduced)
 			expr1 || expr2  # OR (reduced)
-			
+
 			( expr )  # group to change precedence
 
 ================================================================================
 Regex ==========================================================================
-	
+
 	# Glob
 		# Glob can be used to match string or filenames.
 		# There spec characters:
@@ -438,7 +413,7 @@ Regex ==========================================================================
 				ls -l ~/*.txt  # list all txt files in home dir
 				rm -r ./*  # remove all files and dirs from cwd
 				if [[ filename = *.png ]]; then ...
-	
+
 	# Extended glob
 		# To enable it: `shopt -s extglob`
 		# Also supports:
@@ -447,10 +422,10 @@ Regex ==========================================================================
 			+(pattern1|pattern2|...)  # one or more
 			@(pattern1|pattern2|...)  # one
 			!(pattern1|pattern2|...)  # inverse
-			
+
 			# Ex:
 				ls !(*.jpg|*.gif)
-	
+
 	# Regex in test command
 		# Since bash3.0 supports =~ operator for [[]] keyword.
 		# It matches string from left side by regex from right side and
@@ -460,7 +435,7 @@ Regex ==========================================================================
 					echo ${BASH_REMATCH[0]}  # "some"
 					echo ${BASH_REMATCH[2]}  # "me"
 				fi
-	
+
 	# Basic regex (BRE dialect)
 		^  # beginnig of line
 		$  # end of line
@@ -469,7 +444,7 @@ Regex ==========================================================================
 		[^a-z] # inversed
 		<abc>  # word (space-separated sequence)
 		*   # zero or more occurences
-	
+
 	# Extended regex (ERE dialect)
 		# additionally to BRE it supports:
 		+  # one or more occurences
@@ -479,12 +454,37 @@ Regex ==========================================================================
 		{n,m}  # from n to m [n; m] occurences
 		|  # logical OR
 		()  # grouping
-	
+
 	# (!) Do not quote glob or regex.
 
 ================================================================================
+Functions ======================================================================
+
+	function func_name() {    # declare function
+		# func body
+		echo $1  # first argument
+	}
+
+	func_name  # invoke
+	func_name $arg1 $arg2 ...  # invoke with arguments
+
+	unset func_name  # delete function
+
+	# Inside function are available:
+		$FUNCNAME
+		$1, $2, ...  # arguments
+		$#    # number of args
+
+	local varname=$value  # define local variable
+		# By default all variables defined inside function are available
+		# in caller's scope and can overwrite existing vars.
+
+	return $n  # return from function
+		# Function can return only number, it's like an exitcode.
+
+================================================================================
 Script =========================================================================
-	
+
 	$0  # command|script name
 	$1, $2, ..., ${10}, ...    # arguments
 		# Ex:
@@ -500,7 +500,7 @@ Script =========================================================================
 	shift $n  # shift arguments list to left (exclude $0)
 		# n = 1 by default
 	set $arg1 $arg2 ...  # set command line arguments
-	
+
 	getopts $format arg  # parse one command line argument (invoke in while
 		# to get all args)
 		# format - string like "a:bc:"
@@ -517,10 +517,10 @@ Script =========================================================================
 						fi ;;
 				esac
 			done
-	
+
 	exit $code  # quit script with exitcode [0-255]. 0 means normal exit.
 	$?  # stores exitcode returned by last command
-	
+
 	trap 'command1; command2; ...' $signal  # trap incoming signals
 	trap - $signal  # restore trap to default
 	trap  # print traps list
@@ -533,20 +533,20 @@ Script =========================================================================
 			EXIT
 		# Ex:
 			trap 'rm -f tmpfile' EXIT
-	
+
 	exec $path    # run external program. Process will be replaced
 	source $path    # run script in the current environment (like an import)
 	. $path    # same
 	eval $cmd ...  # concat and evaluate given command, return its exit code
-	
+
 	set -x    # enable debug mode
 	set +x    # disable debug mode
 
 ================================================================================
 Environment variables ==========================================================
-	
+
 	export VARNAME=<value>  # export env var to child processes
-	
+
 	# Predefined global env vars:
 		BASH_VERSION  # string describing the version
 		HOSTNAME  # hostname of your computer
@@ -561,64 +561,64 @@ Environment variables ==========================================================
 		PS1       # string that describes the format of shell prompt
 		TMPDIR    # directory that is used to store temporary files
 		IFS       # args separator (' \t\n' by default)
-	
+
 	# To set env vars need to add|change it in:
 		# global:
 		/etc/environment
-		
+
 		# login shell:
 		/etc/profile
 		~/.profile
-		
+
 		# nonlogin shell:
 		/etc/bashrc
 		~/.bashrc
-		
+
 		# interactive shell:
 		/etc/profile
 		~/.profile
 		~/.bashrc
-		
+
 		# noninteractive shell:
 		/etc/bashrc
 
 ================================================================================
 History ========================================================================
-	
+
 	history N  # print list of N last commands
-	
+
 	!N   # run command number N
 	!-N  # -N'th command
 	!xyz    # last command beginning with 'xyz'
 	!xyz:p  # print instead of run
-	
+
 	!!   # last command
 	!$   # last word|argument of last command
 	!*   # arguments of last command
-	
+
 	^a^b  # replace 'a' to 'b' in last command and run
-	
+
 	# precede command by the space to prevent saving in history
 
 ================================================================================
 Processes ======================================================================
-	
+
 	some_command &  # run command in background
-	
+
 	$!  # stores PID of recently started background task
 		# Ex:
 			( sleep 10; ) & p=$!  # run and save pid
 			kill -INT $p
-	
+
 	bg $pid    # switch paused task to background and resume it
 		# $pid - PID or %task_number
 	fg $pid    # switch task to foreground
 	jobs  # list of background tasks
 	top  # live task manager
 		-d $sec  # update interval (10 seconds by default)
-	
+
 	$$  # PID of current process
-	
+
 	ps  # list processes
 		# options:
 			-A  # all
@@ -629,10 +629,10 @@ Processes ======================================================================
 			-t $tty   # by TTY
 			-p $pid   # by PID
 			-u $user  # by user id or name
-		
+
 		# Ex:
 			ps uaxf | grep "glob_to_filter"
-	
+
 	kill signal $pid  # send signal to process
 		# where signal:
 			-1  # SIGHUP
@@ -644,20 +644,20 @@ Processes ======================================================================
 	killall $name  # kill process by name
 		-s $signal
 		-i  # interactive
-	
+
 	sleep $n  # put current process to sleep for $n seconds
 
 ================================================================================
 IO =============================================================================
-	
+
 	echo $value  # print line to stdout
 		# options:
 			-n  # without ending newline
 			-e  # enable escape-sequences
 			-E  # supress escape-sequences
-	
+
 	exec N< $file  # create|replace file descriptor N
-	
+
 	read varname  # read line from stdin and put to variable
 		# options:
 			-p $prompt  # show prompt
@@ -673,7 +673,7 @@ IO =============================================================================
 			exec 3< "file_to_read"
 			read -u 3 line
 			echo "first line: $line"
-	
+
 	less [$file]    # view file|input with pagination
 		-N  # show line numbers
 		-M  # show prompt (number of lines, percent, filename)
@@ -686,14 +686,16 @@ IO =============================================================================
 			-n $lines
 			-c $bytes
 			-f   # watch for updates
-	
+
 	sort [$file]    # print lines sorted
 		# options:
 			-u    # unique
 			-n    # numeric sort
+			-r    # reverse
+			-k <n>  # sort by field n (from 1)
 	tr $str1 $str2    # filter input - replace all chars from $str1 to
 		# appropriate chars from $str2
-	
+
 	$target N< $source  # input redirection
 		# N = 0 by default
 	$source N> $target  # output redirection (rewrite, create if doesnt exists)
@@ -706,12 +708,12 @@ IO =============================================================================
 		# Ex:
 			cat >> file
 			iconv -f cp1251 -t utf8 < album_cp1251.cue > album_utf8.cue
-	
+
 	# Predefined FDs:
 		0  # stdin
 		1  # stdout
 		2  # stderr
-	
+
 	# Redirection can be filtered.
 	# Ex:
 		wrongCmd 2> $file    # write stderr to file
@@ -719,36 +721,36 @@ IO =============================================================================
 		cmd &> $file         # same
 		cmd > $fileOut 2> $fileErr  # write stdout and stderr to different files
 		cmd 1>&2    # write stdout to stderr
-	
+
 	cmd1 | cmd2    # pipe, conveyer. Uses for chaining - get stdout from
 		# first and send it to stdin of next command. Each command executes
 		# in a subshell.
 		# Ex:
 			cat somefile | grep "word_to_search"
 			cat somefile | tr abc ABC > file2
-	
+
 	/dev/null  # path to system's black hole
 		# It can be used e.g. to silence stdout|stderr.
 		# Ex:
 			{ command1; command2; } 2> /dev/null  # errors will be suppressed
-	
+
 	/dev/tty  # current terminal. Can be used to guarantee that output will reach
 		# terminal although stdout redirection
-	
+
 	sync  # flush any buffered data out to disk
 
 ================================================================================
 FS =============================================================================
-	
+
 	fuser $file  # list users that are using filesystem|file
 		-m $mp  # mountpoint
 		-k  # kill all found processes
 		-v  # verbose
-	
+
 	fdisk -l  # list devices
 	fdisk -l $device  # list partitions
 		# $device - block device, e.g. /dev/sdb
-	
+
 	df [$mp]  # show fs usage
 		-h  # human readable
 	lsblk  # list block devices
@@ -756,7 +758,7 @@ FS =============================================================================
 			# "type", "fstype", "mountpoint", "label", "uuid",
 			# "log-sec", "phy-sec", etc (optionally with + sign to append).
 			# default: name,maj:min,rm,size,ro,type,mountpoint
-	
+
 	mount $fs $mountpoint  # mount filesystem
 		# $fs - filesystem
 		# $mountpoint - target directory to mount
@@ -769,15 +771,15 @@ FS =============================================================================
 			sudo mkdir /mnt/somemp
 			sudo mount /dev/sdb1 /mnt/somemp
 	umount $fs|$mountpoint  # unmount filesystem
-	
+
 	fdisk $device  # change partition table of this device
 	mkfs -t $type $fs  # format
 		# $fs - filesystem
-	
+
 	mlabel -i $fs ::$label  # change FAT label
 	ntfslabel $fs $label  # change NTFS label
 	e2label $fs $label  # change EXT label
-	
+
 	# Ex:
 		# create bootable usb
 		sudo -s
@@ -792,7 +794,7 @@ FS =============================================================================
 
 ================================================================================
 Files ==========================================================================
-	
+
 	chmod value $file  # set privileges
 		# where value can be:
 			ABC
@@ -825,10 +827,10 @@ Files ==========================================================================
 			-R  # recursive
 		# Ex:
 			sudo chown -R $(whoami) some/dir
-	
+
 	pwd  # print current working directory
 	cd $dir  # change current directory
-	
+
 	ls $dir|$file...    # print list of items in directory or
 		# info about file
 		# options:
@@ -847,12 +849,12 @@ Files ==========================================================================
 			-c  # show grand total
 			-h  # human readable
 			-s  # print only total for each argument
-	
+
 	dd  # copy and convert bytes
 		bs=$c  # read|write up to $c bytes at a time (e.g. "1M")
 		if=$source  # file or device
 		of=$dest  # file or device
-	
+
 	cp $source... $target  # copy file|dir
 		# options:
 			-r  # recursive - to copy directory
@@ -889,14 +891,14 @@ Files ==========================================================================
 		# options:
 			-s  # symbolic
 			-v  # verbose
-	
+
 	locate $file  # quick file search
 		# options:
 			-i  # ignore case
 			-b  # match only basename
 			-c  # print only count of found
 			--regex  # use extended regex
-	find $dir search action  # recursively search files|dirs in $dir by search 
+	find $dir search action  # recursively search files|dirs in $dir by search
 		# pattern and perform action for each item
 		# where $dir is a path
 		# where search can contain:
@@ -927,8 +929,8 @@ Files ==========================================================================
 				# for found path
 		# Ex:
 			find ./* -exec touch -m {} \;  # update modified time recursively
-	
-	grep $pattern [$file...]  # search by pattern in contents of each 
+
+	grep $pattern [$file...]  # search by pattern in contents of each
 		# file or stdin
 		# options:
 			-r  # resursive
@@ -943,7 +945,7 @@ Files ==========================================================================
 			-x  # match whole lines
 			-C $n  # show $n lines around (context)
 			-H  # show filenames
-			-h  # dont show filenames		
+			-h  # dont show filenames
 			-n  # show line numbers
 			-l  # print only filenames
 			-L  # print only filenames of not matched
@@ -952,7 +954,7 @@ Files ==========================================================================
 			-s  # supress warnings
 		# Ex:
 			ls -a | grep ".bash*"
-	
+
 	sed $expression [$file]  # SED - stream editor
 		# expression applies for each line
 		-e $expression  # to specify multiple expressions
@@ -962,7 +964,7 @@ Files ==========================================================================
 		-n [$print_command]  # no printing unless an explicit request to print
 		-r  # use extended regex
 		-i[suffix]  # save backup and rewrite file
-		
+
 		# expression syntax:
 			<address> # address lines to work width (at beginning of expression)
 				# where address:
@@ -971,9 +973,9 @@ Files ==========================================================================
 					/<regex>/
 			<start_addr>,<stop_addr>  # address range
 			!  # invert address restriction
-			
+
 			{ <commands> }  # group commands
-			
+
 			p  # print line
 			=  # print line number
 			d  # delete line
@@ -983,23 +985,23 @@ Files ==========================================================================
 			s/<regex>/<repl>/<flags>  # substitute (first occurence by default)
 				# regex - basic regular expression
 				# & - specchar - found substring to past in replacement pattern
-				# flags: 
+				# flags:
 					<n>  # address occurence
 					g  # global
 					I  # ignore case
 			y/<chars>/<chars>/  # transform (like tr shell command)
-			
+
 			h  # put pattern buffer to hold buffer
 			H  # append to hold buffer
 			x  # exchange pattern buffer and hold buffer
 			g  # put hold buffer to pattern buffer
 			G  # append to pattern buffer
-			
+
 			r <file>  # read file and paste contents after current line
 			w <file>  # write to file
 			n  # skip line
 			q  # quit
-		
+
 		# Ex:
 			sed "2 ! s/([a-z]+)/(\1)/g w out.txt" -r  # wrap words into parentheses
 				# on every lines exclude line 2 and write modified lines to file
@@ -1008,31 +1010,33 @@ Files ==========================================================================
 				a rty
 			}"
 				# wrap 1 and 2 lines and print to stdout
-			find ./static/ -type f -name "*.es6" | xargs -i sed -r -i "s/import ([a-z0-9_]+) from '(.+)'/import * as \1 from '\2'/I" {}
+			find ./static/ -type f -name "*.es6" | \
+				xargs -i sed -r -i \
+				"s/import ([a-z0-9_]+) from '(.+)'/import * as \1 from '\2'/I" {}
 				# modify imports and rewrite files, recursively
-	
+
 	wc [$file]  # tells how many lines, words and bytes in file|input
 		-l  # count lines
 		-w  # count words
 		-m  # count chars
 		-c  # count bytes
-	
+
 	cut [$file]  # parse fields from file|input
 		-c $selec  # select characters
 		-b $selec  # select bytes
 		-f $selec  # select fields, e.g. '-f 1,3' - first and third
 		-d $char  # fields delimeter (default - tab)
 		-s   # do not print lines without delimeters
-	
+
 	diff $file1 $file2      # show differs
 		-u    # unified output (+, -, @@)
-	
+
 	md5sum [$file]  # md5 hash of file|input
-	
+
 	shed [$file]  # hex editor
 		-r  # readonly
 		-s $n  # cursor offset
-	
+
 	tar $file...  # tar archiving
 		# options:
 			-f $file  # archive file
@@ -1049,7 +1053,7 @@ Files ==========================================================================
 			tar -xj -f ./archive.tar.bz2 -C ./target
 			tar -xJ -f ./archive.tar.xz -C ./target
 			tar -cz -f "../${PWD##*/}.tar.gz" .
-	
+
 	zip $archive_file $file...  # zip archiving
 		# options:
 			-d $file...  # delete files from archive
@@ -1060,7 +1064,7 @@ Files ==========================================================================
 	unzip $archive
 		# options:
 			-d $path    # specify target dir
-	
+
 	dump -N $fs  # backup filesystem, N - backup level (0 - full)
 		-u  # save date and level in /etc/dumpdates
 		-f $dumpfile
@@ -1075,9 +1079,9 @@ Files ==========================================================================
 
 ================================================================================
 Network ========================================================================
-	
+
 	curl ifconfig.co  # get public ip
-	
+
 	netstat  # print network connections, routing tables, statistics, etc.
 		-t  # tcp
 		-u  # udp
@@ -1086,16 +1090,16 @@ Network ========================================================================
 		-a  # all, any status
 		-p  # display pid and program names
 		-n  # dont resolve hosts or usernames, use numeric (for speed up)
-		
+
 		-s  # print statistics
 		-r  # print kernel routing table
 		-i  # print list of network interfaces
 		# Ex:
 			netstat -tulpn  # print listening ports
-	
+
 	lsof -i :$port  # search processes by listening port
 		-t  # print only pid
-	
+
 	ifconfig [$interface]  # configure|view network interface(s)
 		-a  # show all, even if down
 	ifconfig $interface [$addr] [options]
@@ -1107,15 +1111,15 @@ Network ========================================================================
 			pointopoint [$addr]  # enable|disable p2p mode
 			hw $type $mac    # set hardware address
 				# $type - "ether", "ax25", "ARCnet", "netrom"
-	
+
 	ifup|ifdown [$interface]  # bring interface(s) up or down
 		-a  # all interfaces
-	
+
 	ping $addr
 		-s $bytes  # packet size
 	traceroute $addr
 		-n  # dont resolve names
-	
+
 	telnet $addr $port
 		-l $user
 		-n $tracefile  # record trace info
@@ -1125,10 +1129,10 @@ Network ========================================================================
 			send eof|eor|el|escape|nop|susp
 			close
 			quit
-		
+
 		# Ex (smtp):
 			$ telnet 123.123.123.123 25
-			
+
 			HELO smtp.example.com
 			MAIL FROM: sender@host
 			RCPT TO: receiver@host
@@ -1136,7 +1140,7 @@ Network ========================================================================
 			Subject: some subject
 			some message
 			.
-	
+
 	wget $url  # download files via http, https or ftp
 		# options:
 			-t $num  # number tries
@@ -1146,7 +1150,7 @@ Network ========================================================================
 			-D $domain  # restrict only for specified domain
 			-S  # collect headers
 			--spider  # do not load content
-	
+
 	tcpdmp [filter]  # dump traffic
 		-i $interface
 		-c $n  # limit number of puckets
@@ -1159,7 +1163,7 @@ Network ========================================================================
 		# filter:
 			host $addr
 			port $n
-	
+
 	nmap $target  # port scanner
 		-sL   # list scan
 		-sn   # ping scan
@@ -1180,17 +1184,17 @@ Network ========================================================================
 
 ================================================================================
 SSH ============================================================================
-	
+
 	apt-get install openssh-server
 	apt-get install openssh-client
-	
+
 	ssh $user@$hostname [$commands]    # connect
 		# commands - single quoted commands
 		# options:
 			-i $path  # private key for authentication (default: ~/.ssh/id_rsa)
 			-p $number  # port number
 			-A  # forward key
-	
+
 	ssh-keygen    # generate key pair
 		# options:
 			-t dsa|rsa
@@ -1202,12 +1206,12 @@ SSH ============================================================================
 		# options:
 			-i $path    # public key file (default: ~/.ssh/id-rsa.pub)
 			-p $number    # port number
-	
+
 	puttygen -o $destfile -O $type $keyfile  # convert ssh key
 		# type - output format. "private" - putty format,
 			# "private-openssh", "public" - standart ssh.com,
 			# "public-openssh", "fingerprint"
-	
+
 	scp [$user_from@$host_from:]$path_src [$user_to@$host_to:]$path_dst
 		# copy files locally or to|from remote system over ssh
 		# options:
@@ -1240,24 +1244,24 @@ SSH ============================================================================
 			-v  # verbose
 		# if $path_src have trailing slash - it will be same as /* glob
 		# Ex:
-			rsync -auv --delete
-				--exclude "/files/*" --exclude "/logs"
+			rsync -auv --delete \
+				--exclude "/files/*" --exclude "/logs" \
 				./ "$user@$host:$dest"
-	
+
 	# client config:
 		~/.ssh/config or /etc/ssh/ssh_config
-	
+
 	# server config:
 		/etc/ssh/sshd_config
 
 ================================================================================
 Vim ============================================================================
-	
+
 	vim $file  # open file in vim editor
 		# options:
 			-R    # readonly
 			-r    # restore from temp backup
-	
+
 	# Vim will be launched in command mode.
 	# commands:
 		CTRL+G    # show filename, size and status
@@ -1265,25 +1269,25 @@ Vim ============================================================================
 		i    # edit before cursor (insert)
 			# will be switched to editor mode
 		ESC    # switch back to command mode
-		
+
 		.    # repeat last command
-		
+
 		gg   # go to start
 		G    # go to EOF
-		
+
 		CTRL+V  # selection
 		d    # delete selection
 		y    # copy selection
-		
+
 		dd   # delete current line
 		D    # delete chars from current pos to EOL
-		
+
 		yy   # copy current line
 		yG   # from current line to the EOF
 		NY   # N lines
 		p    # paste below current line
 		P    # paste above current line
-		
+
 		:w   # save
 		:w $file    # save to file
 		:w>> $file  # append to file
@@ -1291,23 +1295,23 @@ Vim ============================================================================
 		:N,Mw>> $file  # append lines [N; M] to file
 		:r $file   # read file and append below current line
 		:Nr $file  # read and append below line N
-		
+
 		:q   # quit
 		:q!  # quit without save
 		:cq  # quit with non-zero exit code
-		
+
 		u    # undo
 		CTRL+R    # redo
-		
+
 		/    # search after
 		?    # search before
 		n    # find next
-		
+
 		:set number    # show line numbers (nonumber to disable)
 		:set incsearch    # enable inremental search
 		:set autoindent    # enable indentaion
 		:set syntax=some_lang|off    # enable|disable syntax highlighting
-	
+
 	# settings can be defined in VIMINIT environment variable:
 		# Ex:
 			export VIMINIT='set number incsearch'
