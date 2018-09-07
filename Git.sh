@@ -2,18 +2,9 @@
 ================================================================================
 Config =========================================================================
 
-	git config --global user.name <username>
-	git config --global user.email <email>
-
-	git config --global core.autocrlf <v>
-		# true - replace crlf to lf and vice-versa (for windows)
-		# input - only replace crlf to lf on commit (for linux|mac)
-		# false - disable
-	git config --global core.safecrlf <v>
-		# true - refuse irreversible autocrlf changes
-		# warn - only show warn message
-
-	git config --global core.editor <editor>
+	git config -e  # edit .gitconfig
+		--local  # for current repository
+		--global  # globally for user
 
 # ~/.gitconfig example:
 	[user]
@@ -21,14 +12,18 @@ Config =========================================================================
 		email = oupirum@gmail.com
 	[core]
 		autocrlf = input
+			# true - replace crlf to lf and vice-versa (for windows)
+			# input - only replace crlf to lf on commit (for linux|mac)
+			# false - disable
 		safecrlf = warn
+			# true - refuse irreversible autocrlf changes
+			# warn - only show warn message
 		editor = vim
 	[alias]
 		hist = log --pretty=format:\"%h %ad%d | %s\n  [%an <%ae>]\n\" --graph --date-order --date=short
 		hists = log --pretty=format:\"%h %ad%d | %s\n  [%an <%ae>]\n\" --graph --date-order --date=short --all
 		co = checkout
 		st = status
-		cmt = !git add --all . && git commit
 		pushit = !git push origin $(git rev-parse --abbrev-ref HEAD)
 		pullit = !git pull origin $(git rev-parse --abbrev-ref HEAD)
 

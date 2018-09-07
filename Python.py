@@ -78,6 +78,8 @@ Basics =========================================================================
         dir([obj]) : list  # get list of names of variables in current scope
             # or attributes of given object
 
+        globals(): dict  # get dict of global variables
+
     ================================
     Types
 
@@ -318,7 +320,7 @@ Basics =========================================================================
             n  # step to next line
             s  # step into
             c  # continue
-            exit
+            q  # exit
 
 ================================================================================
 Environment ====================================================================
@@ -1404,9 +1406,14 @@ PyTest =========================================================================
         def user_defined_fixture(request):
             # will be called for tests that mention this fixture
             # available predefined fixtures:
-            # cache, capfd, capfdbinary, caplog, capsys, capsysbinary,
-            # doctest_namespace, monkeypatch, pytestconfig, record_xml_attribute,
-            # record_xml_property, recwarn, stub, tmpdir, tmpdir_factory
+            # cache,
+            # capfd, capfdbinary, caplog, capsys, capsysbinary,
+            # doctest_namespace,
+            # monkeypatch, stub,
+            # pytestconfig,
+            # record_xml_attribute, record_xml_property,
+            # recwarn,
+            # tmpdir, tmpdir_factory
             return some_fixture_result
 
         @pytest.fixture(autouse=True)
@@ -1421,7 +1428,9 @@ PyTest =========================================================================
             with pytest.raises(ExceptionType):
                 # some code
 
-    $ pytest <tests_dir>
+
+    $ pytest <tests_dir>  # run all tests found in directory
         -v  # verbose
         -l  # dump variables on test failure
-        -s  # don't hide stdout
+        -s  # no capture stdout
+    $ pytest <test_file>::<test_func>  # run a specific test

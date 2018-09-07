@@ -20,42 +20,15 @@
 	// components.
 
 ================================================================================
-Setup ========================================================================={
-	
-	// /package.json:
-	{
-		"devDependencies": {
-			"autopolyfiller-loader": "^1.0.1",
-			"autoprefixer-loader": "^3.2.0",
-			"babel-core": "^6.18.2",
-			"babel-eslint": "^7.1.1",
-			"babel-loader": "^6.2.8",
-			"babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
-			"babel-preset-es2015": "^6.18.0",
-			"babel-preset-react": "^6.16.0",
-			"clean-webpack-plugin": "^0.1.14",
-			"css-loader": "^0.26.1",
-			"file-loader": "^0.9.0",
-			"html-loader": "^0.4.4",
-			"style-loader": "^0.13.1",
-			"webpack": "^2.2.1"
-		},
-		"dependencies": {
-			"react": "^15.4.1",
-			"react-dom": "^15.4.1",
-			"react-redux": "^4.4.6",
-			"redux": "^3.6.0"
-		}
-	}
-	
+Setup ==========================================================================
+
 	// /webpack.config.js:
-	{
 		var webpack = require('webpack');
 		var CleanWebpackPlugin = require('clean-webpack-plugin');
-		
+
 		var src = __dirname + '/app/src';
 		var build = __dirname + '/app/build';
-		
+
 		var config = {
 			context: src,
 			entry: {
@@ -71,7 +44,7 @@ Setup ========================================================================={
 				library: '[name]',
 				publicPath: '/build/'
 			},
-			
+
 			module: {
 				rules: [{
 					test: /\.jsx?$/,
@@ -91,7 +64,7 @@ Setup ========================================================================={
 					loader: 'style!css!autoprefixer'
 				}]
 			},
-			
+
 			plugins: [
 				new CleanWebpackPlugin([build + '/*']),
 				new webpack.optimize.CommonsChunkPlugin({
@@ -99,23 +72,22 @@ Setup ========================================================================={
 					minChunks: Infinity
 				}),
 			],
-			
+
 			resolve: {
 				extensions: ['.js', '.jsx']
 			},
 			resolveLoader: {
 				moduleExtensions: ['-loader']
 			},
-			
+
 			devtool: 'source-map',
 		};
-		
+
 		module.exports = config;
-	}
-}
+
 ================================================================================
-React ========================================================================={
-// version 15.4.0
+React ==========================================================================
+// version 16.4.1
 
 ================================
 // JSX
@@ -126,7 +98,7 @@ React ========================================================================={
 	// By deafult, ReactDOM escapes embedded values in JSX.
 	// Custom component can have any attributes that will be available
 	// on this.props object.
-	
+
 	// Ex:
 		let el = (
 			<div>
@@ -141,21 +113,22 @@ React ========================================================================={
 			<div>{ el }</div>,
 			document.querySelector('#root')
 		);
-	
+
 	// Builtin JSX node's attributes
-		
+
 		key={ string }  // unique key, uses to give the elements a stable
 			// identity when create list of elements
-		ref={ func(component|element) }  // refer component instance or DOM element
+		ref={ func(component|element)|RefObject }
+			// refer component instance or DOM element
 		className={ string }  // specifies "class" native attribute
 		tabIndex={ int }      // specifies "tabindex" native attribute
 		style={ obj }  // map of styles like: { borderWidth: '1px' }
+		dangerouslySetInnerHTML={ {__html: str} }
 		// and most of native DOM attrs
-	
+
 	// Events
-		
+
 		onChange={ func(ev) }  // for form input elements
-			// func - reference to function or definition, not calling
 			// ev - SyntheticEvent object
 		onInput={ func(ev) }
 		onSubmit={ func(ev) }
@@ -164,7 +137,8 @@ React ========================================================================={
 		onFocus={ func(ev) }
 		onBlur={ func(ev) }
 		onContextMenu={ func(ev) }
-		onMouseEnter|Leave|Over|Move|Out={ func(ev) }
+		onMouseEnter|Leave={ func(ev) }
+		onMouseOver|Move|Out={ func(ev) }
 		onMouseDown|Up={ func(ev) }
 		onSelect={ func(ev) }
 		onTouchStart|Move|End|Cancel={ func(ev) }
@@ -172,7 +146,7 @@ React ========================================================================={
 		onWheel={ func(ev) }
 		onLoad={ func(ev) }
 		onError={ func(ev) }
-		
+
 		// To prevent default behaviour call ev.preventDefault() in handler.
 		// To catch event on capture phase append "Capture" to event
 		// name, e.g: onClickCapture={...}
@@ -181,23 +155,32 @@ React ========================================================================={
 // React
 	// react module
 	// Entry point to the React library.
-	
+
 	React.Component  // base class for component
 	React.PureComponent  // same as React.Component but implements
 		// shouldComponentUpdate() with a shallow prop and state comparison.
 		// It can be better for performance reasons.
-	
+
 	React.createElement(type [, props] [, children, ...]) : VNode
 		// type - tag name string or component type
 	React.createFactory(type) : func
 	React.cloneElement(VNode [, props] [, children, ...]) : VNode
 	React.isValidElement(obj) : bool
 
+	React.Fragment  // wrapper for list of elements
+
+	React.createRef(): RefObject
+		// ref.current - target Element
+	React.forwardRef(func(props, ref) : VNode) : VNode
+		// create component that forwards ref below in the tree
+
+	React.createContext(defVal) : Context
+
 ================================
 // ReactDOM
 	// react-dom module
 	// Top level DOM-specific methods.
-	
+
 	ReactDOM.render(VNode, element [, callb()])  // render|update
 		// React element into the container DOM node
 	ReactDOM.unmountComponentAtNode(element)  // remove React elements from
@@ -209,12 +192,12 @@ React ========================================================================={
 // Component
 	// To create own Component - extend React.Component class and
 	// override render() method.
-	
+
 	class SomeComp extends React.Component {
 		constructor(props) {
 			super(props);
 		}
-		
+
 		render() {  // required
 			return (
 				some JSX markup...
@@ -222,47 +205,54 @@ React ========================================================================={
 			// to hide component - return null
 		}
 	}
-	
+
 	// React.Component static fields|methods:
-		
+
 		propTypes : obj  // describe props constraints
 		defaultProps : obj  // default props values
 		displayName : string
-	
+
 	// React.Component instance fields|methods:
-		
+
 		state : obj  // this component's state object
 			// initial state must be assigned in constructor
 		props : obj  // map of readonly properties that passed from parent
 			// by a JSX attributes
 		props.children : VNode[]|undefined  // nested nodes from JSX
-		
+
 		setState(obj [, done()])  // update this component's state (merge) and
 			// trigger rerendering
 		setState(callb(prevState, props) : obj)
 		forceUpdate(done())  // trigger rerendering without checking state
-	
+
 	// Lifecycle
-		
+
 		// Mount
 			constructor(props)
-			componentWillMount()
+			static getDerivedStateFromProps(props, state): state
+				// return patch to update state or null
 			render()
 			componentDidMound()
-		
+
 		// Update
-			componentWillReceiveProps(newProps)
-			shouldComponentUpdate(newProps, newState) : bool
-			componentWillUpdate(newProps, newState)
+			static getDerivedStateFromProps(props, state) : state
+			shouldComponentUpdate(nextProps, nextState) : bool
 			render()
-			componentDidUpdate(prevProps, prevState)
-		
+			getSnapshotBeforeUpdate(prevProps, prevState) : snapshot
+				// invoked between render and commit phases
+			componentDidUpdate(prevProps, prevState, snapshot)
+
 		// Unmount
 			componentWillUnmount()
 
+// React.PureComponent
+	// Similar to React.Component, but implements shouldComponentUpdate
+	// with shallow props and state comparison.
+	// Also PureComponent skips props update for the whole subtree.
+
 // Stateless functional component
 	// Component that only uses render() method and has immutable state.
-	
+
 	function SomeComp(props) {
 		return (
 			// body of this function uses instead of render() method
@@ -273,7 +263,7 @@ React ========================================================================={
 ================================
 // Controlled component
 	// Input form element whose value is controlled by React.
-	
+
 	class SomeComp extends React.Component {
 		constructor(props) {
 			super(props);
@@ -284,7 +274,7 @@ React ========================================================================={
 			this.onTextChanged = this.onTextChanged.bind(this);
 			this.onOptionChanged = this.onOptionChanged.bind(this);
 		}
-		
+
 		render() {
 			return (
 				<form>
@@ -303,11 +293,11 @@ React ========================================================================={
 				</form>
 			);
 		}
-		
+
 		onTextChanged(ev) {
 			this.setState({text: ev.target.value});
 		}
-		
+
 		onOptionChanged(ev) {
 			this.setState({option: ev.target.value});
 		}
@@ -315,25 +305,25 @@ React ========================================================================={
 
 // Uncontrolled component
 	// Without onChange and frequent rerendering.
-	
+
 	class SomeComp extends React.Component {
 		constructor(props) {
 			super(props);
 			this.onSubmit = this.onSubmit.bind(this);
 		}
-		
+
 		render() {
 			return (
 				<form onSubmit={ this.onSubmit }>
 					<input
 						type="text" className="test-input"
 						defaultValue=""
-						ref={(ref)=> this.myInput = ref}/>
+						ref={ (ref)=> this.myInput = ref }/>
 					<input type="submit" value="Submit"/>
 				</form>
 			);
 		}
-		
+
 		onSubmit(ev) {
 			ev.preventDefault();
 			console.log('text:', this.myInput.value);
@@ -341,15 +331,66 @@ React ========================================================================={
 	}
 
 ================================
+// Context
+	// Context is designed to share data that can be considered "global"
+	// for a tree of React components.
+
+	Provider  // context provider component
+		// props:
+			value : any  // set context value
+	Consumer  // context consumer component
+		// props:
+			children : (context) => vnode
+
+	// Ex:
+		// some-context.js:
+			export const SomeContext = React.createContext({
+				val: 'qwe',
+				update: (val) => {},
+			});
+
+		// app.js:
+			constructor(props) {
+				super(props);
+				this.state = {
+					some: 'qwe',
+					update: (val) => {
+						this.setState({
+							some: val,
+						});
+					},
+				}
+			}
+
+			render() {
+				return (
+					<SomeContext.Provider value={this.state}>
+						<Child/>
+					</SomeContext.Provider>
+				);
+			}
+
+		// child.js:
+			render() {
+				return (
+					<SomeContext.Consumer>
+						{(context) => (
+							<button onClick={context.update}>{context.some}</button>
+						)}
+					</SomeContext.Consumer>
+				);
+			}
+
+================================
 // PropTypes
 	// Describe props constraints.
 	// Dev env only.
-	
+
 	SomeComp.propTypes = {
 		somePropName: propType,
 		...
 	};
-	
+
 	// e.g:
 		// specify type:
 		optionalArray: React.PropTypes.array,
@@ -359,29 +400,29 @@ React ========================================================================={
 		optionalObject: React.PropTypes.object,
 		optionalString: React.PropTypes.string,
 		optionalElement: React.PropTypes.element,
-		
+
 		// union:
 		optionalUnion: React.PropTypes.oneOfType([
 			React.PropTypes.string,
 			React.PropTypes.number,
 			React.PropTypes.instanceOf(Message)
 		]),
-		
+
 		// object structure:
 		optionalObjectWithShape: React.PropTypes.shape({
 			color: React.PropTypes.string,
 			fontSize: React.PropTypes.number
 		}),
-		
+
 		// required:
 		requiredFunc: React.PropTypes.func.isRequired,
-		
+
 		// any required primitive:
 		requiredAny: React.PropTypes.any.isRequired,
 
 ================================
 // Example
-	
+
 	class SomeComp extends React.Component {
 		constructor(props) {
 			super(props);
@@ -390,7 +431,7 @@ React ========================================================================={
 			};
 			this.onClickHideLink = this.onClickHideLink.bind(this);
 		}
-		
+
 		render() {
 			var sListViews = this.props.myList.map(function(item, index) {
 				return (
@@ -406,26 +447,27 @@ React ========================================================================={
 					<br/>
 					<a href="#"
 						className={ this.state.visible ? '' : 'hidden' }
-						onClick={ this.onClickHideLink }>
+						onClick={ this.onClickHideLink }
+					>
 						Click to hide
 					</a>
 					<b>{ this.props.children }</b>
 				</div>
 			);
 		}
-		
+
 		onClickHideLink(ev) {
 			ev.preventDefault();
 			this.setState({visible: false});
 		}
 	}
-	
+
 	var sList = [{
 		name: 'some'
 	}, {
 		name: 'qwe'
 	}];
-	
+
 	ReactDOM.render(
 		<SomeComp myList={ sList }>
 			Some
@@ -433,9 +475,9 @@ React ========================================================================={
 		document.querySelector('#root')
 	);
 
-}
+
 ================================================================================
-Redux ========================================================================={
+Redux ==========================================================================
 // version 3.6.0
 
 // Realization of Flux-like architecture.
@@ -473,7 +515,7 @@ Redux ========================================================================={
 
 ================================
 // redux module
-	
+
 	createStore(reducer(state, action) : state
 			[, initialState] [, enhancer]) : store
 		// create Redux store
@@ -495,14 +537,14 @@ Redux ========================================================================={
 						return next(action);  // call next middleware in
 							// the chain
 					}));
-	
+
 	bindActionCreators(actionCreators, dispatch) : actionCreators
 		// wrap action creators into dispatch() calls
 		// actionCreators - object like {actionCreator1: ()=> action, ...}
 
 ================================
 // Store methods
-	
+
 	getState() : any
 		// last state tree returned by the root reducer (rootState)
 	dispatch(action) : dispatchedAction
@@ -511,24 +553,24 @@ Redux ========================================================================={
 		// register listener for state changes
 		// use getState() to get current state inside listener
 		// returns function to remove listener
-	
+
 	replaceReducer(newReducer)  // replace root reducer
 
 ================================
 // react-redux module
-	
+
 	<Provider store={ mystore }>view...</Provider>
 		// make the Redux store available to
 		// the connect() calls in the component hierarchy
-	connect([mapStateToObj(rootState, ownProps) : obj]
-			[, mapDispatchToObj(dispatch, ownProps) : obj]
+	connect([mapStateToProps(rootState, ownProps) : obj]
+			[, mapDispatchToProps(dispatch, ownProps) : obj]
 			[, mergeProps(stateProps, dispatchProps, ownProps) : props]
 			) : container
 		// create container - React component connected to Redux store
-		// mapStateToObj - map store properties to object
+		// mapStateToProps - map store properties to object
 			// that will be merged into props.
 			// Invoked on each store update.
-		// mapDispatchToObj - map action creators to object
+		// mapDispatchToProps - map action creators to object
 			// that will be merged into props
 
 ================================
@@ -537,19 +579,19 @@ Redux ========================================================================={
 	// function (dispatch)=> void that can call dispatch() itself.
 	// For handling async actions uses middlewares like redux-thunk
 	// or redux-promise.
-	
+
 	// Ex:
 		// index.js:
 			import thunkMiddleware from 'redux-thunk';
 			import fetchPosts from './actions';
-			
+
 			const store = createStore(rootReducer,
 					applyMiddleware(thunkMiddleware));
-			
+
 			store.dispatch(fetchPosts('some')).then(()=>
 				console.log(store.getState());
 			);
-		
+
 		// actions.js:
 			export function fetchPosts(subreddit) {
 				return (dispatch)=> {
@@ -565,17 +607,17 @@ Redux ========================================================================={
 ================================
 // Undo/redo
 	// redux-undo module.
-	
+
 	// Ex:
 		import undoable, {distinctState} from 'redux-undo';
-		
+
 		const undoableReducer = undoable(reducer, {
 			filter: distinctState()
 		});
-		
+
 		...
 		import {ActionCreators} from 'redux-undo';
-		
+
 		const mapDispatchToProps = (dispatch)=> {
 			return {
 				onUndo: ()=> dispatch(ActionCreators.undo()),
@@ -585,7 +627,7 @@ Redux ========================================================================={
 
 ================================
 // Example
-	
+
 	// index.jsx:
 		import React from 'react';
 		import ReactDOM from 'react-dom';
@@ -593,16 +635,16 @@ Redux ========================================================================={
 		import App from './containers/app';
 		import {createStore} from 'redux';
 		import rootReducer from './reducers';
-		
+
 		const store = createStore(rootReducer);
-		
+
 		ReactDOM.render(
 			<Provider store={ store }>
 				<App/>
 			</Provider>,
 			document.getElementById('root')
 		);
-	
+
 	// actions/index.js:
 		export function setName(name) {
 			return {
@@ -610,13 +652,13 @@ Redux ========================================================================={
 				payload: name
 			};
 		}
-		
+
 		export function nameUpper() {
 			return {
 				type: 'UPPER'
 			};
 		}
-	
+
 	// reducers/name.js:
 		export function name(state = {f: 'some'}, action) {
 			switch(action.type) {
@@ -630,48 +672,26 @@ Redux ========================================================================={
 					return state;
 			}
 		}
-	
+
 	// reducers/index.js:
 		import {combineReducers} from 'redux';
 		import nameReducer from './name';
-		
+
 		export default combineReducers({
 			name: nameReducer
 		});
-	
-	// components/app.jsx:
-		import React from 'react';
-		
-		export default class App extends React.Component {
-			
-			render() {
-				return (
-					<div onClick={ this.props.onClick }>
-						Name: { this.props.name }
-						<br/>
-						<input type="text" ref={(ref)=> this.newName = ref}/>
-						<button onClick={ this.onClickSetName.bind(this) }>Submit</button>
-					</div>
-				);
-			}
-			
-			onClickSetName(ev) {
-				ev.stopPropagation();
-				this.props.onClickSetName(this.newName.value);
-			}
-		};
-	
+
 	// containers/app.js:
 		import {connect} from 'react-redux';
 		import {setName, nameUpper} from '../actions';
 		import App from '../components/app';
-		
+
 		function mapStateToProps(state, ownProps) {
 			return {
 				name: state.name.f
 			};
 		}
-		
+
 		function mapDispatchToProps(dispatch, ownProps) {
 			return {
 				onClickSetName: (newName)=> {
@@ -682,9 +702,30 @@ Redux ========================================================================={
 				}
 			};
 		}
-		
+
 		export default connect(
 			mapStateToProps,
 			mapDispatchToProps
 		)(App);
-}
+
+	// components/app.jsx:
+		import React from 'react';
+
+		export default class App extends React.Component {
+
+			render() {
+				return (
+					<div onClick={ this.props.onClick }>
+						Name: { this.props.name }
+						<br/>
+						<input type="text" ref={ (ref)=> this.newName = ref }/>
+						<button onClick={ this.onClickSetName.bind(this) }>Submit</button>
+					</div>
+				);
+			}
+
+			onClickSetName(ev) {
+				ev.stopPropagation();
+				this.props.onClickSetName(this.newName.value);
+			}
+		};
