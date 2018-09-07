@@ -56,6 +56,15 @@ Karma ========================================================================={
 				// if true - capture browser, run tests and exit on finish
 			browsers: ['PhantomJS'],
 				// or "Chrome", "Firefox", etc.
+			ChromeHeadless: {
+				base: 'Chrome',
+				flags: [
+					'--no-sandbox',
+					'--headless',
+					'--disable-gpu',
+					'--remote-debugging-port=9222',
+				],
+			},
 			concurrency: Infinity,
 			browserConsoleLogOptions: {
 				level: "log"
