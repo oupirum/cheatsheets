@@ -500,6 +500,7 @@ Math ===========================================================================
     round(fl [, n]) : int  # round fl to n digits after point
     min(n1, n2, ...) : number
     max(n1, n2, ...) : number
+    sum(iterable [, start]) : number
 
     ================================
     math package
@@ -688,7 +689,7 @@ Collections ====================================================================
         insert(index, obj)
         remove(obj)  # first occurence
         pop([index]) : obj  # get and remove
-        sort(key=lambda(v): v)
+        sort(key=lambda(v) : v)
         reverse()
         index(obj) : int
         count(obj) : int
@@ -807,6 +808,9 @@ Collections ====================================================================
 
         # new dict:
             {key_expr: val_expr for item in sequence}
+
+        # Comprehension + filter:
+            [expr for item in sequence if expr]
 
         # Ex:
             {str(v): True for v in arr}  # create set of items
@@ -1429,8 +1433,8 @@ PyTest =========================================================================
                 # some code
 
 
-    $ pytest <tests_dir>  # run all tests found in directory
+    $ python3 -m pytest <tests_dir>  # run all tests found in directory
         -v  # verbose
         -l  # dump variables on test failure
         -s  # no capture stdout
-    $ pytest <test_file>::<test_func>  # run a specific test
+    $ python3 -m pytest <test_file>::<test_func>  # run a specific test

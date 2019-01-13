@@ -17,19 +17,19 @@ Terminal hotkeys ===============================================================
 ================================================================================
 FHS ============================================================================
 
-	boot/  # boot loaders
+	/boot/  # boot loaders
 		vmlinuz-x.x.x-x
 		grub/grub.conf
-	dev/   # essential devices
-	proc/  # virtual filesystem providing info about processes and kernel info
-	mnt/   # temporarily mounted filesystems
-	media/ # mount points for removable media
+	/dev/   # essential devices
+	/proc/  # virtual filesystem providing info about processes and kernel info
+	/mnt/   # temporarily mounted filesystems
+	/media/ # mount points for removable media
 
-	bin/   # essential command binaries available for single user mode
-	sbin/  # same for root
-	lib/   # libraries for /bin and /sbin
-	opt/   # optional software packages
-	etc/   # system-wide configs
+	/bin/   # essential command binaries available for single user mode
+	/sbin/  # same for root
+	/lib/   # libraries for /bin and /sbin
+	/opt/   # optional software packages
+	/etc/   # system-wide configs
 		init.d/  # init scripts and daemons
 			rc  # do runlevel changes (run rcN.d/ scripts)
 		rcN.d/   # init scripts running at certain runlevel N (links to init.d/)
@@ -58,15 +58,15 @@ FHS ============================================================================
 		skel/  # default user's configs
 		apt/
 			sources.list
-	usr/  # secondary hierarchy for readonly files (unix system resources)
+	/usr/  # secondary hierarchy for readonly files (unix system resources)
 		bin/
 		sbin/
 		lib/
 		include/
 		local/  # tertiary hierarchy for local data specific to this host
 
-	tmp/  # temp files (usually removed on reboot (see $TMPTIME env var))
-	var/  # variable files (logs, spool files, emails, etc.)
+	/tmp/  # temp files (usually removed on reboot (see $TMPTIME env var))
+	/var/  # variable files (logs, spool files, emails, etc.)
 		cache/
 		tmp/  # temp files to be preserved between reboots
 		lib/   # state information, e.g. databases
@@ -83,59 +83,8 @@ FHS ============================================================================
 			messages
 			syslog
 
-	root/  # root's home directory
-	home/  # users' home directories
-
-================================================================================
-Miscellaneous ==================================================================
-
-	while ( nc -l 80 < $some_response_file > : ) ; do $some_cmd ; done
-		# simple server
-
-	while true; do
-		inotifywait -r -e MODIFY $some_dir && $some_cmd
-	done  # watch on directory and run command when any file changed
-
-	date +%T  # print time (%H:%M:%S)
-	date +%s  # print timestamp
-	date -d "12/31/2016 23:59:59" +%s  # date to timestamp
-
-	cat url.txt | xargs wget  # pass stdout to argument
-	cat url.txt | xargs -i wget "{} something"  # with placeholder
-
-	which $name    # search executable in PATH
-	whereis $name  # search executable in system dirs
-	locate $name   # search file using precompiled index
-
-	whoami  # current username
-	id $username  # user id and groups
-
-	useradd $username  # create user
-		-d  $dir  # set home directory
-		-m  # create home if not exists
-		-g $group  # set primary group
-	usermod $username  # edit user
-	passwd $username  # change password
-	userdel $username
-		-r  # delete home dir
-
-	crontab  # view|edit user's crontab
-		-u $username  # for specified user
-		-e  # edit
-		-l  # print content
-		-r  # remove
-
-	service $name start|stop|status
-
-	update-rc.d $name enable|disable|remove|defaults  # install and remove
-		# init script links
-		-n  # just show what would do
-
-	lscpu  # display info about cpu
-	lshw  # display info about hardware
-		-short
-	lsblk  # list block devices
-	free  # display free memory
+	/root/  # root's home directory
+	/home/  # users' home directories
 
 ================================================================================
 Package management =============================================================
@@ -160,7 +109,7 @@ Package management =============================================================
 		search $regex  # search package in index
 
 ================================================================================
-Basics =========================================================================
+Bash basics ====================================================================
 
 	# Bash is a dialect of Shell.
 
@@ -804,6 +753,11 @@ Files ==========================================================================
 				# B - "+" (add permission), "=" (rewrite permission),
 					# "-" (remove permission)
 				# C - "r" (read), "w" (write), "x" (execute), "rw", "rwx", etc.
+					# Special flags:
+						# "s" - setuid|setguid (execute with owner's
+						# permissions)
+						# "t" - sticky bit (only owners can delete|rename
+						# files in this directory)
 				# e.g. `chmod ug+x file`
 			UGO
 				# where:
@@ -1255,6 +1209,64 @@ SSH ============================================================================
 		/etc/ssh/sshd_config
 
 ================================================================================
+Tmux ===========================================================================
+
+	# Tmux - terminal manager.
+	# Tmux has three levels of hierarchy: Sessions, windows, and panes.
+	# Sessions are groups of windows, and a window is a layout of panes.
+
+	tmux  # start the tmux session
+	tmux new
+		-s <name>
+
+	# In Tmux press the ctrl+b, then:
+		d  # detach
+		s  # list sessions
+		$  # rename session
+
+		c  # new window
+		,  # rename window
+		&  # kill window
+
+	tmux ls  # list of the running sessions
+
+	tmux a  # attach to the tmux session
+		-t <name>
+
+	tmux kill-session
+		-t <name>
+
+================================================================================
+Services =======================================================================
+
+	# Systemd - create and manage services.
+
+	# To create service put unit file
+	# into /etc/systemd/system/<servicename>.service directory.
+
+	systemctl
+		daemon-reload  # index new unit files
+		enable <servicename>  # enable autostart at boot
+		start <servicename>  # start manually
+		status <servicename>  # view service info and status
+
+	# Example of unit file:
+		[Unit]
+		Description=My Service
+		After=network.target
+
+		[Service]
+		Type=simple
+			# simple, forking, oneshot, dbus, notify, idle
+		Restart=always
+			# always, on-success, on-failure, on-abnormal, on-watchdog, on-abort
+		RestartSec=0  # delay
+		ExecStart=/usr/local/bin/myservice.sh
+
+		[Install]
+		WantedBy=runlevel3.target
+
+================================================================================
 Vim ============================================================================
 
 	vim $file  # open file in vim editor
@@ -1315,3 +1327,48 @@ Vim ============================================================================
 	# settings can be defined in VIMINIT environment variable:
 		# Ex:
 			export VIMINIT='set number incsearch'
+
+================================================================================
+Miscellaneous ==================================================================
+
+	while ( nc -l 80 < $some_response_file > : ) ; do $some_cmd ; done
+		# simple server
+
+	while true; do
+		inotifywait -r -e MODIFY $some_dir && $some_cmd
+	done  # watch on directory and run command when any file changed
+
+	date +%T  # print time (%H:%M:%S)
+	date +%s  # print timestamp
+	date -d "12/31/2016 23:59:59" +%s  # date to timestamp
+
+	cat url.txt | xargs wget  # pass stdout to argument
+	cat url.txt | xargs -i wget "{} something"  # with placeholder
+
+	which $name    # search executable in PATH
+	whereis $name  # search executable in system dirs
+	locate $name   # search file using precompiled index
+
+	whoami  # current username
+	id $username  # user id and groups
+
+	useradd $username  # create user
+		-d  $dir  # set home directory
+		-m  # create home if not exists
+		-g $group  # set primary group
+	usermod $username  # edit user
+	passwd $username  # change password
+	userdel $username
+		-r  # delete home dir
+
+	crontab  # view|edit user's crontab
+		-u $username  # for specified user
+		-e  # edit
+		-l  # print content
+		-r  # remove
+
+	lscpu  # display info about cpu
+	lshw  # display info about hardware
+		-short
+	lsblk  # list block devices
+	free  # display free memory

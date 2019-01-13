@@ -176,6 +176,11 @@ React ==========================================================================
 
 	React.createContext(defVal) : Context
 
+	Class.contextType = ContextTypeClass
+		// Assigning context type to static field of component
+		// makes a context value of specified type
+		// available as instance variable: this.context
+
 ================================
 // ReactDOM
 	// react-dom module
@@ -340,13 +345,13 @@ React ==========================================================================
 			value : any  // set context value
 	Consumer  // context consumer component
 		// props:
-			children : (context) => vnode
+			children : render(context) : vnode
 
 	// Ex:
 		// some-context.js:
 			export const SomeContext = React.createContext({
 				val: 'qwe',
-				update: (val) => {},
+				update: (val)=> {},
 			});
 
 		// app.js:
@@ -354,7 +359,7 @@ React ==========================================================================
 				super(props);
 				this.state = {
 					some: 'qwe',
-					update: (val) => {
+					update: (val)=> {
 						this.setState({
 							some: val,
 						});
@@ -374,7 +379,7 @@ React ==========================================================================
 			render() {
 				return (
 					<SomeContext.Consumer>
-						{(context) => (
+						{(context)=> (
 							<button onClick={context.update}>{context.some}</button>
 						)}
 					</SomeContext.Consumer>

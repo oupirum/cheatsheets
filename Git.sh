@@ -73,6 +73,15 @@ Staging, commit ================================================================
 	git diff <hash1> <hash2>  # between two specified commits
 	git diff <hash1>:<file> <hash2>:<file>
 
+	git clean [<path>]  # recursively remove untracked files
+		-n  # only show what would be done
+		-d  # remove directories too
+		-f  # force
+
+		-x  # use -e for ignoring instead of .gitignore
+		-e <pattern>  # exclude
+		-X  # remove only ignored
+
 ================================================================================
 Commits ========================================================================
 
@@ -133,6 +142,11 @@ Branches =======================================================================
 	git rebase --skip  # skip step
 	git rebase --abort  # cancel rebase
 
+	git cherry-pick <hash>...  # apply given commits on the current branch
+		-e  # edit commit messages
+		-m  # parent number of the mainline
+		--ff  # fast forward (if head is the same as parent of picked)
+
 ================================================================================
 Remote =========================================================================
 
@@ -161,6 +175,8 @@ Remote =========================================================================
 	git push <remote> <local_branch>:<remote_branch>
 
 	git push <remote> --delete <branch>  # delete remote branch
+	git remote prune <remote>  # remove stale remote-tracking branches
+		--dry-run  # only show what will be pruned
 
 ================================================================================
 .gitignore =====================================================================
@@ -221,3 +237,30 @@ git grep =======================================================================
 		-h  # dont show filenames
 		-l  # print only filenames
 		-c  # print only count of matched lines per file
+
+================================================================================
+git hook example ===============================================================
+
+	# Hook that prepend ticket identifier to commit messages
+
+	# ./.githooks/commit-msg
+		#!/bin/sh
+		# Get the current branch name
+		BRANCH_NAME=$(git symbolic-ref --short HEAD)
+		# Check it matches the pattern "AB-123_some-branch-name"
+		if [ $(echo $BRANCH_NAME | grep -cEi "^(feature|bugfix)\/([a-z]+-[0-9]+)_.*") -eq 1 ]; then
+			# Trim it to get the ticket identifier
+			TICKET=$(
+				echo $BRANCH_NAME \
+				| sed -r \
+					-e 's/^(feature|bugfix)\/([a-z]+-[0-9]+)_.*/\2/I' \
+					-e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/'
+			)
+		fi
+		# Preprend the ticket identifier to the commit message
+		if [ -n "$BRANCH_NAME" ] && [ -n "$TICKET" ] && [ $(grep -cF "$TICKET" $1) -eq 0 ]; then
+			sed -i.bak -e "1s/^/$TICKET: /" $1
+		fi
+
+	# Enable:
+		git config core.hooksPath .githooks
