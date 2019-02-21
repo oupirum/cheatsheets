@@ -845,6 +845,7 @@ Files ==========================================================================
 		# options:
 			-s  # symbolic
 			-v  # verbose
+	file $filename  # identify file type
 
 	locate $file  # quick file search
 		# options:
@@ -1033,8 +1034,6 @@ Files ==========================================================================
 
 ================================================================================
 Network ========================================================================
-
-	curl ifconfig.co  # get public ip
 
 	netstat  # print network connections, routing tables, statistics, etc.
 		-t  # tcp
@@ -1333,6 +1332,8 @@ Miscellaneous ==================================================================
 
 	while ( nc -l 80 < $some_response_file > : ) ; do $some_cmd ; done
 		# simple server
+
+	curl ifconfig.co  # get public ip
 
 	while true; do
 		inotifywait -r -e MODIFY $some_dir && $some_cmd

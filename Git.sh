@@ -20,7 +20,7 @@ Config =========================================================================
 			# warn - only show warn message
 		editor = vim
 	[alias]
-		hist = log --pretty=format:\"%h %ad%d | %s\n  [%an <%ae>]\n\" --graph --date-order --date=short
+		hist = log --pretty=format:\"%C(red)%h%Creset %C(green)%ad%Creset%C(yellow)%d%Creset | %s\n  %C(blue)[%an <%ae>]%Creset\n\" --graph --date-order --date=short
 		hists = log --pretty=format:\"%h %ad%d | %s\n  [%an <%ae>]\n\" --graph --date-order --date=short --all
 		co = checkout
 		st = status
@@ -43,7 +43,13 @@ Staging, commit ================================================================
 		--all  # include removals
 
 	git reset <file>  # unstage file
+	git reset <hash>  # reset HEAD to the specified state
+		--mixed  # reset index (default)
+		--soft  # reset only head point to; doesn't touch index and working tree
+		--hard  # reset both index and working tree
+
 	git update-index --assume-unchanged <file>  # temporarily ignore
+
 	git rm <file>  # unstage and remove
 		--cached  # remove from index ("forget", stage file for removal)
 
@@ -146,6 +152,10 @@ Branches =======================================================================
 		-e  # edit commit messages
 		-m  # parent number of the mainline
 		--ff  # fast forward (if head is the same as parent of picked)
+
+	git cherry-pick --continue
+	git cherry-pick --quit  # skip
+	git cherry-pick --abort
 
 ================================================================================
 Remote =========================================================================
