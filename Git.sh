@@ -53,17 +53,6 @@ Staging, commit ================================================================
 	git rm <file>  # unstage and remove
 		--cached  # remove from index ("forget", stage file for removal)
 
-	git stash  # stash the staged state of working dir
-	git stash save <message>  # stash with specified description
-	git stash create <message>  # create new stash (returns hash)
-	git stash store -m <message> <hash>  # put to list
-	git stash list  # list all stashes
-	git stash show -p <stash>  # view stash
-		# <stash> - stash@{N} or stash^{/regex}
-	git stash apply <stash>  # restore stash
-	git stash pop <stash>  # restore and delete stash
-	git stash drop <stash>  # delete stash
-
 	git apply <patch_file>  # apply patch file generated from diff
 
 	git commit
@@ -89,6 +78,29 @@ Staging, commit ================================================================
 		-X  # remove only ignored
 
 ================================================================================
+Stashing =======================================================================
+
+	git stash  # stash the working tree
+	git stash push [<paths>...]  # create and push new stash entry
+		-m <message>
+		-k|--keep-index  # keep staged changes
+		--no-keep-index
+		-u  # include untracked
+			(stash and then clean up)
+		--all    # include also ignored files
+			(stash and then clean up)
+		--patch  # interactively select hanks
+			# keeps the index by default
+	git stash create <message>   # create new stash entry (returns hash)
+	git stash store -m <message> <hash>  # put stash entry to list
+	git stash list             # list all stash entries
+	git stash show -p <stash>  # view stash content
+		# <stash> - stash@{N} or stash^{/regex}
+	git stash apply <stash>    # apply from stash entry
+	git stash pop <stash>      # apply and delete stash entry
+	git stash drop <stash>     # delete stash entry
+
+================================================================================
 Commits ========================================================================
 
 	git log  # print history of commits
@@ -100,7 +112,7 @@ Commits ========================================================================
 		--since <date> --until <date>
 			# date - string like "2013-01-31 01:30:00", "7 days ago", etc.
 		--first-parent  # show only first parent commit for merged branch
-		-S <str>  # search for commits where str added or deleted
+		-S <str>    # search for commits where str added or deleted
 		-G <regex>  # search by regex
 	git shortlog
 
@@ -187,6 +199,18 @@ Remote =========================================================================
 	git push <remote> --delete <branch>  # delete remote branch
 	git remote prune <remote>  # remove stale remote-tracking branches
 		--dry-run  # only show what will be pruned
+
+================================================================================
+Worktree =======================================================================
+
+	# Multiple working trees attached to the same repository
+
+	git worktree add <path> [<base-branch>]  # create new worktree
+		# Also creates new branch
+		-b <new-branch>  # explicitly specify new branch name
+	git worktree list  # list associated worktrees
+	git worktree remove <worktree>  # delete specified
+	git worktree prune  # clean up stale worktree files
 
 ================================================================================
 .gitignore =====================================================================

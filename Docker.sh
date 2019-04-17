@@ -38,9 +38,6 @@ docker build -t <name>:<tag> <src_path>  # build new image with version <tag>
 
 docker run <image> [<cmd arg...>]  # run new container
 	# <image> can be <usename>/<repository>:<tag> to pull from repo and run
-	-v <volume>:/<path>  # attach storage
-		# to run container inside container use host docker daemon:
-		# -v /var/run/docker.sock:/var/run/docker.sock
 	-p <foreign>:<inner>  # map ports
 	--network bridge|host|overlay|macvlan|none  # connect to network
 	--name <name>  # specify name for new container
@@ -49,6 +46,17 @@ docker run <image> [<cmd arg...>]  # run new container
 	-t  # allocate pseudo tty
 	-a stdin|stdout|stder  # attach to stdin, stdout and/or stderr
 	--rm  # automatically remove when exits
+
+	--volume <volume|host_path>:<mount_path>  # attach storage
+	--mount <options>  # attach storage (more explicit syntax)
+		# options: comma-separated key=value pairs
+			type=bind|volume|tmpfs
+			source=<host_path>
+			destination=<mount_path>
+			readonly=true
+			bind-propagation=rprivate|private|rslave|slave|rshared|shared
+				# whether or not sub-mounts can be propagated to replicas
+				# r - recursive
 
 docker ps  # list running containers
 docker start <container>  # run stopper container

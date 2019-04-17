@@ -1121,6 +1121,7 @@ Network ========================================================================
 		-sL   # list scan
 		-sn   # ping scan
 		-Pn   # no ping (skip discovery stage)
+		-PS   # TCP SYN/ACK
 		--disable-arp-ping
 		-n    # no DNS resolution
 		--dns-servers $dns_servers
