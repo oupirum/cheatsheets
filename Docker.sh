@@ -1,5 +1,5 @@
 # Docker - platform for containerization
-# version: 17.12.0-ce
+# version: 18.09
 
 # Image - read-only template with instructions for creating a docker container.
 # Container - runnable instance of an image.
@@ -24,11 +24,14 @@ ENV <name> <value>  # environment variable
 
 EXPOSE <port>...  # make port available inside container
 
-WORKDIR /<path>       # set cwd
+WORKDIR /<path>       # set working directory
 COPY <path> /<path>   # copy files into container
 
 CMD <shellstr>  # default command to run app (shell form)
 CMD [<cmdarg>...]  # exec form
+
+USER <user>[:<group>]  # set user to use when running the image and
+	# for all following RUN, CMD, ENTRYPOINT
 
 ################################################################################
 
@@ -59,11 +62,17 @@ docker run <image> [<cmd arg...>]  # run new container
 				# r - recursive
 
 docker ps  # list running containers
+
 docker start <container>  # run stopper container
 	-i  # interactive
 	-a  # attach stdout and stderr and forward signals
-docker attach <container>  # back to foreground
 docker exec <container> <cmd arg...>  # execute in running container
+	-d  # detached mode
+	-w <path>  # set working directory
+	-i  # interactive
+	-t  # allocate pseudo tty
+	-e <key>=<val>  # set environment variable
+docker attach <container>  # back to foreground
 docker stop <container>  # gracefully stop running container
 docker kill <container>  # force stop
 
