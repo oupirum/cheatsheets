@@ -90,23 +90,23 @@ FHS ============================================================================
 Package management =============================================================
 
 	dpkg  # debian package manager
-		-i $deb_file  # install
-		-r $package     # remove package
-		--purge $package  # remove package and its dependencies
+		-i <deb_file>  # install
+		-r <package>     # remove package
+		--purge <package>  # remove package and its dependencies
 		-s  # print package status details
 
 	apt-get  # APT package handling utility
 		update    # update index
 		upgrade    # install newest versions of all packages
-		install $package  # install package
+		install <package>  # install package
 			-f  # attempt to fix broken dependencies
-		remove $package
-		purge $package
+		remove <package>
+		purge <package>
 		-y  # automatic "yes" to prompts
 
 	apt-cache
-		show $package  # print package records
-		search $regex  # search package in index
+		show <package>  # print package records
+		search <regex>  # search package in index
 
 ================================================================================
 Bash basics ====================================================================
@@ -144,7 +144,7 @@ Bash basics ====================================================================
 ================================================================================
 Statements groups ==============================================================
 
-	{ statement1; statement2; ...; }  # statements group
+	{ <statement1>; <statement2>; ...; }  # statements group
 		# Group interpretes as one command and returns output, so can be used
 		# for IO redirection.
 		# Ex:
@@ -152,11 +152,11 @@ Statements groups ==============================================================
 				expr1
 				expr2
 			} > dir/file
-	( statement1; statement2; ...; )  # statements group
+	( <statement1>; <statement2>; ...; )  # statements group
 		# Executes in a subshell (child process). Has local scope, so vars
 		# will not be available in parent scope.
 
-	$( command1; command2; ...; )  # command substitution
+	$( <command1>; <command2>; ...; )  # command substitution
 		# Executes commands and substitutes result.
 		# Ex:
 			a=$(
@@ -165,11 +165,11 @@ Statements groups ==============================================================
 			)
 			echo "$a"  # quoted to save whitespaces
 
-	command1 && command2  # reduced logical AND by exitcode
-	command1 || command2  # OR
+	<command1> && <command2>  # reduced logical AND by exitcode
+	<command1> || <command2>  # OR
 
-	{$val1,$val2}  # variants substitution
-	{$m..$n}  # by range
+	{<val1>,<val2>}  # variants substitution
+	{<m>..<n>}  # by range
 		# Command will be interpreted as command with list of arguments
 		# provided by {...}.
 		# Could not contain unescaped spaces!
@@ -178,8 +178,9 @@ Statements groups ==============================================================
 			mkdir ./d{"1"," $v", " 3 "}
 				# same as `mkdir "./d1" "./d 2" "./d 3 "`
 
-	(( expr1, expr2, ... ))  # arithmetic expressions group
-	$(( expr1, expr2, ... ))  # arith expr substitution (returns result of last)
+	(( <expr1>, <expr2>, ... ))  # arithmetic expressions group
+	$(( <expr1>, <expr2>, ... ))  # arithmetic expression substitution
+		# (returns result of last)
 		# Ex:
 			echo $(( a = 1 + 1, b = 6 / 2 ))  # 3
 			echo $a  # 2
@@ -210,13 +211,13 @@ Variables ======================================================================
 Arrays =========================================================================
 
 	arr=()  # new empty array
-	arr=($val1 $val2 ...)  # create and fill
-	declare -A arr=([$key]=$val1 ...)  # associative array
+	arr=(<val1> <val2> ...)  # create and fill
+	declare -A arr=([<key>]=<val1> ...)  # associative array
 
-	arr[$key]=$value  # put|set value
-	arr+=($value)  # append value
+	arr[<key>]=<value>  # put|set value
+	arr+=(<value>)  # append value
 
-	${arr[$key]}  # get item by index|key
+	${arr[<key>]}  # get item by index|key
 	${#arr[@]}  # get length
 
 	${arr[*]}  # join values. Uses IFS as delimeter.
@@ -232,29 +233,29 @@ Arrays =========================================================================
 			echo "$val"
 		done
 
-	seq $end   # generate sequence of numbers [1; $end]
-	seq $start $end  # [$start; $end]
-	seq $start $step $end  # [$start; $end] with step $step
+	seq <end>   # generate sequence of numbers [1; end]
+	seq <start> <end>  # [start; end]
+	seq <start> <step> <end>  # [start; end] with step
 
 ================================================================================
 Control statements =============================================================
 
-	if command; then
+	if <command>; then
 		...
-	elif command; then
+	elif <command>; then
 		...
 	else
 		...
 	fi
 
-	case $str in
-		pattern1) command1 ;;
-		pattern2) command2 ;;
+	case <str> in
+		<pattern1>) <command1> ;;
+		<pattern2>) <command2> ;;
 		...
-		*) commandDefault ;;
+		*) <commandDefault> ;;
 	esac
 
-	while command; do
+	while <command>; do
 		...
 	done
 		# Ex:
@@ -267,11 +268,11 @@ Control statements =============================================================
 				[ $n -ge 5 ] && cancel=true
 			done
 
-	until command; do
+	until <command>; do
 		...
 	done
 
-	for item in $range; do
+	for <item> in <range>; do
 		...
 	done
 		# Ex:
@@ -279,11 +280,11 @@ Control statements =============================================================
 				echo "$v"
 			done
 
-	for (( init; check; step; )); do
+	for (( <init>; <check>; <step>; )); do
 		...
 	done
 
-	select selected in item1 item2 ...; do
+	select <selected> in <item1> <item2> ...; do
 		# will ask user to select item
 		# uses PS3 as prompt
 		# selected variable will contain selected item value or ""
@@ -301,50 +302,50 @@ Control statements =============================================================
 ================================================================================
 Test command ===================================================================
 
-	[ expr ]  # test command. Unix-shell-compatible.
-		# [] operators:
-			-e $path  # is exists
-			-s $path  # is file exists and not empty
-			-f $path  # is file
-			-d $path  # is dir
-			-h $path  # is symlink
-			-r|-w|-x $path  # is readable|writable|executable
+	[ <expr> ]  # test command. Unix-shell-compatible.
+		# <expr> can be contain:
+			-e <path>  # is exists
+			-s <path>  # is file exists and not empty
+			-f <path>  # is file
+			-d <path>  # is dir
+			-h <path>  # is symlink
+			-r|-w|-x <path>  # is readable|writable|executable
 
-			-t $fd  # is file descriptor opened on a terminal
+			-t <fd>  # is file descriptor opened on a terminal
 				# e.g. [ -t 0 ] - true if it's an interactive shell
 
-			-z $str  # is string empty
-			-n $str  # not empty
-			$str1 = $str2
-			$str1 != $str2
-			$str1 \< $str2  # ascii sorting
-			$str \> $str2
+			-z <str>  # is string empty
+			-n <str>  # not empty
+			<str1> = <str2>
+			<str1> != <str2>
+			<str1> \< <str2>  # ascii sorting
+			<str> \> <str2>
 
-			! expr  # NOT
-			expr1 -a expr2  # AND (not reduced)
-			expr1 -o expr2  # OR (not reduced)
+			! <expr>  # NOT
+			<expr1> -a <expr2>  # AND (not reduced)
+			<expr1> -o <expr2>  # OR (not reduced)
 
-			$num1 -eq $num2  # is numbers are equal
-			$num1 -ne $num2  # not equal
-			$num1 -lt $num2  # less than
-			$num1 -le $num2  # less or equal
-			$num1 -gt $num2  # greater than
-			$num1 -ge $num2  # greater or equal
+			<num1> -eq <num2>  # is numbers are equal
+			<num1> -ne <num2>  # not equal
+			<num1> -lt <num2>  # less than
+			<num1> -le <num2>  # less or equal
+			<num1> -gt <num2>  # greater than
+			<num1> -ge <num2>  # greater or equal
 		# Ex:
-			if [ $a = "a" ]; then ...
+			if [ <a> = "a" ]; then ...
 
-	[[ expr ]]  # test keyword. It's more powerful but not shell-compatible.
-		# [[]] operators (additional to []):
-			$str1 = glob_pattern  # dont quote!
-			$str1 != glob_pattern
-			$str1 =~ regex_pattern  # dont quote!
-			$str1 < $str2  # ascii sorting
-			$str > $str2
+	[[ <expr> ]]  # test keyword. It's more powerful but not shell-compatible.
+		# <expr> can contain (additional to []):
+			<str1> = <glob_pattern>  # without quotes!
+			<str1> != <glob_pattern>
+			<str1> =~ <regex_pattern>  # without quotes!
+			<str1> < <str2>  # ascii sorting
+			<str> > <str>
 
-			expr1 && expr2  # AND (reduced)
-			expr1 || expr2  # OR (reduced)
+			<expr1> && <expr2>  # AND (reduced)
+			<expr1> || <expr2>  # OR (reduced)
 
-			( expr )  # group to change precedence
+			( <expr> )  # group to change precedence
 
 ================================================================================
 Regex ==========================================================================
@@ -415,7 +416,7 @@ Functions ======================================================================
 	}
 
 	func_name  # invoke
-	func_name $arg1 $arg2 ...  # invoke with arguments
+	func_name <arg1> <arg2> ...  # invoke with arguments
 
 	unset func_name  # delete function
 
@@ -424,11 +425,11 @@ Functions ======================================================================
 		$1, $2, ...  # arguments
 		$#    # number of args
 
-	local varname=$value  # define local variable
+	local varname=<value>  # define local variable
 		# By default all variables defined inside function are available
 		# in caller's scope and can overwrite existing vars.
 
-	return $n  # return from function
+	return <n>  # return from function
 		# Function can return only number, it's like an exitcode.
 
 ================================================================================
@@ -446,11 +447,11 @@ Script =========================================================================
 			IFS=","
 			echo "${args[*]}"  # print args separated by ","
 			unset IFS
-	shift $n  # shift arguments list to left (exclude $0)
+	shift <n>  # shift arguments list to left (exclude $0)
 		# n = 1 by default
-	set $arg1 $arg2 ...  # set command line arguments
+	set <arg1> <arg2> ...  # set command line arguments
 
-	getopts $format arg  # parse one command line argument (invoke in while
+	getopts <format> <arg>  # parse one command line argument (invoke in while
 		# to get all args)
 		# format - string like "a:bc:"
 			# ":" after key means that value required for this key
@@ -467,11 +468,11 @@ Script =========================================================================
 				esac
 			done
 
-	exit $code  # quit script with exitcode [0-255]. 0 means normal exit.
+	exit <code>  # quit script with exitcode [0-255]. 0 means normal exit.
 	$?  # stores exitcode returned by last command
 
-	trap 'command1; command2; ...' $signal  # trap incoming signals
-	trap - $signal  # restore trap to default
+	trap '<command1>; <command2>; ...' <signal>  # trap incoming signals
+	trap - <signal>  # restore trap to default
 	trap  # print traps list
 		# It can be used to perform cleanup.
 		# where signal:
@@ -483,10 +484,10 @@ Script =========================================================================
 		# Ex:
 			trap 'rm -f tmpfile' EXIT
 
-	exec $path    # run external program. Process will be replaced
-	source $path    # run script in the current environment (like an import)
-	. $path    # same
-	eval $cmd ...  # concat and evaluate given command, return its exit code
+	exec <path>    # run external program. Process will be replaced
+	source <path>    # run script in the current environment (like an import)
+	. <path>    # same
+	eval <cmd> ...  # concat and evaluate given command, return its exit code
 
 	set -x    # enable debug mode
 	set +x    # disable debug mode
@@ -534,12 +535,12 @@ Environment variables ==========================================================
 ================================================================================
 History ========================================================================
 
-	history N  # print list of N last commands
+	history <N>  # print list of N last commands
 
-	!N   # run command number N
-	!-N  # -N'th command
-	!xyz    # last command beginning with 'xyz'
-	!xyz:p  # print instead of run
+	!<N>   # run command number N
+	!-<N>  # -N'th command
+	!<str>    # last command beginning with str
+	!<str>:p  # print instead of run
 
 	!!   # last command
 	!$   # last word|argument of last command
@@ -552,19 +553,19 @@ History ========================================================================
 ================================================================================
 Processes ======================================================================
 
-	some_command &  # run command in background
+	<some_command> &  # run command in background
 
 	$!  # stores PID of recently started background task
 		# Ex:
 			( sleep 10; ) & p=$!  # run and save pid
 			kill -INT $p
 
-	bg $pid    # switch paused task to background and resume it
-		# $pid - PID or %task_number
-	fg $pid    # switch task to foreground
+	bg <pid>    # switch paused task to background and resume it
+		# pid - PID or %task_number
+	fg <pid>    # switch task to foreground
 	jobs  # list of background tasks
 	top  # live task manager
-		-d $sec  # update interval (10 seconds by default)
+		-d <sec>  # update interval (10 seconds by default)
 
 	$$  # PID of current process
 
@@ -575,84 +576,84 @@ Processes ======================================================================
 			a   # all with TTY, include other users
 			x   # all without TTY
 			r   # only running
-			-t $tty   # by TTY
-			-p $pid   # by PID
-			-u $user  # by user id or name
+			-t <tty>   # by TTY
+			-p <pid>   # by PID
+			-u <user>  # by user id or name
 
 		# Ex:
 			ps uaxf | grep "glob_to_filter"
 
-	kill signal $pid  # send signal to process
+	kill <signal> <pid>  # send signal to process
 		# where signal:
 			-1  # SIGHUP
 			-2  # SIGINT
 			-3  # SIGQUIT
 			-15 # SIGTERM (default)
 			-9  # SIGKILL
-		# $pid - PID or %task_number
-	killall $name  # kill process by name
-		-s $signal
+		# pid - PID or %task_number
+	killall <name>  # kill process by name
+		-s <signal>
 		-i  # interactive
 
-	sleep $n  # put current process to sleep for $n seconds
+	sleep <n>  # put current process to sleep for <n> seconds
 
 ================================================================================
 IO =============================================================================
 
-	echo $value  # print line to stdout
+	echo <value>  # print line to stdout
 		# options:
 			-n  # without ending newline
 			-e  # enable escape-sequences
 			-E  # supress escape-sequences
 
-	exec N< $file  # create|replace file descriptor N
+	exec N< <file>  # create|replace file descriptor N
 
-	read varname  # read line from stdin and put to variable
+	read <varname>  # read line from stdin and put to variable
 		# options:
-			-p $prompt  # show prompt
+			-p <prompt>  # show prompt
 			-s  # hide input
 			-r  # dont allow backslash escaping
 			-a  # split to array
-			-d $char  # specify delimeter char
-			-t $sec  # timeout
-			-n $n  # read max n chars if delimeter not received before
-			-N $n  # read exactly n chars. Ignore delimeter.
-			-u $fd  # specify FD instead of stdin
+			-d <char>  # specify delimeter char
+			-t <sec>  # timeout
+			-n <n>  # read max n chars if delimeter not received before
+			-N <n>  # read exactly n chars. Ignore delimeter.
+			-u <fd>  # specify FD instead of stdin
 		# Ex:
 			exec 3< "file_to_read"
 			read -u 3 line
 			echo "first line: $line"
 
-	less [$file]    # view file|input with pagination
+	less [<file>]    # view file|input with pagination
 		-N  # show line numbers
 		-M  # show prompt (number of lines, percent, filename)
-	head [$file]    # print first part of file|input
+	head [<file>]    # print first part of file|input
 		# options:
-			-n $lines   # number of lines to print
-			-c $bytes   # bytes to print
-	tail [$file]    # print last part
+			-n <lines>   # number of lines to print
+			-c <bytes>   # bytes to print
+	tail [<file>]    # print last part
 		# options:
-			-n $lines
-			-c $bytes
+			-n <lines>
+			-c <bytes>
 			-f   # watch for updates
 
-	sort [$file]    # print lines sorted
+	sort [<file>]    # print lines sorted
 		# options:
 			-u    # unique
 			-n    # numeric sort
 			-r    # reverse
 			-k <n>  # sort by field n (from 1)
-	tr $str1 $str2    # filter input - replace all chars from $str1 to
-		# appropriate chars from $str2
+	tr <str1> <str2>    # filter input - replace all chars from <str1> to
+		# appropriate chars from <str2>
 
-	$target N< $source  # input redirection
+	<target> N< <source>  # input redirection
 		# N = 0 by default
-	$source N> $target  # output redirection (rewrite, create if doesnt exists)
+	<source> N> <target>  # output redirection (rewrite, create if doesnt exists)
 		# N = 1 by default
-	$source N>> $target  # append
+	<source> N>> <target>  # append
 		# N = 1 by default
 		# where:
-			$source, $target  # input|output (file, statements group, etc.)
+			<source>, <target>  # input|output (file, statements group, etc.)
 			N  # FD number
 		# Ex:
 			cat >> file
@@ -668,10 +669,10 @@ IO =============================================================================
 		wrongCmd 2> $file    # write stderr to file
 		cmd > $file 2>&1     # write both stdout and stderr to file
 		cmd &> $file         # same
-		cmd > $fileOut 2> $fileErr  # write stdout and stderr to different files
+		cmd > $file_out 2> $file_err  # write stdout and stderr to different files
 		cmd 1>&2    # write stdout to stderr
 
-	cmd1 | cmd2    # pipe, conveyer. Uses for chaining - get stdout from
+	<cmd1> | <cmd2>    # pipe, conveyer. Uses for chaining - get stdout from
 		# first and send it to stdin of next command. Each command executes
 		# in a subshell.
 		# Ex:
@@ -691,43 +692,43 @@ IO =============================================================================
 ================================================================================
 FS =============================================================================
 
-	fuser $file  # list users that are using filesystem|file
-		-m $mp  # mountpoint
+	fuser <file>  # list users that are using filesystem|file
+		-m <mount_point>
 		-k  # kill all found processes
 		-v  # verbose
 
 	fdisk -l  # list devices
-	fdisk -l $device  # list partitions
-		# $device - block device, e.g. /dev/sdb
+	fdisk -l <device>  # list partitions
+		# <device> - block device, e.g. /dev/sdb
 
-	df [$mp]  # show fs usage
+	df [<mount_point>]  # show fs usage
 		-h  # human readable
 	lsblk  # list block devices
-		-o $output  # comma-separated options: "name", "rm", "size", "ro",
+		-o <output>  # comma-separated options: "name", "rm", "size", "ro",
 			# "type", "fstype", "mountpoint", "label", "uuid",
 			# "log-sec", "phy-sec", etc (optionally with + sign to append).
 			# default: name,maj:min,rm,size,ro,type,mountpoint
 
-	mount $fs $mountpoint  # mount filesystem
-		# $fs - filesystem
-		# $mountpoint - target directory to mount
+	mount <fs> <mountpoint>  # mount filesystem
+		# <fs> - filesystem
+		# <mountpoint> - target directory to mount
 		# options:
-			-t $type  # fs type: "ext4", "ntfs", "vfat", "smbfs", etc,
-			-o $rights  # options, "rw" (read,write), "ro" (readonly),
+			-t <type>  # fs type: "ext4", "ntfs", "vfat", "smbfs", etc,
+			-o <rights>  # options, "rw" (read,write), "ro" (readonly),
 				# "force" (for repair), "remount" (change mountpoint or rights)
-			--bind $dir  # create mirror
+			--bind <dir>  # create mirror
 		# Ex:
 			sudo mkdir /mnt/somemp
 			sudo mount /dev/sdb1 /mnt/somemp
-	umount $fs|$mountpoint  # unmount filesystem
+	umount <fs|mountpoint>  # unmount filesystem
 
-	fdisk $device  # change partition table of this device
-	mkfs -t $type $fs  # format
-		# $fs - filesystem
+	fdisk <device>  # change partition table of this device
+	mkfs -t <type> <fs>  # format
+		# <fs> - filesystem
 
-	mlabel -i $fs ::$label  # change FAT label
-	ntfslabel $fs $label  # change NTFS label
-	e2label $fs $label  # change EXT label
+	mlabel -i <fs> ::<label>  # change FAT label
+	ntfslabel <fs> <label>  # change NTFS label
+	e2label <fs> <label>  # change EXT label
 
 	# Ex:
 		# create bootable usb
@@ -744,8 +745,8 @@ FS =============================================================================
 ================================================================================
 Files ==========================================================================
 
-	chmod value $file  # set privileges
-		# where value can be:
+	chmod <value> <file>  # set privileges
+		# where <value> can be:
 			ABC
 				# where:
 				# A - "u" (user,owner), "g" (group), "o" (others), "a" (all),
@@ -773,19 +774,19 @@ Files ==========================================================================
 				# e.g. `chmod 754 file`
 		# options:
 			-R  # recursive
-			--reference $file  # copy privileges from another file
+			--reference <file>  # copy privileges from another file
 			-v  # verbose
 			-f  # silent
-	chown $user:$group $path
+	chown <user>:<group> <path>
 		# options:
 			-R  # recursive
 		# Ex:
 			sudo chown -R $(whoami) some/dir
 
 	pwd  # print current working directory
-	cd $dir  # change current directory
+	cd <dir>  # change current directory
 
-	ls $dir|$file...    # print list of items in directory or
+	ls <dir|file>...    # print list of items in directory or
 		# info about file
 		# options:
 			-a  # show hidden (beginning with '.')
@@ -797,95 +798,95 @@ Files ==========================================================================
 			-r  # reverse order
 			-s  # show blocks number
 			-d  # directory itself instead of its content
-	du $dir|$file  # print size of file or directory recursively (disk usage)
+	du <dir|file>  # print size of file or directory recursively (disk usage)
 		# options:
-			-d $n  # max depth
+			-d <n>  # max depth
 			-c  # show grand total
 			-h  # human readable
 			-s  # print only total for each argument
 
 	dd  # copy and convert bytes
-		bs=$c  # read|write up to $c bytes at a time (e.g. "1M")
-		if=$source  # file or device
-		of=$dest  # file or device
+		bs=<c>  # read|write up to <c> bytes at a time (e.g. "1M")
+		if=<source>  # file or device
+		of=<dest>  # file or device
 
-	cp $source... $target  # copy file|dir
+	cp <source>... <target>  # copy file|dir
 		# options:
 			-r  # recursive - to copy directory
 			-i  # interactive mode (prompt before overwrite)
 			-u  # update mode
 			-P  # dont follow symbolic links in source
 			-L  # always follow symlinks in source
-			--preserve=$attrs  # preserve attributes
+			--preserve=<attrs>  # preserve attributes
 				# available params: mode, ownership, timestamps, context,
 				# links, xattr, all
 			-p  # same as --preserve=mode,ownership,timestamps
 			-v  # verbose
-	mv $source... $target  # move file|dir
+	mv <source>... <target>  # move file|dir
 		# options:
 			-v  # verbose
 			-i  # interactive mode
 			-u  # update mode
-	touch $file  # create empty file
+	touch <file>  # create empty file
 		# options:
 			-c  # do not create if doesnt exists
 			-a  # only update access time
 			-m  # only update modified time
-			-d $rel_date  # change modified time
-	mkdir $dir  # create empty dir
+			-d <rel_date>  # change modified time
+	mkdir <dir>  # create empty dir
 		# options:
 			-r  # recursive
 			-v  # verbose
-	rm $file  # remove file|dir
+	rm <file>  # remove file|dir
 		# options:
 			-r  # recursive - to remove dir
 			-f  # force	- without prompt for subdirs
 			-v  # verbose
-	ln $file_target $link_path  # create link (hard by default)
+	ln <file_target> <link_path>  # create link (hard by default)
 		# options:
 			-s  # symbolic
 			-v  # verbose
-	file $filename  # identify file type
+	file <filename>  # identify file type
 
-	locate $file  # quick file search
+	locate <file>  # quick file search
 		# options:
 			-i  # ignore case
 			-b  # match only basename
 			-c  # print only count of found
 			--regex  # use extended regex
-	find $dir search action  # recursively search files|dirs in $dir by search
-		# pattern and perform action for each item
-		# where $dir is a path
-		# where search can contain:
-			\( expr \)  # group expressions to change precedence
-			! expr
-			expr -o expr  # OR
-			expt -a expr  # AND
+	find <dir> <search> <action>  # recursively search files|dirs in
+		# <dir> by <search> pattern and perform <action> for each item
+		# where <dir> is a path
+		# where <search> can contain:
+			\( <expr> \)  # group expressions to change precedence
+			! <expr>
+			<expr> -o <expr>  # OR
+			<expt> -a <expr>  # AND
 			-name "glob_pattern"  # search by filename
 			-path "glob_pattern"  # search by path or filename
-			-mtime $n  # by date modified (days)
-				# where $n:
+			-mtime <n>  # by date modified (days)
+				# where <n>:
 					N  # N days
 					+N  # more than N
 					-N  # less than
-			-type $type  # by type
-				# where $type:
+			-type <type>  # by type
+				# where <type>:
 					f  # file
 					d  # directory
-			-size $size  # by size (blocks)
-				# where $size:
+			-size <size>  # by size (blocks)
+				# where <size>:
 					N  # N blocks
 					Nc  # N bytes
 					+N|+Nc  # more than
 					-N|-Nc  # less than
-		# and where action:
+		# and where <action>:
 			-print  # simple print found list (default)
-			-exec command {} \;  # execute command(s). {} is a placeholder
+			-exec <command> {} \;  # execute command(s). {} is a placeholder
 				# for found path
 		# Ex:
 			find ./* -exec touch -m {} \;  # update modified time recursively
 
-	grep $pattern [$file...]  # search by pattern in contents of each
+	grep <pattern> [<file>...]  # search by pattern in contents of each
 		# file or stdin
 		# options:
 			-r  # resursive
@@ -893,12 +894,12 @@ Files ==========================================================================
 			-E  # use extended regular expression (ERE)
 			-P  # use perl regex
 			-F  # fixed string, dont interpret pattern as regex
-			-m $n  # specify max count of matches
+			-m <n>  # specify max count of matches
 			-v  # invert match
 			-i  # ignore case
 			-w  # match whole words
 			-x  # match whole lines
-			-C $n  # show $n lines around (context)
+			-C <n>  # show <n> lines around (context)
 			-H  # show filenames
 			-h  # dont show filenames
 			-n  # show line numbers
@@ -910,15 +911,15 @@ Files ==========================================================================
 		# Ex:
 			ls -a | grep ".bash*"
 
-	sed $expression [$file]  # SED - stream editor
+	sed <expression> [<file>]  # SED - stream editor
 		# expression applies for each line
-		-e $expression  # to specify multiple expressions
+		-e <expression>  # to specify multiple expressions
 			# ; can be used as delimeter instead
-		-f $script_file  # file containing sed expressions
+		-f <script_file>  # file containing sed expressions
 			# also uses for interpreter script: #!/bin/sed -f
-		-n [$print_command]  # no printing unless an explicit request to print
+		-n [<print_command>]  # no printing unless an explicit request to print
 		-r  # use extended regex
-		-i[suffix]  # save backup and rewrite file
+		-i[<suffix>]  # save backup and rewrite file
 
 		# expression syntax:
 			<address> # address lines to work width (at beginning of expression)
@@ -970,32 +971,32 @@ Files ==========================================================================
 				"s/import ([a-z0-9_]+) from '(.+)'/import * as \1 from '\2'/I" {}
 				# modify imports and rewrite files, recursively
 
-	wc [$file]  # tells how many lines, words and bytes in file|input
+	wc [<file>]  # tells how many lines, words and bytes in file|input
 		-l  # count lines
 		-w  # count words
 		-m  # count chars
 		-c  # count bytes
 
-	cut [$file]  # parse fields from file|input
-		-c $selec  # select characters
-		-b $selec  # select bytes
-		-f $selec  # select fields, e.g. '-f 1,3' - first and third
-		-d $char  # fields delimeter (default - tab)
+	cut [<file>]  # parse fields from file|input
+		-c <selec>  # select characters
+		-b <selec>  # select bytes
+		-f <selec>  # select fields, e.g. '-f 1,3' - first and third
+		-d <char>  # fields delimeter (default - tab)
 		-s   # do not print lines without delimeters
 
-	diff $file1 $file2      # show differs
+	diff <file1> <file2>      # show differs
 		-u    # unified output (+, -, @@)
 
-	md5sum [$file]  # md5 hash of file|input
+	md5sum [<file>]  # md5 hash of file|input
 
-	shed [$file]  # hex editor
+	shed [<file>]  # hex editor
 		-r  # readonly
-		-s $n  # cursor offset
+		-s <n>  # cursor offset
 
-	tar $file...  # tar archiving
+	tar <file>...  # tar archiving
 		# options:
-			-f $file  # archive file
-			-C $file  # destination
+			-f <file>  # archive file
+			-C <file>  # destination
 			-x  # extract
 			-c  # create
 			-r  # append files
@@ -1009,28 +1010,28 @@ Files ==========================================================================
 			tar -xJ -f ./archive.tar.xz -C ./target
 			tar -cz -f "../${PWD##*/}.tar.gz" .
 
-	zip $archive_file $file...  # zip archiving
+	zip <archive_file> <file>...  # zip archiving
 		# options:
-			-d $file...  # delete files from archive
+			-d <file>...  # delete files from archive
 			-r  # recursively
 			-u  # update mode
 		# Ex:
 			zip -r ./archive.zip ./file1 ./file2 ./dir
-	unzip $archive
+	unzip <archive>
 		# options:
-			-d $path    # specify target dir
+			-d <path>    # specify target dir
 
-	dump -N $fs  # backup filesystem, N - backup level (0 - full)
+	dump -<n> <fs>  # backup filesystem, <N> - backup level (0 - full)
 		-u  # save date and level in /etc/dumpdates
-		-f $dumpfile
+		-f <dumpfile>
 		-a  # auto-size, fill dest device
 	restore  # restore|view dump
-		-f $dumpfile
-		-x $filename  # restore specified file
+		-f <dumpfile>
+		-x <filename>  # restore specified file
 		-r  # restore to cwd
 		-i  # interactive restore
 			# commands:
-				# cd, ls, pwd, add $filename, extract
+				# cd, ls, pwd, add <filename>, extract
 
 ================================================================================
 Network ========================================================================
@@ -1050,33 +1051,33 @@ Network ========================================================================
 		# Ex:
 			netstat -tulpn  # print listening ports
 
-	lsof -i :$port  # search processes by listening port
+	lsof -i :<port>  # search processes by listening port
 		-t  # print only pid
 
-	ifconfig [$interface]  # configure|view network interface(s)
+	ifconfig [<interface>]  # configure|view network interface(s)
 		-a  # show all, even if down
-	ifconfig $interface [$addr] [options]
+	ifconfig <interface> [<addr>] [<options>]
 		# options:
 			up|down  # up or down certain interface
-			mtu $n   # set max transmission unit
-			netmask $mask  # set mask
-			broadcast [$addr]  # set|reset broadcast address
-			pointopoint [$addr]  # enable|disable p2p mode
-			hw $type $mac    # set hardware address
-				# $type - "ether", "ax25", "ARCnet", "netrom"
+			mtu <n>   # set max transmission unit
+			netmask <mask>  # set mask
+			broadcast [<addr>]  # set|reset broadcast address
+			pointopoint [<addr>]  # enable|disable p2p mode
+			hw <type> <mac>    # set hardware address
+				# <type> - "ether", "ax25", "ARCnet", "netrom"
 
-	ifup|ifdown [$interface]  # bring interface(s) up or down
+	ifup|ifdown [<interface>]  # bring interface(s) up or down
 		-a  # all interfaces
 
-	ping $addr
-		-s $bytes  # packet size
-	traceroute $addr
+	ping <addr>
+		-s <bytes>  # packet size
+	traceroute <addr>
 		-n  # dont resolve names
 
-	telnet $addr $port
-		-l $user
-		-n $tracefile  # record trace info
-		-S $tos  # type of service
+	telnet <addr> <port>
+		-l <user>
+		-n <tracefile>  # record trace info
+		-S <tos>  # type of service
 		# commands:
 			mode line|character|isig|-isig|edit|-edit
 			send eof|eor|el|escape|nop|susp
@@ -1094,47 +1095,47 @@ Network ========================================================================
 			some message
 			.
 
-	wget $url  # download files via http, https or ftp
+	wget <url>  # download files via http, https or ftp
 		# options:
-			-t $num  # number tries
-			-O $path  # output file
+			-t <num>  # number tries
+			-O <path>  # output file
 			-c  # continue partially downloaded file
 			-r  # recursively
-			-D $domain  # restrict only for specified domain
+			-D <domain>  # restrict only for specified domain
 			-S  # collect headers
 			--spider  # do not load content
 
 	tcpdmp [filter]  # dump traffic
-		-i $interface
-		-c $n  # limit number of puckets
+		-i <interface>
+		-c <n>  # limit number of puckets
 		-n    # dont resolve names
 		-A    # print as ascii
 		-X    # print both numeric and ascii
 		-l    # make stdout line buffered
-		-w $file    # dump to file
-		-r $file    # read dump from file
+		-w <file>    # dump to file
+		-r <file>    # read dump from file
 		# filter:
-			host $addr
-			port $n
+			host <addr>
+			port <n>
 
-	nmap $target  # port scanner
+	nmap <target>  # port scanner
 		-sL   # list scan
 		-sn   # ping scan
 		-Pn   # no ping (skip discovery stage)
 		-PS   # TCP SYN/ACK
 		--disable-arp-ping
 		-n    # no DNS resolution
-		--dns-servers $dns_servers
+		--dns-servers <dns_servers>
 		--traceroute    # trace hop path
 		-sS, -sT, -sA, -sW, -sM    # SYN, Connect, ACK, Window, Maimon
 			# TCP scan technique
 		-sN, -sF, -sX  # Null, FIN, Xmas TCP scan technique
 		-sY    # INIT scan SCTP technique
 		-sU    # UDP scans
-		-sI $zombie $host[:$port]    # iddle scan
+		-sI <zombie_host>[:<port>]    # iddle scan
 		-sV    # probe to determine service version, info
-		-p $range    # set range of ports to scan
-		-iL $file    # list of hosts from file
+		-p <range>    # set range of ports to scan
+		-iL <file>    # list of hosts from file
 
 ================================================================================
 SSH ============================================================================
@@ -1142,39 +1143,45 @@ SSH ============================================================================
 	apt-get install openssh-server
 	apt-get install openssh-client
 
-	ssh $user@$hostname [$commands]    # connect
+	ssh <user>@<hostname> [<commands>]    # connect
 		# commands - single quoted commands
 		# options:
-			-i $path  # private key for authentication (default: ~/.ssh/id_rsa)
-			-p $number  # port number
+			-i <path>  # private key for authentication (default: ~/.ssh/id_rsa)
+			-p <number>  # port number
 			-A  # forward key
+			-L <local_host>:<port>:<target_host>:<port>
+				# local port forwarding
+				# Creates tunnel from local_host:port to target_host:port
+			-R <port>:<target_host>:<port>
+				# remote port forwarding
+				# Creates tunnel from remote_server:port to target_host:port
 
 	ssh-keygen    # generate key pair
 		# options:
 			-t dsa|rsa
-			-b $n    # length (1024 (def), 2048, 4096)
-			-f $path    # file to save keys (default: ~/.ssh/id_rsa and
+			-b <n>    # length (1024 (def), 2048, 4096)
+			-f <path>    # file to save keys (default: ~/.ssh/id_rsa and
 				# ~/.ssh/id_rsa.pub)
-	ssh-copy-id $user@$hostname    # send public key to server
+	ssh-copy-id <user>@<hostname>    # send public key to server
 		# to remote ~/.ssh/autorized_keys dir
 		# options:
-			-i $path    # public key file (default: ~/.ssh/id-rsa.pub)
-			-p $number    # port number
+			-i <path>    # public key file (default: ~/.ssh/id-rsa.pub)
+			-p <number>    # port number
 
-	puttygen -o $destfile -O $type $keyfile  # convert ssh key
+	puttygen -o <destfile> -O <type> <keyfile>  # convert ssh key
 		# type - output format. "private" - putty format,
 			# "private-openssh", "public" - standart ssh.com,
 			# "public-openssh", "fingerprint"
 
-	scp [$user_from@$host_from:]$path_src [$user_to@$host_to:]$path_dst
+	scp [<user_from>>@<host_from>:]<path_src> [<user_to>@<host_to>:]<path_dst>
 		# copy files locally or to|from remote system over ssh
 		# options:
-			-i $path  # private key (passes to ssh)
-			-P $number  # port number
+			-i <path>  # private key (passes to ssh)
+			-P <number>  # port number
 			-p  # preserve mtime and modes
 			-r  # recursive
 			-v  # verbose
-	rsync [$user_from@$host_from:]$path_src [$user_to@$host_to:]$path_dst
+	rsync [<user_from>@<host_from>:]<path_src> [<user_to>@<host_to>:]<path_dst>
 		# copy files locally or to|from remote system over ssh. Uses delta
 		# transfer algorithm.
 		# options:
@@ -1184,7 +1191,7 @@ SSH ============================================================================
 			-u  # skip files which target mtime > source mtime
 			-r  # recursive
 			-z  # compress
-			--exclude $pattern  # prevent syncing (root - root of src)
+			--exclude <pattern>  # prevent syncing (root - root of src)
 			--delete  # delete extraneous files from target (absent in source)
 			--ignore-errors  # delete even if there IO errors
 			--existing  # skip creating new files
@@ -1196,7 +1203,7 @@ SSH ============================================================================
 			--perms  # preserve access permissions
 			--group  # preserve groups info
 			-v  # verbose
-		# if $path_src have trailing slash - it will be same as /* glob
+		# if <path_src> have trailing slash - it will be same as /* glob
 		# Ex:
 			rsync -auv --delete \
 				--exclude "/files/*" --exclude "/logs" \
@@ -1269,7 +1276,7 @@ Services =======================================================================
 ================================================================================
 Vim ============================================================================
 
-	vim $file  # open file in vim editor
+	vim <file>  # open file in vim editor
 		# options:
 			-R    # readonly
 			-r    # restore from temp backup
@@ -1301,12 +1308,12 @@ Vim ============================================================================
 		P    # paste above current line
 
 		:w   # save
-		:w $file    # save to file
-		:w>> $file  # append to file
-		:Nw>> $file  # append line N to file
-		:N,Mw>> $file  # append lines [N; M] to file
-		:r $file   # read file and append below current line
-		:Nr $file  # read and append below line N
+		:w <file>    # save to file
+		:w>> <file>  # append to file
+		:Nw>> <file>  # append line N to file
+		:N,Mw>> <file>  # append lines [N; M] to file
+		:r <file>   # read file and append below current line
+		:Nr <file>  # read and append below line N
 
 		:q   # quit
 		:q!  # quit without save
@@ -1331,13 +1338,14 @@ Vim ============================================================================
 ================================================================================
 Miscellaneous ==================================================================
 
-	while ( nc -l 80 < $some_response_file > : ) ; do $some_cmd ; done
+	man <cmd>
+	while ( nc -l 80 < <some_response_file> > : ) ; do <some_cmd> ; done
 		# simple server
 
 	curl ifconfig.co  # get public ip
 
 	while true; do
-		inotifywait -r -e MODIFY $some_dir && $some_cmd
+		inotifywait -r -e MODIFY <some_dir> && <some_cmd>
 	done  # watch on directory and run command when any file changed
 
 	date +%T  # print time (%H:%M:%S)
@@ -1347,24 +1355,24 @@ Miscellaneous ==================================================================
 	cat url.txt | xargs wget  # pass stdout to argument
 	cat url.txt | xargs -i wget "{} something"  # with placeholder
 
-	which $name    # search executable in PATH
-	whereis $name  # search executable in system dirs
-	locate $name   # search file using precompiled index
+	which <name>    # search executable in PATH
+	whereis <name>  # search executable in system dirs
+	locate <name>   # search file using precompiled index
 
 	whoami  # current username
-	id $username  # user id and groups
+	id <username>  # user id and groups
 
-	useradd $username  # create user
-		-d  $dir  # set home directory
+	useradd <username>  # create user
+		-d  <dir>  # set home directory
 		-m  # create home if not exists
-		-g $group  # set primary group
-	usermod $username  # edit user
-	passwd $username  # change password
-	userdel $username
+		-g <group>  # set primary group
+	usermod <username>  # edit user
+	passwd <username>  # change password
+	userdel <username>
 		-r  # delete home dir
 
 	crontab  # view|edit user's crontab
-		-u $username  # for specified user
+		-u <username>  # for specified user
 		-e  # edit
 		-l  # print content
 		-r  # remove

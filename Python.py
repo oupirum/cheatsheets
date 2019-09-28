@@ -94,6 +94,7 @@ Basics =========================================================================
         str
         list
         tuple
+        set
         dict
         None  # null value
 
@@ -111,13 +112,10 @@ Basics =========================================================================
             complex(x, imag)
             str(obj, encoding="utf-8")
             bytes(obj [, encoding])
-            list(obj)
-            tuple(obj)
-            set(obj)
-            dict(obj)
-            chr(code)
-            unichr(code)
-            ord(char)
+            list(iterable)
+            tuple(iterable)
+            set(iterable)
+            dict(iterable)
 
     ================================
     Operators
@@ -166,12 +164,8 @@ Basics =========================================================================
         while expr:
             # code
 
-        for item in sequence:
+        for item in iterable:
             # code
-
-        for item in range(nFrom, nTo):
-            # code
-            # [nFrom; nTo)
 
         break  # to break loop
         continue  # to break current iteration of loop
@@ -219,13 +213,14 @@ Basics =========================================================================
 
             __doc__ : str  # documentation string
             __module__ : str  # module name (path)
-            __name__ : str  # class name
+            __name__ : str  # class name when imported
+                # "__main__" when called from command line
             __bases__ : tuple  # tuple of parent types
 
         Builtin methods that can be overriden:
 
-            __init__(self [, arg1, ...])  # constructor
-                # Typename(arg1, ...)
+            __init__(self [, *args])  # constructor
+                # Typename(*args)
             __del__(self)  # destructor
                 # del obj
             __repr__(self) : str  # "official" string representation
@@ -307,7 +302,7 @@ Basics =========================================================================
 
         pdb.run(statement [, globals][, locals])  # exec statement in
             # interactive debugger
-        pdb.runcall(func [, arg, ...]) : obj  # call function in debugger
+        pdb.runcall(func [, *args]) : obj  # call function in debugger
 
         pdb.set_trace()  # enter debugger at curr stack frame
         pdb.pm()  # enter post-mortem debugging (sys.last_traceback)
@@ -452,7 +447,7 @@ Exceptions =====================================================================
         # ...
         print(e.args)  # tuple of arguments that was passed to exception
             # constructor
-    except (Exception1, Exception2, ...):
+    except (*Exceptions):
         # ...
     except:
         # ...
@@ -498,8 +493,8 @@ Math ===========================================================================
 
     abs(n) : number
     round(fl [, n]) : int  # round fl to n digits after point
-    min(n1, n2, ...) : number
-    max(n1, n2, ...) : number
+    min(*numbers) : number
+    max(*numbers) : number
     sum(iterable [, start]) : number
 
     ================================
@@ -541,7 +536,7 @@ Strings ========================================================================
 
     s1 + s2  # concat
     s * n  # repeat n times
-    "%s %d %02d %f %1.2f %o %x %#x" % (arg1, ...)  # format
+    "%s %d %02d %f %1.2f %o %x %#x" % (*values)  # format
 
     char = str[i]
     substr = str[iFrom:iTo]
@@ -559,6 +554,9 @@ Strings ========================================================================
     # bytes:
     b"some bytes"  # only ascii
     b.decode(encoding="utf-8") : str
+
+    chr(code) : str  # get char by charcode
+    ord(char) : int  # get charcode by char
 
     len(s) : int
     min(s) : char
@@ -742,7 +740,7 @@ Collections ====================================================================
     ================================
     Set
 
-        s = set([val1, val2, ...])
+        s = set(iterable)
         s = {val1, val2, ...}
 
         v in s
@@ -758,10 +756,17 @@ Collections ====================================================================
         pop(obj) : obj
         clear()
 
+        union(seq) : set  # disjunction
         update(seq)  # disjunction
-        intersection_update(seq)  # conjunction
-        difference_update(seq)  # sustraction
-        symmetric_difference_update(seq)  # symmetr substr
+        intersection(seq) : set  # conjunction
+        intersection_update(seq)
+        difference(seq) : set  # subtraction
+        difference_update(seq)
+        symmetric_difference(seq) : set
+        symmetric_difference_update(seq)
+
+        issubset(set) : bool
+        issuperset(set) : bool
 
     ================================
     Looping
@@ -782,7 +787,7 @@ Collections ====================================================================
             ...
 
     ================================
-    Iterator
+    Iterators
 
         # To create iterator object from any sequence:
             iter(seq) : iterator
@@ -797,23 +802,29 @@ Collections ====================================================================
                 for index in range(obj.count()-1, -1, -1):
                     yield obj.getSomeItem(index)
 
+        # Generator expression:
+            (expr for item in iterable)  # creates iterator
+
+
         filter(func(v) : bool, iterable) : iterator
         map(func(v) : obj, iterable) : iterator
+        zip(*iterables) : iterator
+        range(nFrom, nTo [, step]) : iterator  # [nFrom; nTo)
 
     ================================
     Comprehension
 
         # Iterate by sequence and generate new list:
-            [expr for item in sequence]
+            [expr for item in iterable]
 
         # new dict:
-            {key_expr: val_expr for item in sequence}
+            {key_expr: val_expr for item in iterable}
 
         # Comprehension + filter:
-            [expr for item in sequence if expr]
+            [expr for item in iterable if expr]
 
         # Ex:
-            {str(v): True for v in arr}  # create set of items
+            {str(v) for v in arr}  # create set of stringified items
 
     ================================
     JSON
@@ -900,7 +911,7 @@ IO, Files ======================================================================
         os.path.abspath(path) : str
         os.path.relpath(path [, base]) : str
         os.path.isabs(path) : bool
-        os.path.join(part1, part2, ...) : str
+        os.path.join(*parts) : str
         os.path.normpath(path) : str
         os.path.split(path) : tuple  # for "/d1/d2" - ("d1", "d2"),
             # but for "/d1/d2/" - ("d1/d2", "")
@@ -946,7 +957,7 @@ IO, Files ======================================================================
         Console  # Read (write) from (to) stdin (stdout) by default
 
             input(prompt) : str
-            print(arg1, ... , sep=' ', end='\n')
+            print(*values, sep=' ', end='\n')
 
         STDIN, STDOUT, STDERR  # even if redirected
             # import sys
@@ -1048,7 +1059,7 @@ Urllib =========================================================================
                 getcode() : int  # http response code
                 getinfo() : http.client.HTTPMessage
 
-        request.build_opener(handler1, ...) : urllib.request.OpenerDirector
+        request.build_opener(*handlers) : urllib.request.OpenerDirector
             # chain handlers and create opener
             # handler - subclass of urllib.request.BaseHandler,
                 # e.g. HTTPBasicAuthHandler, HTTPDigestAuthHandler,
@@ -1438,3 +1449,16 @@ PyTest =========================================================================
         -l  # dump variables on test failure
         -s  # no capture stdout
     $ python3 -m pytest <test_file>::<test_func>  # run a specific test
+
+================================================================================
+virtualenv =====================================================================
+================================================================================
+
+    # virtualenv is a tool to create isolated Python environments.
+
+    $ python3 -m venv <virtualenv_directory>  # create new virtual environment
+
+    $ . <virtualenv_directory>/bin/activate  # activate
+
+    # when inside virtualenv:
+    $ deactivate  # exit
