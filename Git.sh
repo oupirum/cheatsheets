@@ -41,6 +41,7 @@ Staging, commit ================================================================
 
 	git add <file>  # stage for commit file|dir
 		--all  # include removals
+		-p|--patch  # interactively select hanks
 
 	git reset <file>  # unstage file
 	git reset <hash>  # reset HEAD to the specified state
@@ -83,14 +84,14 @@ Stashing =======================================================================
 	git stash  # stash the working tree
 	git stash push [<paths>...]  # create and push new stash entry
 		-m <message>
-		-k|--keep-index  # keep staged changes
-		--no-keep-index
 		-u  # include untracked
-			(stash and then clean up)
+			# (stash and then clean up)
 		--all    # include also ignored files
-			(stash and then clean up)
-		--patch  # interactively select hanks
-			# keeps the index by default
+			# (stash and then clean up)
+		-p|--patch  # interactively select hanks
+			# keep index by default
+		-k|--keep-index  # keep staged changes untouched
+		--no-keep-index
 	git stash create <message>   # create new stash entry (returns hash)
 	git stash store -m <message> <hash>  # put stash entry to list
 	git stash list             # list all stash entries
@@ -146,7 +147,7 @@ Branches =======================================================================
 
 	git merge <branch>  # merge branch to current
 		--no-commit
-		-s resolve|recursive|octopus  # strategy
+		-s|--strategy resolve|recursive|octopus|ours|subtree
 		-X theirs|ours  # to prefer those|these changes if there are conflicts
 			# for recursive strategy
 		--squash  # squash merged commits into one
@@ -155,7 +156,7 @@ Branches =======================================================================
 	git rebase <branch>  # reapply current on top of specified branch
 		-i [HEAD~<N>]  # interactive mode (e.g. for squashing)
 			# N - number of last commits to rebase
-
+		-s|--strategy recursive|resolve|octopus|ours|subtree
 	git rebase --continue  # continue rebase (e.g. after fixing conflicts)
 	git rebase --skip  # skip step
 	git rebase --abort  # cancel rebase
@@ -189,6 +190,7 @@ Remote =========================================================================
 			# e.g. 'pull --rebase origin master' is same as:
 			# 'checkout master; pull origin master;
 			#  checkout current_branch; rebase master'
+		-s|--strategy recursive|resolve|octopus|ours|subtree
 
 	git push <remote> <branch>  # push local branch to remote repo
 		--tags  # with tags
@@ -205,9 +207,8 @@ Worktree =======================================================================
 
 	# Multiple working trees attached to the same repository
 
-	git worktree add <path> [<base-branch>]  # create new worktree
-		# Also creates new branch
-		-b <new-branch>  # explicitly specify new branch name
+	git worktree add <dir> [<branch>]  # create new worktree
+		-b <new-branch>  # create new branch
 	git worktree list  # list associated worktrees
 	git worktree remove <worktree>  # delete specified
 	git worktree prune  # clean up stale worktree files

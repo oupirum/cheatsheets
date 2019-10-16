@@ -93,7 +93,12 @@ docker volume create <volume>  # create storage
 docker volume ls  # list volumes
 docker volume rm <volume>  # remove volume
 
-docker cp <path>/. <container>:/<path>  # copy files from host to container
+# copy files from host to container
+docker cp <file_path> <container>:/<path>  # copy file into dir or rewrite file
+docker cp <dir_path> <container>:/<dir_path>
+	# if exists: create subdirectory and copy contents into it
+	# if does not exist: create dir and copy contents into it
+docker cp <dir_path>/. <container>:/<dir_path>  # copy dir contents into dir
 
 ################################################################################
 # Dockerfile example:
