@@ -36,6 +36,9 @@ observable(value) : value
 observable.object(value) : value
 observable.array(value) : value
 observable.map(value) : value
+	// Observable objects do not detect or react to property assignments
+	// that weren't declared observable before.
+	// So use observable.map, then add new properties using .set(key, value)
 observable.box(value) : value
 @observable
 @observable.deep  // default

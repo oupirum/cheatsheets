@@ -26,6 +26,7 @@ Config =========================================================================
 		st = status
 		pushit = !git push origin $(git rev-parse --abbrev-ref HEAD)
 		pullit = !git pull origin $(git rev-parse --abbrev-ref HEAD)
+		diffs = diff --staged
 
 ================================================================================
 Create repo ====================================================================
@@ -42,8 +43,11 @@ Staging, commit ================================================================
 	git add <file>  # stage for commit file|dir
 		--all  # include removals
 		-p|--patch  # interactively select hanks
+		-N|--intent-to-add  # add paths to index with no content
+			# useful for showing untracked files in diff
 
 	git reset <file>  # unstage file
+		-p|--patch
 	git reset <hash>  # reset HEAD to the specified state
 		--mixed  # reset index (default)
 		--soft  # reset only head point to; doesn't touch index and working tree

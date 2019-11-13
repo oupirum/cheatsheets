@@ -35,7 +35,8 @@ Basics =========================================================================
 
         # To make subdir to be a package need to put empty "__init__.py" file
         # to this dir.
-        # This __init__ file also can contain some initialization code.
+        # When package imported, this file implicitly executed, and the objects
+        # it defines are bound to names in the package’s namespace.
 
         # src/
         #    __init__.py
