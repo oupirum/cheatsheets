@@ -9,80 +9,83 @@ sudo usermod -aG docker $(whoami)
 
 ################################################################################
 
-docker info  # show details about installed docker, images, containers
-docker inspect <name|id>  # low-level information in json format
+docker
+	info  # show details about installed docker, images, containers
+	inspect <name|id>  # low-level information in json format
 
-docker build -t <name>:<tag> <src_path>  # build new image with version <tag>
+	build -t <name>:<tag> <src_path>  # build new image with version <tag>
 
-docker run <image> [<cmd arg...>]  # run new container
-	# <cmd args...> - to override CMD or add ENTRYPOINT arguments
-	# <image> can be <usename>/<repository>:<tag> to pull from repo and run
-	-p <foreign>:<inner>  # map ports
-	--network bridge|host|overlay|macvlan|none  # connect to network
-	--name <name>  # specify name for new container
-	-d  # detached mode (run in background)
-	-i  # interactive
-	-t  # allocate pseudo tty
-	-a stdin|stdout|stder  # attach to stdin, stdout and/or stderr
-	--rm  # automatically remove when exits
+	run <image> [<cmd arg...>]  # run new container
+		# <cmd args...> - to override CMD or add ENTRYPOINT arguments
+		# <image> can be <usename>/<repository>:<tag> to pull from repo and run
+		-p <foreign>:<inner>  # map ports
+		--network bridge|host|overlay|macvlan|none  # connect to network
+		--name <name>  # specify name for new container
+		-d  # detached mode (run in background)
+		-i  # interactive
+		-t  # allocate pseudo tty
+		-a stdin|stdout|stder  # attach to stdin, stdout and/or stderr
+		--rm  # automatically remove when exits
 
-	-v|--volume <volume|host_path>:<mount_path>  # attach storage
-	--mount <options>  # attach storage (more explicit syntax)
-		# options: comma-separated key=value pairs
-			type=bind|volume|tmpfs
-			source=<host_path>
-			destination=<mount_path>
-			readonly=true
-			bind-propagation=rprivate|private|rslave|slave|rshared|shared
-				# whether or not sub-mounts can be propagated to replicas
-				# r - recursive
+		-v|--volume <volume|host_path>:<mount_path>  # attach storage
+		--mount <options>  # attach storage (more explicit syntax)
+			# options: comma-separated key=value pairs
+				type=bind|volume|tmpfs
+				source=<host_path>
+				destination=<mount_path>
+				readonly=true
+				bind-propagation=rprivate|private|rslave|slave|rshared|shared
+					# whether or not sub-mounts can be propagated to replicas
+					# r - recursive
 
-docker ps  # list running containers
-docker logs <container>    # fetch logs of a container
-	-f|--follow  # follow log output
-	--tail <n>  # show only <n> last lines
-	-t|--timestamps  # show timestamps
-	--since <time>  # show logs since <time> (e.g. 2013-01-02T13:23:37)
-		# or relative (e.g. 42m for 42 minutes)
-	--details  # show extra deails provided to logs (env vars)
+	ps  # list running containers
+	logs <container>    # fetch logs of a container
+		-f|--follow  # follow log output
+		--tail <n>  # show only <n> last lines
+		-t|--timestamps  # show timestamps
+		--since <time>  # show logs since <time> (e.g. 2013-01-02T13:23:37)
+			# or relative (e.g. 42m for 42 minutes)
+		--details  # show extra deails provided to logs (env vars)
 
-docker start <container>   # run stopper container
-	-i  # interactive
-	-a  # attach stdout and stderr and forward signals
-docker exec <container> <cmd arg...>  # execute in running container
-	-d  # detached mode
-	-w <path>  # set working directory
-	-i  # interactive
-	-t  # allocate pseudo tty
-	-e <key>=<val>  # set environment variable
-docker attach <container>  # back to foreground
-docker stop <container>    # gracefully stop running container
-docker kill <container>    # force stop
+	start <container>   # run stopper container
+		-i  # interactive
+		-a  # attach stdout and stderr and forward signals
+	exec <container> <cmd arg...>  # execute in running container
+		-d  # detached mode
+		-w <path>  # set working directory
+		-i  # interactive
+		-t  # allocate pseudo tty
+		-e <key>=<val>  # set environment variable
+	attach <container>  # back to foreground
+	stop <container>    # gracefully stop running container
+	kill <container>    # force stop
 
-docker image ls  # list images
-	-a  # all (default hides intermediate images)
-docker image rm <image>    # remove image
-docker image prune         # remove all dangling images
-	-f  # without prompt
+	image ls  # list images
+		-a  # all (default hides intermediate images)
+	image rm <image>    # remove image
+	image prune         # remove all dangling images
+		-f  # without prompt
 
-docker container ls  # list containers
-	-a  # all (default hides stopped)
-docker container rm <container>  # remove container
-	-v  # with associated volumes
-docker container prune           # remove all stopped containers
-	-f
+	container ls  # list containers
+		-a  # all (default hides stopped)
+	container rm <container>  # remove container
+		-v  # with associated volumes
+	container prune           # remove all stopped containers
+		-f
 
-docker volume create <volume>  # create storage
-	# volumes stored in /var/lib/docker/volumes/<volume-name>
-docker volume ls  # list volumes
-docker volume rm <volume>  # remove volume
+	volume create <volume>  # create storage
+		# volumes stored in /var/lib/docker/volumes/<volume-name>
+	volume ls  # list volumes
+	volume rm <volume>  # remove volume
 
-# copy files from host to container
-docker cp <file_path> <container>:/<path>  # copy file into dir or rewrite file
-docker cp <dir_path> <container>:/<dir_path>
-	# if exists: create subdirectory and copy contents into it
-	# if does not exist: create dir and copy contents into it
-docker cp <dir_path>/. <container>:/<dir_path>  # copy dir contents into dir
+	# copy files from host to container
+	cp <file_path> <container>:/<path>
+		# copy file into dir or rewrite file
+	cp <dir_path> <container>:/<dir_path>
+		# if exists: create subdirectory and copy contents into it
+		# if does not exist: create dir and copy contents into it
+	cp <dir_path>/. <container>:/<dir_path>
+		# copy dir contents into dir
 
 ################################################################################
 # Dockerfile - config defining the steps needed to create the image and run it.
@@ -226,17 +229,18 @@ docker-compose
 # docker-compose.yml example:
 
 version: "3.7"
+
 services:
 	webapp:      # service name
 		build: ./        # path to Dockerfile
 		container_name: web
 		ports:  # expose ports <host>:<container>
-			- "8000:8000"
+			- 8000:8000
 		volumes:
-			- "./:/app/"     # mount project directory to /app/ inside container
+			- ./:/app/     # mount project directory to /app/ inside container
 		environment:
-			APP_ENV: dev
-		command: "python manage.py runserver"  # override the default CMD
+			- APP_ENV=dev
+		command: python manage.py runserver  # override the default CMD
 		depends_on:  # specify service's dependencies
 			- redis
 		dns:
@@ -247,6 +251,7 @@ services:
 			# available: no, always, on-failure, unless-stopped
 		networks:  # networks to join (referencing entries of top-level networks)
 			- frontend
+
 	db:
 		build:
 			context: ./dir
@@ -255,8 +260,10 @@ services:
 				key: val
 		entrypoint: ./start_db.sh  # override the default ENTRYPOINT
 		network_mode: bridge
+
 	redis:
-		image: "redis:alpine"
+		image: redis:alpine
+
 networks:
 	frontend:
 		driver: bridge
