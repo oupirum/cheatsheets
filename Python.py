@@ -1,5 +1,5 @@
 
-# version 3.5
+# version 3.8
 
 ================================================================================
 Basics =========================================================================
@@ -538,6 +538,8 @@ Strings ========================================================================
     s1 + s2  # concat
     s * n  # repeat n times
     "%s %d %02d %f %1.2f %o %x %#x" % (*values)  # format
+    f"some str {expr}"  # string interpolation
+        # since v3.6
 
     char = str[i]
     substr = str[iFrom:iTo]
@@ -591,6 +593,9 @@ Strings ========================================================================
             # e.g.: "a b c d".split(" ", 2) == ['a', 'b', 'c d']
 
         encode(encoding="utf-8") : bytes
+
+        format(**values)
+            # ex: 'your name is: {name}'.format(name='Eric')
 
     ================================
     Regex
@@ -1247,7 +1252,7 @@ Multithreading =================================================================
         notify([n])  # wake up n treads (1 by default)
         notify_all()
         # wait() and notify() throws RuntimeError if underlying lock not
-            # acquired yet.
+            # acquired yet
         acquire() : bool  # acquire underlying lock
         release()  # release underlying lock
 
@@ -1262,6 +1267,177 @@ Multithreading =================================================================
 
             with condition:
                 condition.notify()
+
+    ================================
+    Queue
+        # synchronized thread safe queue
+        # import queue
+
+        queue.Queue(maxsize=0)  # FIFO queue
+        queue.LifoQueue(maxsize=0)  # LIFO queue
+        queue.PriorityQueue(maxsize=0)  # LIFO queue
+            # Lower priorities retrieved first.
+            # Typical pattern for entry is a tuple (priority_number, data).
+
+        qsize()  # approximate size
+        empty() : bool
+        full() : bool
+        put(item, block=True, timeout=None)
+            # add an item
+            # Block until free slot is available if block=True and queue is full.
+            # Raise exception if block=False and full.
+        get(block=True, timeout=None) : item
+            # remove and return item
+            # Block until item is available if block=True and queue is empty.
+            # Raise exception if block=False and empty.
+
+        join()  # block until all items have been gotten and processed
+        task_done()  # notify that item processed
+
+================================================================================
+AsyncIO ========================================================================
+================================================================================
+
+    # asyncio is a library to write concurrent code using async/await syntax.
+    # It is a perfect fit for IO-bound and high-level structured network code.
+
+    # There are three main types of awaitable objects:
+    # coroutines, Tasks, and Futures.
+    # - Coroutine function: an async def function;
+    # - Coroutine object: object returned by calling coroutine function;
+    # - Task: to schedule coroutines concurrently;
+    # - Future: low-level awaitable object represents eventual result of
+    # asynchronous operation;
+
+    # import asyncio
+
+    asyncio.run(coro, debug=False) : any
+        # Execute the coroutine and return the result.
+        # Runs the passed coroutine, taking care of managing the asyncio
+        # event loop and finalizing asynchronous generators.
+        # This function always creates new event loop and closes it at the end.
+        # Only one event loop can be running in the same thread at the same time.
+
+    asyncio.create_task(coro, name=None) : Task
+        # Wrap the coroutine into a Task and schedule its execution soon.
+
+    asyncio.sleep(seconds, result=None) : coroutine
+        # Block current task.
+        # Coroutine will return result if specified.
+    asyncio.gather(*aws, return_exceptions=False) : awaitable
+        # Run awaitables concurrently.
+        # When all completed, the result
+        # will be an aggregate list of returned values.
+
+    asyncio.wait_for(aw, timeout) : coroutine
+    asyncio.wait(aws, timeout=None, return_when=ALL_COMPLETED) : coroutine
+        # Run aws concurrently and block until the condition return_when.
+        # Coroutine will return tuple of sets of tasks (done, pending).
+        # return_when: ALL_COMPLETED, FIRST_EXCEPTION or FIRST_COMPLETED
+    asyncio.as_completed(aws, timeout=None) : iterator
+
+    asyncio.current_task() : Task|None
+        # Return the currently running Task or None.
+    asyncio.all_tasks() : set<Task>
+        # Return all not yet finished tasks run by the event loop.
+
+    ================================
+    Task  # future-like object that runs a coroutine
+        # Tasks are used to schedule coroutines concurrently.
+
+        asyncio.Task(coro, name=None)
+
+        cancel()
+            # Throw CancelledError into the wrapped coroutine on the next cycle
+            # of the event loop.
+        cancelled() : bool
+        done() : bool
+
+        result() : any  # return result of completed coroutine or raise exception
+        exception() : exception|None
+
+        get_coro() : coroutine
+        get_name() : str|None
+        set_name(name)
+        get_stack(limit=None) : list<frame>
+
+    ================================
+    Lock  # mutex for asyncio tasks
+
+        asyncio.Lock()
+
+        locked() : bool
+        acquire() : awaitable
+        release()
+
+    Event  # can be used to notify multiple tasks about some events
+
+        asyncio.Event()
+
+        is_set() : bool
+        wait() : coroutine  # blocked until set() called
+        set()
+        clear()  # unset
+
+    Condition  # wait for some event and then get exclusive access to resource
+
+        asyncio.Condition(lock=None)
+
+        locked() : boolean
+        acquire() : coroutine
+        release()
+        wait() : coroutine  # release lock and wait until notified
+        wait_for(predicate) : coroutine
+        notify(n=1)  # wake up at most n tasks
+
+    ================================
+    Queue
+
+        asyncio.Queue(maxsize=0)
+
+        maxsize : number
+
+        empty() : bool
+        full() : bool
+        put(item) : coroutine
+            # add item
+            # Block until free slot available if full.
+        put_nowait(item)
+        get() : coroutine
+            # remove and return item
+            # Block until item is available if empty.
+        get_nowait() : item
+
+        join() : coroutine
+        task_done()
+
+    ================================
+    # Ex:
+        import asyncio
+        import time
+
+        async def task(delay, name):
+            print(f'start {name}')
+            await asyncio.sleep(delay)
+            print(f'done {name}')
+
+        async def main():
+            print(f"started at {time.strftime('%X')}")
+
+            t1 = asyncio.create_task(task(1, 'task 1'))
+            t2 = asyncio.create_task(task(5, 'task 2'))
+            await t1
+
+            print(f"finished at {time.strftime('%X')}")
+
+        asyncio.run(main())
+
+        # Will print:
+        # > started at 22:41:22
+        # > start task 1
+        # > start task 2
+        # > done task 1
+        # > finished at 22:41:23
 
 ================================================================================
 SMTP ===========================================================================
