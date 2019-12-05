@@ -1069,11 +1069,12 @@ Text processing ================================================================
 		-a   # treat all files as text
 		-r   # recursively compare files in subdirectories
 	patch < <patch_file>    # apply diff file
-		-c    # as context
-		-u    # interpret diff as unified
+		-c    # interpret diff as context
+		-u    # as unified
 		-p <n>   # strip <n> leading slashes from file paths
 		-i <patch_file>  # read patch from file instead of stdin
 		-o <out_file>
+		-b   # backup changing files
 
 ================================================================================
 Network ========================================================================
