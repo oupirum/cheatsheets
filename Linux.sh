@@ -93,7 +93,8 @@ Package management =============================================================
 		-i <deb_file>  # install
 		-r <package>     # remove package
 		--purge <package>  # remove package and its dependencies
-		-s  # print package status details
+		-s <package>  # print package status details
+		--list  # list all installed packages
 
 	apt-get  # APT package handling utility
 		update    # update index
@@ -175,8 +176,10 @@ Statements groups ==============================================================
 		# Could not contain unescaped spaces!
 		# Ex:
 			v=2
-			mkdir ./d{"1"," $v", " 3 "}
-				# same as `mkdir "./d1" "./d 2" "./d 3 "`
+			mkdir ./d{1," $v"}
+			# or
+			mkdir ./d{1,\ $v}
+				# same as `mkdir ./d1 "./d 2"` or `mkdir ./d1 ./d\ 2`
 
 	(( <expr1>, <expr2>, ... ))  # arithmetic expressions group
 	$(( <expr1>, <expr2>, ... ))  # arithmetic expression substitution
@@ -453,9 +456,9 @@ Script =========================================================================
 
 	getopts <format> <arg>  # parse one command line argument (invoke in while
 		# to get all args)
-		# format - string like "a:bc:"
+		# <format> - string like "a:bc:"
 			# ":" after key means that value required for this key
-		# arg - variable that will contain key
+		# <arg> - variable that will contain key
 		# to get value - OPTARG variable
 		# Ex:
 			while getopts "ad:" arg; do
@@ -483,6 +486,7 @@ Script =========================================================================
 			EXIT
 		# Ex:
 			trap 'rm -f tmpfile' EXIT
+			trap 'exit $?' ERR  # exit from script when error occured
 
 	exec <path>    # run external program. Process will be replaced
 	source <path>    # run script in the current environment (like an import)
@@ -495,7 +499,11 @@ Script =========================================================================
 ================================================================================
 Environment variables ==========================================================
 
-	export VARNAME=<value>  # export env var to child processes
+	export <name>=<value>  # export env var to child processes
+
+	env  # print current environment variables
+	env <name>=<value>... <cmd> <arg>...
+		# extend current environment with passed variables and run command
 
 	# Predefined global env vars:
 		BASH_VERSION  # string describing the version
@@ -550,6 +558,11 @@ History ========================================================================
 
 	# precede command by the space to prevent saving in history
 
+	Ctrl+R  # start reverse-search in history
+		# press again to search next (older) command
+	Ctrl+J  # stop, copy found command to input
+	Ctrl+C  # cancel search
+
 ================================================================================
 Processes ======================================================================
 
@@ -570,30 +583,31 @@ Processes ======================================================================
 	$$  # PID of current process
 
 	ps  # list processes
-		# options:
-			-A  # all
-			u   # user-oriented format
-			a   # all with TTY, include other users
-			x   # all without TTY
-			r   # only running
-			-t <tty>   # by TTY
-			-p <pid>   # by PID
-			-u <user>  # by user id or name
+		-A  # all
+		u   # user-oriented format
+		a   # all with TTY, include other users
+		x   # all without TTY
+		r   # only running
+		-t <tty>   # by TTY
+		-p <pid>   # by PID
+		-u <user>  # by user id or name
 
 		# Ex:
 			ps uaxf | grep "glob_to_filter"
 
 	kill <signal> <pid>  # send signal to process
-		# where signal:
+		# where <signal>:
 			-1  # SIGHUP
 			-2  # SIGINT
 			-3  # SIGQUIT
 			-15 # SIGTERM (default)
 			-9  # SIGKILL
-		# pid - PID or %task_number
+		# <pid> - PID or %task_number
 	killall <name>  # kill process by name
 		-s <signal>
 		-i  # interactive
+
+	strace -p <pid>  # trace process activity: syscalls and signals
 
 	sleep <n>  # put current process to sleep for <n> seconds
 
@@ -601,50 +615,26 @@ Processes ======================================================================
 IO =============================================================================
 
 	echo <value>  # print line to stdout
-		# options:
-			-n  # without ending newline
-			-e  # enable escape-sequences
-			-E  # supress escape-sequences
+		-n  # without ending newline
+		-e  # enable escape-sequences
+		-E  # supress escape-sequences
 
 	exec N< <file>  # create|replace file descriptor N
 
 	read <varname>  # read line from stdin and put to variable
-		# options:
-			-p <prompt>  # show prompt
-			-s  # hide input
-			-r  # dont allow backslash escaping
-			-a  # split to array
-			-d <char>  # specify delimeter char
-			-t <sec>  # timeout
-			-n <n>  # read max n chars if delimeter not received before
-			-N <n>  # read exactly n chars. Ignore delimeter.
-			-u <fd>  # specify FD instead of stdin
+		-p <prompt>  # show prompt
+		-s  # hide input
+		-r  # dont allow backslash escaping
+		-a  # split to array
+		-d <char>  # specify delimeter char
+		-t <sec>  # timeout
+		-n <n>  # read max n chars if delimeter not received before
+		-N <n>  # read exactly n chars. Ignore delimeter.
+		-u <fd>  # specify FD instead of stdin
 		# Ex:
 			exec 3< "file_to_read"
 			read -u 3 line
 			echo "first line: $line"
-
-	less [<file>]    # view file|input with pagination
-		-N  # show line numbers
-		-M  # show prompt (number of lines, percent, filename)
-	head [<file>]    # print first part of file|input
-		# options:
-			-n <lines>   # number of lines to print
-			-c <bytes>   # bytes to print
-	tail [<file>]    # print last part
-		# options:
-			-n <lines>
-			-c <bytes>
-			-f   # watch for updates
-
-	sort [<file>]    # print lines sorted
-		# options:
-			-u    # unique
-			-n    # numeric sort
-			-r    # reverse
-			-k <n>  # sort by field n (from 1)
-	tr <str1> <str2>    # filter input - replace all chars from <str1> to
-		# appropriate chars from <str2>
 
 	<target> N< <source>  # input redirection
 		# N = 0 by default
@@ -709,26 +699,29 @@ FS =============================================================================
 			# "log-sec", "phy-sec", etc (optionally with + sign to append).
 			# default: name,maj:min,rm,size,ro,type,mountpoint
 
-	mount <fs> <mountpoint>  # mount filesystem
-		# <fs> - filesystem
+	mount <partition> <mountpoint>  # mount filesystem
+		# <partition> - e.g. /dev/sdb1
 		# <mountpoint> - target directory to mount
 		# options:
-			-t <type>  # fs type: "ext4", "ntfs", "vfat", "smbfs", etc,
+			-t <type>  # filesystem type: "ext4", "ntfs", "vfat", "smbfs", etc,
 			-o <rights>  # options, "rw" (read,write), "ro" (readonly),
 				# "force" (for repair), "remount" (change mountpoint or rights)
 			--bind <dir>  # create mirror
 		# Ex:
 			sudo mkdir /mnt/somemp
 			sudo mount /dev/sdb1 /mnt/somemp
-	umount <fs|mountpoint>  # unmount filesystem
+	umount <partition|mountpoint>  # unmount filesystem
 
 	fdisk <device>  # change partition table of this device
-	mkfs -t <type> <fs>  # format
-		# <fs> - filesystem
+	mkfs -t <type> <partition>  # format
 
-	mlabel -i <fs> ::<label>  # change FAT label
-	ntfslabel <fs> <label>  # change NTFS label
-	e2label <fs> <label>  # change EXT label
+	dd if=<source_file|device> of=<target_file|device>  # copy blocks of data
+		bs=<block_size>
+		count=<blocks_number>
+
+	mlabel -i <partition> ::<label>  # change FAT label
+	ntfslabel <partition> <label>  # change NTFS label
+	e2label <partition> <label>  # change EXT label
 
 	# Ex:
 		# create bootable usb
@@ -778,8 +771,7 @@ Files ==========================================================================
 			-v  # verbose
 			-f  # silent
 	chown <user>:<group> <path>
-		# options:
-			-R  # recursive
+		-R  # recursive
 		# Ex:
 			sudo chown -R $(whoami) some/dir
 
@@ -788,22 +780,21 @@ Files ==========================================================================
 
 	ls <dir|file>...    # print list of items in directory or
 		# info about file
-		# options:
-			-a  # show hidden (beginning with '.')
-			-A  # without ./ and ../
-			-l  # with info (chmod, size, mtime)
-			-F  # show "/" after dir, "*" after executable file
-			-h  # human-readable size (kb, mb, gb)
-			-t  # sort by modified time (desc)
-			-r  # reverse order
-			-s  # show blocks number
-			-d  # directory itself instead of its content
+		-a  # show hidden (beginning with '.')
+		-A  # without ./ and ../
+		-l  # with info (chmod, size, mtime)
+		-F  # show "/" after dir, "*" after executable file
+		-h  # human-readable size (kb, mb, gb)
+		-t  # sort by modified time (desc)
+		-S  # sort by size
+		-r  # reverse order
+		-s  # show blocks number
+		-d  # directory itself instead of its content
 	du <dir|file>  # print size of file or directory recursively (disk usage)
-		# options:
-			-d <n>  # max depth
-			-c  # show grand total
-			-h  # human readable
-			-s  # print only total for each argument
+		-d <n>  # max depth
+		-c  # show grand total
+		-h  # human readable
+		-s  # print only total for each argument
 
 	dd  # copy and convert bytes
 		bs=<c>  # read|write up to <c> bytes at a time (e.g. "1M")
@@ -811,103 +802,167 @@ Files ==========================================================================
 		of=<dest>  # file or device
 
 	cp <source>... <target>  # copy file|dir
-		# options:
-			-r  # recursive - to copy directory
-			-i  # interactive mode (prompt before overwrite)
-			-u  # update mode
-			-P  # dont follow symbolic links in source
-			-L  # always follow symlinks in source
-			--preserve=<attrs>  # preserve attributes
-				# available params: mode, ownership, timestamps, context,
-				# links, xattr, all
-			-p  # same as --preserve=mode,ownership,timestamps
-			-v  # verbose
+		-r  # recursive - to copy directory
+		-i  # interactive mode (prompt before overwrite)
+		-u  # update mode (only newer or non-existing)
+		-P  # dont follow symbolic links in source
+		-L  # always follow symlinks in source
+		--preserve=<attrs>  # preserve attributes
+			# available params: mode, ownership, timestamps, context,
+			# links, xattr, all
+		-p  # same as --preserve=mode,ownership,timestamps
+		-a  # preserve all attributes
+		-v  # verbose
 	mv <source>... <target>  # move file|dir
-		# options:
-			-v  # verbose
-			-i  # interactive mode
-			-u  # update mode
+		-v  # verbose
+		-i  # interactive mode
+		-u  # update mode
 	touch <file>  # create empty file
-		# options:
-			-c  # do not create if doesnt exists
-			-a  # only update access time
-			-m  # only update modified time
-			-d <rel_date>  # change modified time
+		-c  # do not create if doesnt exists
+		-a  # only update access time
+		-m  # only update modified time
+		-d <rel_date>  # change modified time
 	mkdir <dir>  # create empty dir
-		# options:
-			-r  # recursive
-			-v  # verbose
+		-r  # recursive
+		-v  # verbose
 	rm <file>  # remove file|dir
-		# options:
-			-r  # recursive - to remove dir
-			-f  # force	- without prompt for subdirs
-			-v  # verbose
+		-r  # recursive - to remove dir
+		-f  # force	- without prompt for subdirs
+		-v  # verbose
 	ln <file_target> <link_path>  # create link (hard by default)
-		# options:
-			-s  # symbolic
-			-v  # verbose
+		-s  # symbolic
+		-v  # verbose
 	file <filename>  # identify file type
 
 	locate <file>  # quick file search
-		# options:
-			-i  # ignore case
-			-b  # match only basename
-			-c  # print only count of found
-			--regex  # use extended regex
+		-i  # ignore case
+		-b  # match only basename
+		-c  # print only count of found
+		--regex  # use extended regex
 	find <dir> <search> <action>  # recursively search files|dirs in
 		# <dir> by <search> pattern and perform <action> for each item
 		# where <dir> is a path
 		# where <search> can contain:
 			\( <expr> \)  # group expressions to change precedence
-			! <expr>
+			! <expr>          # NOT
 			<expr> -o <expr>  # OR
 			<expt> -a <expr>  # AND
-			-name "glob_pattern"  # search by filename
-			-path "glob_pattern"  # search by path or filename
+			-name "<glob_pattern>"  # search by filename
+			-path "<glob_pattern>"  # search by path or filename
 			-mtime <n>  # by date modified (days)
 				# where <n>:
-					N  # N days
-					+N  # more than N
-					-N  # less than
+					<N>  # <N> days
+					+<N>  # more than <N>
+					-<N>  # less than
 			-type <type>  # by type
 				# where <type>:
 					f  # file
 					d  # directory
+					c  # character device
+					b  # block device
+					l  # symbolic link
 			-size <size>  # by size (blocks)
 				# where <size>:
-					N  # N blocks
-					Nc  # N bytes
-					+N|+Nc  # more than
-					-N|-Nc  # less than
+					<N>  # <N> blocks
+					<N>c  # <N> bytes
+					<N>b  # blocks
+					<N>w  # 2-byte words
+					<N>k  # kilobytes
+					<N>M  # megabytes
+					<N>G  # gigabytes
+					+<N>|+<N>c  # more than
+					-<N>|-<N>c  # less than
+			-user <username>
+			-perm <mode>
 		# and where <action>:
 			-print  # simple print found list (default)
-			-exec <command> {} \;  # execute command(s). {} is a placeholder
-				# for found path
+			-delete
+			-exec <command> "{}" \;  # execute command(s) for each found file.
+				# {} is a placeholder for found file path
+			-exec <command> "{}" +   # execute once and use results as
+				# arguments list
+			-quit  # stop execution on first match
 		# Ex:
 			find ./* -exec touch -m {} \;  # update modified time recursively
 
+	md5sum [<file>]  # md5 hash of file|input
+
+	shed [<file>]  # hex editor
+		-r     # readonly
+		-s <n>  # cursor offset
+
+	tar <file>...  # tar archiving
+		-f <file>  # archive file
+		-C <file>  # destination
+		-x  # extract
+		-c  # create
+		-r  # append files
+		-u  # update mode. Append files if they are newer
+		-t  # list contents
+		-z  # use gzip compression
+		-j  # use bzip2 compression
+		# Ex:
+			tar -xz -f ./archive.tar.gz -C ./target
+			tar -xj -f ./archive.tar.bz2 -C ./target
+			tar -xJ -f ./archive.tar.xz -C ./target
+			tar -cz -f "../${PWD##*/}.tar.gz" .
+
+	zip <archive_file> <file>...  # zip archiving
+		-d <file>...  # delete files from archive
+		-r  # recursively
+		-u  # update mode
+		# Ex:
+			zip -r ./archive.zip ./file1 ./file2 ./dir
+	unzip <archive>
+		-d <path>    # specify target dir
+
+	dump -<n> <fs>  # backup filesystem, <n> - backup level (0 - full)
+		-u  # save date and level in /etc/dumpdates
+		-f <dumpfile>
+		-a  # auto-size, fill dest device
+	restore  # restore|view dump
+		-f <dumpfile>
+		-x <filename>  # restore specified file
+		-r  # restore to cwd
+		-i  # interactive restore
+			# commands:
+				# cd, ls, pwd, add <filename>, extract
+
+================================================================================
+Text processing ================================================================
+
+	less [<file>]    # view file|input with pagination
+		-N  # show line numbers
+		-M  # show prompt (number of lines, percent, filename)
+	head [<file>]    # print first part of file|input
+		-n <lines>   # number of lines to print
+		-c <bytes>   # bytes to print
+	tail [<file>]    # print last part
+		-n <lines>
+		-c <bytes>
+		-f   # watch for updates
+
 	grep <pattern> [<file>...]  # search by pattern in contents of each
 		# file or stdin
-		# options:
-			-r  # resursive
-			-G  # use basic regular expression (BRE) (default)
-			-E  # use extended regular expression (ERE)
-			-P  # use perl regex
-			-F  # fixed string, dont interpret pattern as regex
-			-m <n>  # specify max count of matches
-			-v  # invert match
-			-i  # ignore case
-			-w  # match whole words
-			-x  # match whole lines
-			-C <n>  # show <n> lines around (context)
-			-H  # show filenames
-			-h  # dont show filenames
-			-n  # show line numbers
-			-l  # print only filenames
-			-L  # print only filenames of not matched
-			-c  # print only count of matched lines per file
-			-q  # supress output (return only exit code)
-			-s  # supress warnings
+		-r  # resursive
+		-G  # use basic regular expression (BRE) (default)
+		-E  # use extended regular expression (ERE)
+		-P  # use perl regex
+		-F  # fixed string, dont interpret pattern as regex
+		-m <n>  # specify max count of matches
+		-v  # invert match
+		-i  # ignore case
+		-w  # match whole words
+		-x  # match whole lines
+		-C <n>  # show <n> lines around (context)
+		-H  # show filenames
+		-h  # dont show filenames
+		-n  # show line numbers
+		-l  # print only filenames
+		-L  # print only filenames of not matched
+		-c  # print only count of matched lines per file
+		-q  # supress output (return only exit code)
+		-s  # supress warnings
 		# Ex:
 			ls -a | grep ".bash*"
 
@@ -923,7 +978,7 @@ Files ==========================================================================
 
 		# expression syntax:
 			<address> # address lines to work width (at beginning of expression)
-				# where address:
+				# <address> is:
 					<n>  # line number (count from 1)
 						# $ - specchar for last line
 					/<regex>/
@@ -959,7 +1014,8 @@ Files ==========================================================================
 			q  # quit
 
 		# Ex:
-			sed "2 ! s/([a-z]+)/(\1)/g w out.txt" -r  # wrap words into parentheses
+			sed "2 ! s/([a-z]+)/(\1)/g w out.txt" -r
+				# wrap words into parentheses
 				# on every lines exclude line 2 and write modified lines to file
 			sed "1,2 {
 				i qwe
@@ -971,100 +1027,123 @@ Files ==========================================================================
 				"s/import ([a-z0-9_]+) from '(.+)'/import * as \1 from '\2'/I" {}
 				# modify imports and rewrite files, recursively
 
+	sort [<file>]    # sort lines
+		-u    # unique
+		-n    # numeric sort
+		-f    # ignore case
+		-r    # reverse
+		-k <selec>  # sort by selected fields
+			# where <selec>:
+				# <n> - fields from <n> to EOL
+				# <n>r - reverse order
+				# <n>,<m> - range [n; m]
+		-t <char>   # fields separator (whitespace by default)
+	uniq  	# remove duplicate lines
+		-c  # print duplicates with counters
+		-d  # reverse - print only duplicates
+
+	cut [<file>]  # select fields for each line file|input
+		-c <selec>  # select characters
+		-b <selec>  # select bytes
+		-f <selec>  # select fields
+			# where <selec>:
+				# <n>,<m>,... - numbers of chars, bytes or fields
+					# e.g. '-f 1,3' - first and third fields
+				# <n>-<m> - range [m; m]
+		-d <char>  # fields delimeter (default - tab)
+		-s   # do not print lines without delimeters
+
+	tr <str1> <str2>    # filter input - replace all chars from <str1> to
+		# appropriate chars from <str2>
+
 	wc [<file>]  # tells how many lines, words and bytes in file|input
 		-l  # count lines
 		-w  # count words
 		-m  # count chars
 		-c  # count bytes
 
-	cut [<file>]  # parse fields from file|input
-		-c <selec>  # select characters
-		-b <selec>  # select bytes
-		-f <selec>  # select fields, e.g. '-f 1,3' - first and third
-		-d <char>  # fields delimeter (default - tab)
-		-s   # do not print lines without delimeters
-
-	diff <file1> <file2>      # show differs
-		-u    # unified output (+, -, @@)
-
-	md5sum [<file>]  # md5 hash of file|input
-
-	shed [<file>]  # hex editor
-		-r  # readonly
-		-s <n>  # cursor offset
-
-	tar <file>...  # tar archiving
-		# options:
-			-f <file>  # archive file
-			-C <file>  # destination
-			-x  # extract
-			-c  # create
-			-r  # append files
-			-u  # update mode. Append files if they are newer
-			-t  # list contents
-			-z  # through gzip compression
-			-j  # through bzip2 compression
-		# Ex:
-			tar -xz -f ./archive.tar.gz -C ./target
-			tar -xj -f ./archive.tar.bz2 -C ./target
-			tar -xJ -f ./archive.tar.xz -C ./target
-			tar -cz -f "../${PWD##*/}.tar.gz" .
-
-	zip <archive_file> <file>...  # zip archiving
-		# options:
-			-d <file>...  # delete files from archive
-			-r  # recursively
-			-u  # update mode
-		# Ex:
-			zip -r ./archive.zip ./file1 ./file2 ./dir
-	unzip <archive>
-		# options:
-			-d <path>    # specify target dir
-
-	dump -<n> <fs>  # backup filesystem, <N> - backup level (0 - full)
-		-u  # save date and level in /etc/dumpdates
-		-f <dumpfile>
-		-a  # auto-size, fill dest device
-	restore  # restore|view dump
-		-f <dumpfile>
-		-x <filename>  # restore specified file
-		-r  # restore to cwd
-		-i  # interactive restore
-			# commands:
-				# cd, ls, pwd, add <filename>, extract
+	diff <file1> <file2>     # show differences between two files
+		-c    # context format
+		-u   # unified format (+, -, @@)
+		-N   # treat absent files as empty
+		-a   # treat all files as text
+		-r   # recursively compare files in subdirectories
+	patch < <patch_file>    # apply diff file
+		-c    # as context
+		-u    # interpret diff as unified
+		-p <n>   # strip <n> leading slashes from file paths
+		-i <patch_file>  # read patch from file instead of stdin
+		-o <out_file>
 
 ================================================================================
 Network ========================================================================
 
-	netstat  # print network connections, routing tables, statistics, etc.
-		-t  # tcp
-		-u  # udp
-		-x  # unix sockets
-		-l  # only listening
-		-a  # all, any status
-		-p  # display pid and program names
-		-n  # dont resolve hosts or usernames, use numeric (for speed up)
+	# IpRoute2 package: ip, ss, bridge, ctstat, etc.
 
-		-s  # print statistics
-		-r  # print kernel routing table
-		-i  # print list of network interfaces
-		# Ex:
-			netstat -tulpn  # print listening ports
+	# ip - show/manipulate routing, devices, policy routing and tunnels
+	ip link|l      # list network interfaces
+		ls up|down   # only up|down
+		-s  # show interface statistics
 
-	lsof -i :<port>  # search processes by listening port
-		-t  # print only pid
+	ip link set <device>   # change interface attributes
+		up|down       # up or down network interface
+		<name>      # rename
+		mtu <mtu_number>     # set MTU value
+		multicast on|off     # set MULTICAST flag
+		address <addr>     # set IP or MAC address
+		broadcast <addr>
+		promisc on|off   # enable|disable promiscuous mode
 
-	ifconfig [<interface>]  # configure|view network interface(s)
-		-a  # show all, even if down
-	ifconfig <interface> [<addr>] [<options>]
-		# options:
-			up|down  # up or down certain interface
-			mtu <n>   # set max transmission unit
-			netmask <mask>  # set mask
-			broadcast [<addr>]  # set|reset broadcast address
-			pointopoint [<addr>]  # enable|disable p2p mode
-			hw <type> <mac>    # set hardware address
-				# <type> - "ether", "ax25", "ARCnet", "netrom"
+	ip show <device>      # show interface attributes
+
+	ip addr|a          # list addresses associated with network interfaces
+		-4    # only IPv4
+		-6    # only IPv6
+		show <device>   # only specified interface
+	ip addr add|del <addr> dev <device>    # add|remove ip address for interface
+	ip addr add|del broadcast <addr> dev <device>   # broadcast address
+
+	ip neighbour|neigh|n    # show ARP table entries
+	ip neight add <addr> lladdr <mac|lladdress> dev <device>    # add ARP entry
+		# for neighbour <addr> on the <device>
+		nud perm|noarp|stale|reachable    # Neigh bour Unreachability Detection
+			# perm - valid forever and can only be removed administratively
+			# noarp - can be removed when its lifetime expires
+			# stale - valid but suspicious
+			# reachable - valid until the reachability timeout expires
+	ip neigh chg <addr> dev <device> nud <state>    # change state
+	ip neigh del <addr> dev <device>
+	ip neigh flush <addr>     # flush table entries
+
+	ip route|r   # list route table entries
+		<addr>    # only entry for specified address
+	ip route add|del [default] <network>/<mask>   # add|delete new route
+		via <gateway>
+		dev <device>
+
+	# Ex:
+		ip addr add 192.168.1.1/24 dev enp6s0   # set network mask 255.255.255.0
+		ip route add default via 192.168.2.254  # set default gateway
+
+	# ss - investigate sockets
+	ss  # dump socket statistics
+		-r|--resolve   # try to resolve numeric address/ports
+		-n|--numeric   # do not resolve
+		-l|--listening   # only listening
+		-a|--all         # show both listening and non-listening
+		-e|--extended     # show detailed information
+		-p|--processes    # show processes using socket
+		-i|--i            # show internal TCP info
+		-4|--ipv4      # show only IPv4
+		-6|--ipv6      # show only IPv6
+		-0|--packet    # show PACKET sockets
+		-t|--tcp       # show TCP
+		-u|--udp       # show UDP
+		-o|--options   # show timer information
+		-s|--summary   # print summary statistics
+
+	=======================================
+	fuser <port>/<protoocol>  # search process by listening port
 
 	ifup|ifdown [<interface>]  # bring interface(s) up or down
 		-a  # all interfaces
@@ -1096,14 +1175,13 @@ Network ========================================================================
 			.
 
 	wget <url>  # download files via http, https or ftp
-		# options:
-			-t <num>  # number tries
-			-O <path>  # output file
-			-c  # continue partially downloaded file
-			-r  # recursively
-			-D <domain>  # restrict only for specified domain
-			-S  # collect headers
-			--spider  # do not load content
+		-t <num>  # number tries
+		-O <path>  # output file
+		-c  # continue partially downloaded file
+		-r  # recursively
+		-D <domain>  # restrict only for specified domain
+		-S  # collect headers
+		--spider  # do not load content
 
 	tcpdmp [filter]  # dump traffic
 		-i <interface>
@@ -1145,28 +1223,25 @@ SSH ============================================================================
 
 	ssh <user>@<hostname> [<commands>]    # connect
 		# commands - single quoted commands
-		# options:
-			-i <path>  # private key for authentication (default: ~/.ssh/id_rsa)
-			-p <number>  # port number
-			-A  # forward key
-			-L <local_host>:<port>:<target_host>:<port>
-				# local port forwarding
-				# Creates tunnel from local_host:port to target_host:port
-			-R <port>:<target_host>:<port>
-				# remote port forwarding
-				# Creates tunnel from remote_server:port to target_host:port
+		-i <path>  # private key for authentication (default: ~/.ssh/id_rsa)
+		-p <number>  # port number
+		-A  # forward key
+		-L <local_host>:<port>:<target_host>:<port>
+			# local port forwarding
+			# Creates tunnel from local_host:port to target_host:port
+		-R <port>:<target_host>:<port>
+			# remote port forwarding
+			# Creates tunnel from remote_server:port to target_host:port
 
 	ssh-keygen    # generate key pair
-		# options:
-			-t dsa|rsa
-			-b <n>    # length (1024 (def), 2048, 4096)
-			-f <path>    # file to save keys (default: ~/.ssh/id_rsa and
-				# ~/.ssh/id_rsa.pub)
+		-t dsa|rsa
+		-b <n>    # length (1024 (def), 2048, 4096)
+		-f <path>    # file to save keys (default: ~/.ssh/id_rsa and
+			# ~/.ssh/id_rsa.pub)
 	ssh-copy-id <user>@<hostname>    # send public key to server
 		# to remote ~/.ssh/autorized_keys dir
-		# options:
-			-i <path>    # public key file (default: ~/.ssh/id-rsa.pub)
-			-p <number>    # port number
+		-i <path>    # public key file (default: ~/.ssh/id-rsa.pub)
+		-p <number>    # port number
 
 	puttygen -o <destfile> -O <type> <keyfile>  # convert ssh key
 		# type - output format. "private" - putty format,
@@ -1175,34 +1250,33 @@ SSH ============================================================================
 
 	scp [<user_from>>@<host_from>:]<path_src> [<user_to>@<host_to>:]<path_dst>
 		# copy files locally or to|from remote system over ssh
-		# options:
-			-i <path>  # private key (passes to ssh)
-			-P <number>  # port number
-			-p  # preserve mtime and modes
-			-r  # recursive
-			-v  # verbose
+		-i <path>  # private key (passes to ssh)
+		-P <number>  # port number
+		-p  # preserve mtime and modes
+		-r  # recursive
+		-v  # verbose
+
 	rsync [<user_from>@<host_from>:]<path_src> [<user_to>@<host_to>:]<path_dst>
 		# copy files locally or to|from remote system over ssh. Uses delta
 		# transfer algorithm.
-		# options:
-			-A  # with ACL
-			-a  # recursive with symlinks and devices saving mtime, owner, group
-			-b  # backup files instead of rewriting (uses "~" prefix by def)
-			-u  # skip files which target mtime > source mtime
-			-r  # recursive
-			-z  # compress
-			--exclude <pattern>  # prevent syncing (root - root of src)
-			--delete  # delete extraneous files from target (absent in source)
-			--ignore-errors  # delete even if there IO errors
-			--existing  # skip creating new files
-			--ignore-existing  # skip updating files
-			--devices  # copy devices
-			--specials  # copy special files
-			--links  # copy symlinks as symlinks
-			--times  # preserve mtime
-			--perms  # preserve access permissions
-			--group  # preserve groups info
-			-v  # verbose
+		-A  # with ACL
+		-a  # recursive with symlinks and devices saving mtime, owner, group
+		-b  # backup files instead of rewriting (uses "~" prefix by def)
+		-u  # skip files which target mtime > source mtime
+		-r  # recursive
+		-z  # compress
+		--exclude <pattern>  # prevent syncing (root - root of src)
+		--delete  # delete extraneous files from target (absent in source)
+		--ignore-errors  # delete even if there IO errors
+		--existing  # skip creating new files
+		--ignore-existing  # skip updating files
+		--devices  # copy devices
+		--specials  # copy special files
+		--links  # copy symlinks as symlinks
+		--times  # preserve mtime
+		--perms  # preserve access permissions
+		--group  # preserve groups info
+		-v  # verbose
 		# if <path_src> have trailing slash - it will be same as /* glob
 		# Ex:
 			rsync -auv --delete \
@@ -1364,9 +1438,11 @@ Miscellaneous ==================================================================
 
 	useradd <username>  # create user
 		-d  <dir>  # set home directory
-		-m  # create home if not exists
+		-m    # create home if not exists
 		-g <group>  # set primary group
 	usermod <username>  # edit user
+		-L  # lock user
+		-U  # unlock
 	passwd <username>  # change password
 	userdel <username>
 		-r  # delete home dir
