@@ -1352,35 +1352,76 @@ Services =======================================================================
 Vim ============================================================================
 
 	vim <file>  # open file in vim editor
-		# options:
-			-R    # readonly
-			-r    # restore from temp backup
+		-R    # readonly
+		-r    # restore from temp backup
 
 	# Vim will be launched in command mode.
 	# commands:
-		CTRL+G    # show filename, size and status
-		a    # edit after cursor (add)
-		i    # edit before cursor (insert)
+		CTRL+g    # show filename, size and status
+
+		i  # activate edit mode before cursor (insert)
+		I  # at line start
+		a  # after cursor (add)
+		A  # at line end
+		o  # at new line below
+		O  # at new line line above
 			# will be switched to editor mode
+
 		ESC    # switch back to command mode
 
 		.    # repeat last command
 
-		gg   # go to start
-		G    # go to EOF
+		gg    # go to start
+		G     # go to EOF
+		<N>G  # go to line N
+		0     # go to line start
+		^     # go to first non-whitespace char of the line
+		$     # go to line end
+		w     # go to next word
+		W     # go to next word (skip punctuation)
+		w     # go to previous word
+		W     # go to previous word (skip punctuation)
 
-		CTRL+V  # selection
-		d    # delete selection
-		y    # copy selection
+		Ctrl+f  # next page
+		Ctrl+f  # prev page
 
-		dd   # delete current line
-		D    # delete chars from current pos to EOL
+		J   # join current and next lines
 
-		yy   # copy current line
-		yG   # from current line to the EOF
-		NY   # N lines
-		p    # paste below current line
-		P    # paste above current line
+		x     # delete char after cursor
+		<N>x  # N chars
+		X     # delete char before cursor
+		<N>X  # N chars
+
+		dd    # cut current line
+		<N>dd # cut current line and next N-1 lines
+		d0    # cut from cursor to line start
+		d$    # cut from cursor to line end
+		dG    # cut from cursor to EOF
+
+		yy    # copy current line
+		<N>yy # N lines
+		y0    # copy from cursor to line start
+
+		v     # start selection mode
+		d     # cut selection
+		y     # copy selection
+
+		p     # paste after cursor
+		P     # paste before cursor
+
+		u    # undo
+		CTRL+r    # redo
+
+		/    # search after
+		?    # search before
+		n    # find next
+
+		:%s/<regex>/<subs>/   # substitute first occurence for each line
+		:%s/<regex>/<subs>/g  # substitute all oocurences
+
+		:e <file>    # open file in new buffer
+		:buffers     # list opened files
+		:b <N>  # switch to file
 
 		:w   # save
 		:w <file>    # save to file
@@ -1393,13 +1434,6 @@ Vim ============================================================================
 		:q   # quit
 		:q!  # quit without save
 		:cq  # quit with non-zero exit code
-
-		u    # undo
-		CTRL+R    # redo
-
-		/    # search after
-		?    # search before
-		n    # find next
 
 		:set number    # show line numbers (nonumber to disable)
 		:set incsearch    # enable inremental search
