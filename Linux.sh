@@ -966,15 +966,17 @@ Text processing ================================================================
 		# Ex:
 			ls -a | grep ".bash*"
 
-	sed <expression> [<file>]  # SED - stream editor
-		# expression applies for each line
+	sed <expression> [<file>]  # SED - stream editor.
+		# Applies single expression or script to each line of the
+		# input text (file or stdin).
 		-e <expression>  # to specify multiple expressions
-			# ; can be used as delimeter instead
+			# ; can be used as separator instead
 		-f <script_file>  # file containing sed expressions
 			# also uses for interpreter script: #!/bin/sed -f
 		-n [<print_command>]  # no printing unless an explicit request to print
 		-r  # use extended regex
-		-i[<suffix>]  # save backup and rewrite file
+		-i[<suffix>]  # save backup (if suffix provided) and rewrite file
+			# instead of printing to stdout
 
 		# expression syntax:
 			<address> # address lines to work width (at beginning of expression)
@@ -982,7 +984,9 @@ Text processing ================================================================
 					<n>  # line number (count from 1)
 						# $ - specchar for last line
 					/<regex>/
-			<start_addr>,<stop_addr>  # address range
+			<addr1>,<addr2>  # lines range [addr1; addr2]
+			<addr1>,+<n>   # line <addr1> and next <n> lines
+			<n>~<step>    # line <n> and every <step>'th line
 			!  # invert address restriction
 
 			{ <commands> }  # group commands
@@ -1011,7 +1015,7 @@ Text processing ================================================================
 			r <file>  # read file and paste contents after current line
 			w <file>  # write to file
 			n  # skip line
-			q  # quit
+			q  # quit (skip all next lines)
 
 		# Ex:
 			sed "2 ! s/([a-z]+)/(\1)/g w out.txt" -r
