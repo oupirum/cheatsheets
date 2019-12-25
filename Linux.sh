@@ -270,6 +270,10 @@ Control statements =============================================================
 				echo "iter $n"
 				[ $n -ge 5 ] && cancel=true
 			done
+		# Loop accepts lines from stdin:
+			while IFS="" read line; do
+				echo $line
+			done < ./file.txt
 
 	until <command>; do
 		...
@@ -305,7 +309,8 @@ Control statements =============================================================
 ================================================================================
 Test command ===================================================================
 
-	[ <expr> ]  # test command. Unix-shell-compatible.
+	[ <expr> ]  # test command.
+		# Unix-shell-compatible (POSIX).
 		# <expr> can be contain:
 			-e <path>  # is exists
 			-s <path>  # is file exists and not empty
@@ -319,7 +324,7 @@ Test command ===================================================================
 
 			-z <str>  # is string empty
 			-n <str>  # not empty
-			<str1> = <str2>
+			<str1> == <str2>
 			<str1> != <str2>
 			<str1> \< <str2>  # ascii sorting
 			<str> \> <str2>
@@ -327,6 +332,7 @@ Test command ===================================================================
 			! <expr>  # NOT
 			<expr1> -a <expr2>  # AND (not reduced)
 			<expr1> -o <expr2>  # OR (not reduced)
+			\( <expr> \)  # group to change precedence
 
 			<num1> -eq <num2>  # is numbers are equal
 			<num1> -ne <num2>  # not equal
@@ -335,11 +341,12 @@ Test command ===================================================================
 			<num1> -gt <num2>  # greater than
 			<num1> -ge <num2>  # greater or equal
 		# Ex:
-			if [ <a> = "a" ]; then ...
+			if [ $char == "a" ]; then ...
 
-	[[ <expr> ]]  # test keyword. It's more powerful but not shell-compatible.
-		# <expr> can contain (additional to []):
-			<str1> = <glob_pattern>  # without quotes!
+	[[ <expr> ]]  # test keyword.
+		# It's more powerful but available in bash, not POSIX.
+		# <expr> can contain (additional to test command):
+			<str1> == <glob_pattern>  # without quotes!
 			<str1> != <glob_pattern>
 			<str1> =~ <regex_pattern>  # without quotes!
 			<str1> < <str2>  # ascii sorting
@@ -447,9 +454,7 @@ Script =========================================================================
 	$@  # all arguments as string (separated by IFS)
 		# Ex:
 			args=("$@")  # args as array
-			IFS=","
-			echo "${args[*]}"  # print args separated by ","
-			unset IFS
+			IFS="," echo "${args[*]}"  # print args separated by ","
 	shift <n>  # shift arguments list to left (exclude $0)
 		# n = 1 by default
 	set <arg1> <arg2> ...  # set command line arguments
@@ -621,15 +626,16 @@ IO =============================================================================
 
 	exec N< <file>  # create|replace file descriptor N
 
-	read <varname>  # read line from stdin and put to variable
+	read <varname>...  # read line from stdin and put to variable(s)
+		# uses IFS as delimeter
 		-p <prompt>  # show prompt
 		-s  # hide input
-		-r  # dont allow backslash escaping
+		-r  # don't allow backslash escaping
 		-a  # split to array
-		-d <char>  # specify delimeter char
+		-d <char>  # use <char> instead of EOL
 		-t <sec>  # timeout
-		-n <n>  # read max n chars if delimeter not received before
-		-N <n>  # read exactly n chars. Ignore delimeter.
+		-n <n>  # read max <n> chars if delimeter not received before
+		-N <n>  # read exactly <n> chars. Ignore delimeter.
 		-u <fd>  # specify FD instead of stdin
 		# Ex:
 			exec 3< "file_to_read"
