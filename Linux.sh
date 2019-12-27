@@ -158,13 +158,19 @@ Statements groups ==============================================================
 		# will not be available in parent scope.
 
 	$( <command1>; <command2>; ...; )  # command substitution
-		# Executes commands and substitutes result.
+		# Executes commands in a subshell and substitutes result.
 		# Ex:
 			a=$(
 				echo "List of files:"
 				ls -l
 			)
 			echo "$a"  # quoted to save whitespaces
+
+	<( <cmd1>; <cmd2>; ...; )  # process substisution
+		# Interprets output as file and allows its redirection.
+		# Ex:
+			while read line; do echo $line; done < <(ls -l | tail -n +2)
+				# print lines from command output
 
 	<command1> && <command2>  # reduced logical AND by exitcode
 	<command1> || <command2>  # OR
@@ -202,11 +208,13 @@ Variables ======================================================================
 	${#varname}  # length
 	${varname:offset:length}  # substring
 	${varname/pattern/str}  # replace first match by str
-	${varname//pattern/str}  # replace all matches by str
-	${varname#pattern}  # delete shortest match
-	${varname##pattern}  # delete longest match
-	${varname%pattern}  # delete shortest match from end
-	${varname%%pattern}  # delete longest match from end
+	${varname/#pattern/str}  # replace if on start
+	${varname/%pattern/str}  # replace if on end
+	${varname//pattern/str}  # replace all matches
+	${varname#pattern}  # delete shortest match on start
+	${varname##pattern}  # delete longest match on start
+	${varname%pattern}  # delete shortest match on end
+	${varname%%pattern}  # delete longest match on end
 
 	unset varname  # delete variable
 
@@ -214,7 +222,9 @@ Variables ======================================================================
 Arrays =========================================================================
 
 	arr=()  # new empty array
-	arr=(<val1> <val2> ...)  # create and fill
+	arr=(<val0> <val1> ...)  # create and fill
+	arr=([<index0>]=<val0> [<index1>]=<val1> ...)  # explicitly set index
+	declare -a arr=(<val0> ...)  # declare array
 	declare -A arr=([<key>]=<val1> ...)  # associative array
 
 	arr[<key>]=<value>  # put|set value
@@ -253,9 +263,9 @@ Control statements =============================================================
 
 	case <str> in
 		<pattern1>) <command1> ;;
-		<pattern2>) <command2> ;;
+		<pattern2>|<pattern3>) <command2> ;;
 		...
-		*) <commandDefault> ;;
+		*) <command_default> ;;
 	esac
 
 	while <command>; do
@@ -445,7 +455,7 @@ Functions ======================================================================
 ================================================================================
 Script =========================================================================
 
-	$0  # command|script name
+	$0  # command or script name
 	$1, $2, ..., ${10}, ...    # arguments
 		# Ex:
 			sn=`basename $0`
@@ -578,6 +588,8 @@ Processes ======================================================================
 			( sleep 10; ) & p=$!  # run and save pid
 			kill -INT $p
 
+	wait <pid>  # pause current process until specified process stop
+
 	bg <pid>    # switch paused task to background and resume it
 		# pid - PID or %task_number
 	fg <pid>    # switch task to foreground
@@ -623,6 +635,13 @@ IO =============================================================================
 		-n  # without ending newline
 		-e  # enable escape-sequences
 		-E  # supress escape-sequences
+
+	<cmd> <<-EOF  # here document
+		<some content line>
+		...
+	EOF
+		# redirect multiline string
+		# Can be used to feed commands list to an interactive program.
 
 	exec N< <file>  # create|replace file descriptor N
 
