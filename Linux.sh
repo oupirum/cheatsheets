@@ -231,6 +231,7 @@ Arrays =========================================================================
 	arr+=(<value>)  # append value
 
 	${arr[<key>]}  # get item by index|key
+	${arr[@]:<n>:<m>}  # slice
 	${#arr[@]}  # get length
 
 	${arr[*]}  # join values. Uses IFS as delimeter.
@@ -681,10 +682,10 @@ IO =============================================================================
 
 	# Redirection can be filtered.
 	# Ex:
-		wrongCmd 2> $file    # write stderr to file
-		cmd > $file 2>&1     # write both stdout and stderr to file
-		cmd &> $file         # same
-		cmd > $file_out 2> $file_err  # write stdout and stderr to different files
+		wrongCmd 2> "$file"    # write stderr to file
+		cmd > "$file" 2>&1     # write both stdout and stderr to file
+		cmd &> "$file"         # same
+		cmd > "$file_out" 2> "$file_err"  # write stdout and stderr to different files
 		cmd 1>&2    # write stdout to stderr
 
 	<cmd1> | <cmd2>    # pipe, conveyer. Uses for chaining - get stdout from
