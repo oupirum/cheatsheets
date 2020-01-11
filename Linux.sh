@@ -141,6 +141,7 @@ Bash basics ====================================================================
 	\	# escape specchar. also uses to escape newline.
 	"some_val"  # escape most of specchars in expression. Exclude "$", "`", "\".
 	'some_val'  # escape all specchars. Exclude only "'".
+	$'\n\t...'  # string that contains ANSI-C escape characters
 
 ================================================================================
 Statements groups ==============================================================
