@@ -302,6 +302,123 @@ Jasmine ======================================================================={
 	}
 }
 ================================================================================
+Jest =========================================================================={
+
+	// Testing framework.
+	// Supports assertions, mocking, coverage calculation,
+	// snapshots comparing & etc.
+
+	// Setup
+		// install:
+			npm i --save-dev jest
+		// setup:
+			jest init
+		// define test suites: create file <module-name>.test.js
+		// add test command to package.json:
+			"scripts": {
+				"test": "jest"
+			}
+
+	================================
+	// Define test suite
+		describe(description, suiteFn())  // define test suite
+			// suiteFn contains tests, setup/teardown hooks or child suites
+		test(description, testFn())  // define test
+		test(description, testFn([done([err])]))  // define async test
+			// done - function to call at test end.
+			// Passing error as argument indicates fail.
+		test(description, testFn() : Promise)  // define async test
+			// Will wait for promise to resolve.
+			// Test will be failed if returned promise will be rejected.
+
+		beforeEach(setupFn())
+			// Applyes for each test in this and child test suites.
+		afterEach(teardownFn())
+		beforeAll(setupFn())
+		afterAll(teardownFn())
+			// Setup and teardown hooks also can be async like a testFn.
+
+	================================
+	// Assertion
+		expect(expression) : expectation
+			// Expectation object can be used to check that result satisfies
+			// the necessary conditions.
+			.toBe(expected)
+			.toEqual(expected)
+
+			.toBeThruthy()
+			.toBeFalsy()
+			.toBeDefined()
+			.toBeUndefined()
+			.toBeNull()
+
+			.toBeCloseTo(number)
+			.toBeGreaterThan(number)
+			.toBeLessThan(number)
+			.toBeGreaterThanOrEqual(number)
+
+			.toMatch(regex)
+			.toContain(regex)  // in string or iterable
+
+			.toThrow()
+			.toThrow(error)
+			.toThrow(message_regex)
+			// any of this assertions can be preceded by .not:
+				.not.toBe(expected)
+
+		// mockFn assertions:
+			.toHaveBeenCalled()
+			.toHaveBeenCalledWith(args...)
+			.toHaveBeenLastCalledWith(args...)
+			.toMatchSnapshot()
+
+	================================
+	// Mock function
+		// create mock function
+			jest.fn(fakeFn) : mockFn
+
+		// mockFn has methods to set returning value or fake implementation:
+			.mockReturnValue(any)
+			.mockReturnValueOnce(any)
+			.mockReturnThis()
+
+			.mockImplementation(fakeFn)
+			.mockImplementationOnce(fakeFn)
+
+			.mockName(name)  // displayname for debugging purposes
+
+		// mockFn has .mock property that can be used to check calls,
+		// passed arguments, returned values.
+			.mock.calls : call[]
+				// call - array containing passed arguments
+			.mock.results : returned[]
+
+	// Mock module
+		jest.mock(moduleName) : mockModule
+
+		// mockModule can be used to set fake implementations of module methods.
+			.<methodName>.mockResolvedValue(any)
+			.<methodName>.mockResolvedValueOnce(any)
+
+			.<methodName>.mockImplementation(fakeFn)
+			.<methodName>.mockImplementationOnce(fakeFn)
+
+	================================
+	// Snapshot testing
+		// Regression testing the components UI.
+
+		// render component using react-test-renderer:
+			const component = renderer.create(<Component />);
+		// then component can be serialized and checked:
+			expect(component.toJSON()).toMatchSnapshot();
+			// it will save snapshot at first run and compare at subsequent runs
+
+		// When change is intentional snapshots must be updated
+		// Run from CLI:
+			jest --updateSnapshot
+
+}
+================================================================================
 Mocha ========================================================================={
 
 	// Simple testing framework for js and nodejs.
