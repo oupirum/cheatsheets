@@ -495,59 +495,45 @@ Basic ==========================================================================
 // Prototype inheritance
 
 	var Par = function() {
-		var This = this;
-		console.info("Par() constructor invoked, This:", This);
+		console.info("Par constructor invoked", "this:", this);
 
-		this.a = "parent field";
-
-		function funcPriv() {
-			console.log("parent private func, This:", This);
-		}
-
-		this.callPriv = function() {
-			funcPriv();
-		};
-
-		this.method = function() {
-			console.log("method(), parent");
-		};
+		this.a = "parent field a";
+		this.b = "parent field b";
+	};
+	Par.prototype.method = function() {
+		console.log("Par.method()", this.a);
 	};
 	Par.st = "static field";
 
 	var Child = function() {
-		var This = this;
-		console.info("Child() constructor invoked, This:", This);
+		console.info("Child constructor invoked", "this:", this);
+		Par.apply(this, arguments);
 
-		// override field:
-		this.a = "child field, overriden";
-		// override method:
-		this.method = function() {
-			console.log("method(), child, overriden");
-			this.__proto__.method();
-		};
+		// Override field:
+		this.a = "child field a";
+	};
+	// Inherit all methods and fields:
+	Child.prototype = Object.create(Par.prototype);
+	Child.prototype.constructor = Child;
+	// Override method:
+	Child.prototype.method = function() {
+		console.log("Child.method()", this.a);
 	};
 
-	// Inherit all public methods and fields:
-	Child.prototype = new Par();
-	Child.prototype.constructor = Child;
-		// Par object will be prototype of all Childs
-		// Only nonstatic public methods|fields will be inherited
-
 	// Result:
-		var par = new Par();  // Par() constructor invoked, This: Par {}
-		var child = new Child();  // Par() constructor invoked, This: Child {}
+		var par = new Par();  // Par constructor invoked this: Par {}
+		var child = new Child();  // Child constructor invoked this: Child {}
+			// Par constructor invoked this: Child {}
 
-		console.log(par.a);  // parent field
-		console.log(child.a);  // child field, overriden
-		par.method();    // method(), parent
-		child.method();    // method(), child, overriden
-						   // method(), parent
+		console.log(par.a);  // parent field a
+		console.log(child.a);  // child field a
+		console.log(child.b);  // parent field b
+		par.method();    // Par.method() parent field a
+		child.method();    // Child.method() child field a
 
-		child.callPriv();  // parent private func, This: Par {...}
-
-		console.log("child is instance of Par: ", child instanceof Par);
+		console.log("child is instance of Par:", child instanceof Par);
 			// true
-		console.log("child is instance of Child: ", child instanceof Child);
+		console.log("child is instance of Child:", child instanceof Child);
 			// true
 
 ================================
