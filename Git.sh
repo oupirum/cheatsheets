@@ -55,7 +55,7 @@ Staging, commit ================================================================
 
 	git update-index --assume-unchanged <file>  # temporarily ignore
 
-	git rm <file>  # unstage and remove
+	git rm <file>  # remove file from working tree and index
 		--cached  # remove only from index ("forget", stage file for removal)
 
 	git apply <patch_file>  # apply patch file generated from diff

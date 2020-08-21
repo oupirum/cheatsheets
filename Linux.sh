@@ -323,7 +323,7 @@ Test command ===================================================================
 
 	[ <expr> ]  # test command.
 		# Unix-shell-compatible (POSIX).
-		# <expr> can be contain:
+		# <expr> can contain:
 			-e <path>  # is exists
 			-s <path>  # is file exists and not empty
 			-f <path>  # is file
@@ -1386,7 +1386,7 @@ Vim ============================================================================
 		-R    # readonly
 		-r    # restore from temp backup
 
-	# Vim will be launched in command mode.
+	# Vim will launch in command mode.
 	# commands:
 		CTRL+g    # show filename, size and status
 
