@@ -20,13 +20,25 @@ Config =========================================================================
 			# warn - only show warn message
 		editor = vim
 	[alias]
-		hist = log --pretty=format:\"%C(red)%h%Creset %C(green)%ad%Creset%C(yellow)%d%Creset | %s\n  %C(blue)[%an <%ae>]%Creset\n\" --graph --date-order --date=short
-		hists = log --pretty=format:\"%h %ad%d | %s\n  [%an <%ae>]\n\" --graph --date-order --date=short --all
+		h = log --pretty=format:\"%C(red)%h%Creset %C(green)%ad%Creset%C(yellow)%d%Creset | %s\n  %C(blue)[%an <%ae>    ]%Creset\n\" --graph --date-order --date=short
+		ha = log --pretty=format:\"%h %ad%d | %s\n  [%an <%ae>]\n\" --graph --date-order --date=short --all
 		co = checkout
-		st = status
+		s = status
+		d = diff
+		ds = diff --staged
+		a = add
+		ap = !git add -N . && git add -p
+		rs = reset
+		stm = stash push -m
+		stmp = stash push -p -m
+		stl = stash list
+		sts = stash show -p
+		sta = stash apply
+		stp = stash pop
+		c = commit
+		ca = commit --amend
 		pushit = !git push origin $(git rev-parse --abbrev-ref HEAD)
 		pullit = !git pull origin $(git rev-parse --abbrev-ref HEAD)
-		diffs = diff --staged
 
 ================================================================================
 Create repo ====================================================================
