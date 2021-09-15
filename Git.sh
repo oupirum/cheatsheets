@@ -29,16 +29,19 @@ Config =========================================================================
 		a = add
 		ap = !git add -N . && git add -p
 		rs = reset
+		rsh = reset --hard HEAD
 		stm = stash push -m
 		stmp = stash push -p -m
 		stl = stash list
-		sts = stash show -p
-		sta = stash apply
-		stp = stash pop
+		sts = "!f() { git stash show -p stash@{${1:-0}}; }; f"
+		sta = "!f() { git stash apply stash@{${1:-0}}; }; f"
+		stp = "!f() { git stash pop stash@{${1:-0}}; }; f"
+		std = "!f() { git stash drop -p stash@{${1:-0}}; }; f"
 		c = commit
 		ca = commit --amend
 		pushit = !git push origin $(git rev-parse --abbrev-ref HEAD)
 		pullit = !git pull origin $(git rev-parse --abbrev-ref HEAD)
+		pulldev = !git pull origin dev
 
 ================================================================================
 Create repo ====================================================================

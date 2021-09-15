@@ -21,7 +21,7 @@ Basic ==========================================================================
 
 ================================
 // Types
-	// Objects, functions, arrays passes by reference
+	// Objects, functions, arrays are passing by reference
 	// others - primitives - by value
 
 	number
@@ -50,18 +50,13 @@ Basic ==========================================================================
 
 	typeof variable  // get type name (string)
 
-	varible instanceof ClassName  // is ClassName there in prototypes chain
+	varible instanceof ClassName  // is ClassName there in prototype chain
 		// Example:
 			var arr = [1, 2, 3];
 			arr instanceof Array  // true
 
 		// Each object has prototype property,
 		// up to Object, which prototype is null.
-
-
-	// Trying to read undefined variable throws exception.
-		// In this case need to check existence by:
-		typeof name != "undefined"
 
 
 	// In logical context these are equals to false:
@@ -138,7 +133,7 @@ Basic ==========================================================================
 			// ...
 		}
 			// Ex:
-				for (var i = 0; i < 3; i++) {
+				for (let i = 0; i < 3; i++) {
 					alert(i);
 				}
 
@@ -154,20 +149,20 @@ Basic ==========================================================================
 		for (let v of range) {
 			// ...
 		}
-		// range object must have iterator property:
+		// range object should have iterator property:
 		range[Symbol.iterator] = function() {...}
-			// func that returns object with method next()
-			// on each call next() returns object {done: bool, value: any}
+			// Function that returns object with method next().
+			// On each call next() returns object {done: bool, value: any}.
 
 		// Ex:
-			let range = {
+			const range = {
 				from: 1,
 				to: 5
 			};
 
 			range[Symbol.iterator] = function() {
 				let current = this.from;
-				let last = this.to;
+				const last = this.to;
 				return {
 					next() {
 						if (current <= last) {
@@ -190,21 +185,21 @@ Basic ==========================================================================
 		}
 
 	// Return from labeled block
-		break lab;
+		break labl;
 
 		// Ex:
-			lab: {
+			labl: {
 				while (true) {
 					// ...
-					var c = confirm("Stop looping?", "");
-					if (c) {
-						break lab;  // quit from whole labeled block (lab)
+					const stop = confirm("Stop looping?", "");
+					if (stop) {
+						break labl;  // quit from whole labeled block (labl)
 					}
 				}
 			}
 
 	// switch
-		switch  // Replaces several if statemens
+		switch  // Replaces several if statements
 
 		// Ex:
 			switch(x) {
@@ -222,8 +217,8 @@ Basic ==========================================================================
 
 		try	{
 			// ...
-		} catch(err) {
-			// if in try block was thrown exception...
+		} catch (err) {
+			// if in the try block was thrown any exception...
 		} finally {
 			// invokes in any case...
 		}
@@ -282,7 +277,7 @@ Basic ==========================================================================
 		// let-defined variables will not be hoisted
 
 	const somevar = ...  // define constant
-		// same as let, but could not be changed
+		// same as let, but could not be reassigned
 
 ================================
 // Destructuring, expanding (ES6/7)
@@ -317,11 +312,12 @@ Basic ==========================================================================
 	var f = function() {  // function expression
 		// ...
 	};
+
 	f();  // invoke
 
 	// This
-		// in function 'this' - global object or undefined in strict mode
-		// in function that called as method - context object
+		// In function 'this' - global object or undefined in strict mode.
+		// In function that called as method - context object.
 		// Ex:
 			function f() {
 				console.log(this);
@@ -334,7 +330,7 @@ Basic ==========================================================================
 			obj.m();  // obj
 
 	// Hoisting
-		// hoisting works for function declaration, but not for expression
+		// Hoisting works for function declaration, but not for expression
 
 		fn();  // Works
 		function fn() {
@@ -345,7 +341,7 @@ Basic ==========================================================================
 		}
 
 	// Arguments
-		// inside function available "arguments" variable, that contains array
+		// Inside function available "arguments" variable that contains array
 		// of actual arguments
 		// Ex:
 			function f(one, two) {
@@ -539,13 +535,13 @@ Basic ==========================================================================
 ================================
 // Classes (ES6)
 
-	class ClassName {
+	class ClassA {
 		constructor(val) {
 			this.field = val;
 		}
 	}
 
-	class Child extends ClassName {
+	class ClassB extends ClassA {
 		constructor() {
 			super("val");
 		}
@@ -629,6 +625,7 @@ Promise ========================================================================
 				// throw new Error("someerr");
 			});
 		}).then(function(res) {
+			// will not be executed
 			return new Promise(function(resolve, reject) {
 				// ...
 				resolve("someres3");
@@ -641,7 +638,7 @@ Promise ========================================================================
 			// ...
 			console.log(res);  // "error catched"
 		}).catch(function(err) {
-			// will never be called
+			// will not be executed because error swallowed earlier
 			console.error(err);
 		});
 
@@ -734,7 +731,7 @@ Strings, numbers ===============================================================
 
 		isFinite(n) : bool  // true if n is number,
 			// false - Infinity or NaN
-		parseInt(val [, base]) : number  // translate string to number
+		parseInt(val [, base]) : number  // convert string to number
 			// returns NaN if could not parse number
 			// base - base of number system
 		parseFloat(val) : number
@@ -744,7 +741,7 @@ Strings, numbers ===============================================================
 				parseInt("one")       // NaN
 				parseFloat("12.3.4")  // 12.3
 
-		// translate from 16 to 10 number system and vice-versa:
+		// convert from 16 to 10 number system and vice-versa:
 			function decToHex(n){
 				return Number(n).toString(16);
 			}
@@ -764,7 +761,7 @@ Array, object ==================================================================
 			// key - only strings
 
 		Object.create(prototype [, obj]) : object  // clone object
-		Object.assign(target, source1, ...) : object  // merge props to target
+		Object.assign(target, source1, ...) : object  // merge props into target
 			// object and return it
 		Object.keys(obj) : array  // get array of keys
 
@@ -856,7 +853,7 @@ Array, object ==================================================================
 		join(delim) : string
 		slice(start [, end]) : array  // returns part of array
 		splice(i, C [, a, b, ...]) : array  // remove C elements, starting from
-			// index i, then paste a, b,... instead they
+			// index i, then incert a, b,... instead them
 			// returns array of removed elements
 		pop() : object  // get and remove last element
 		push(val, ...)  // append elements to end of array
@@ -868,7 +865,7 @@ Array, object ==================================================================
 		reverse()  // reverse THIS array
 		sort([func])  // sort this array (ascii order by default)
 			// func - function for comparing like (A, B) {}
-				// if A must be first - return negative number,
+				// if A should be first - return negative number,
 				// otherwise - positive
 			// Ex:
 				arr.sort(function(a, b) {
@@ -958,7 +955,7 @@ JSON ===========================================================================
 	// Can contain: arrays, objects, strings, numbers, booleans, null
 	// Keys and string values must be quoted by double quotes
 
-	// objects contains properties - pairs like "key": "value"
+	// Objects contains properties - pairs like "key": "value"
 	// Ex:
 		{
 			"str": "http://example.com/",
@@ -968,7 +965,7 @@ JSON ===========================================================================
 			}
 		}
 
-	// converion to JSON and vice-versa:
+	// Convertion to JSON and vice-versa:
 
 		JSON.stringify(obj [, replacer, indentN]) : string
 			// replacer - function to modify values
@@ -1194,7 +1191,7 @@ Date ===========================================================================
 	setHours(n)
 	...
 
-	getTime()  // ms timestamp
+	getTime()  // timestamp (ms)
 
 ================================================================================
 AJAX ===========================================================================
@@ -1583,97 +1580,3 @@ Local Storage ==================================================================
 		TIME		time in format HH:MM:SS
 		DATETIME	date and time YYYY-MM-DD HH:MM:SS
 		TIMESTAMP	date and time as timestamp
-
-================================================================================
-RequireJS ======================================================================
-================================================================================
-
-	// CDN:
-		//requirejs.org/docs/release/2.2.0/minified/require.js
-
-	// Dependencies management
-	// AMD pattern
-
-	// Load requirejs:
-		<script data-main="main.js" src="require.js"></script>
-		// so, requirejs will run main.js - entry point of app
-
-	// Load dependency
-		require(depends[], func(depen1, ...))
-			// depends[] - list of module names or script paths without
-			// extensions. Paths are relative to config.baseUrl
-			// func(depen1, ...) - callback, will be invoked after loading all
-			// specified dependencies.
-			// callback arguments avaialble only for modules that defined by
-			// define() function.
-
-	// Config
-		// Entry point main.js also can have requirejs.config:
-		requirejs.config({
-			baseUrl: path,  // path to dir that contains scripts
-			paths: {
-				moduleName: path,  // relative to baseUrl
-				...
-			},
-			shim: {  // needs only for modules that was not defined directly
-					// by define() function
-				moduleName: {
-					deps: depends[],
-					exports: varname  // name of variable that will be return
-						// value of this module
-				}
-			}
-		})
-
-	// Define module
-		// To define script as module:
-		define(func())
-			// func() - factory for module, must return some object that will be
-			// available in require([moduleName], function(moduleObj) {...})
-		define(depends[], func(depen1, ...))
-		define(name, depends[], func(depen1, ...))
-
-		define(func(require, exports, module))  // for definition in CommonJS style
-
-		// Ex:
-			define(["some_module", "../libs/some_lib"], function(smodule, slib) {
-				// ...
-				return {
-					// ...
-				};
-			});
-
-================================================================================
-Bower ==========================================================================
-================================================================================
-
-	// Bower - package manager for client JS.
-	// Repositories are searchable at https://bower.io/search
-
-	// Init
-		npm install -g bower
-		cd project_dir/
-		bower init  // create bower.json in current dir
-
-	// Install module
-		bower install <module_name>  // install (put to bower_components/)
-		bower install --save <module_name>  // install and save in bower.json
-
-	// Uninstall
-		bower uninstall <module_name>
-		bower uninstall --save <module_name>
-
-	// List
-		bower list  // list installed modules
-
-	// Restore
-		bower install  // install all modules listed in bower.json
-
-	// Update
-		bower update <module_name>
-
-	// Publish
-		git tag "vx.x.x"
-		git push origin --tags
-
-		bower register <my_module_name> git:github.com/...git
