@@ -32,7 +32,7 @@
 ================================================================================
 Core API =======================================================================
 
-observable(value) : value
+observable(value) : value  // Create observable (wrapped in Proxy)
 observable.object(value) : value
 observable.array(value) : value
 observable.map(value) : value
@@ -137,6 +137,8 @@ inject(storeNames) : wrap(component) : component
 	// Injected stores|props fill be available as plain component's props.
 
 
+// Components wrapped with observer only subscribe to observables used during their own rendering of the component.
+
 ================================================================================
 Example ========================================================================
 
@@ -185,6 +187,7 @@ export class App extends React.Component {
 	render() {
 		return (
 			<Provider {...rootStore}>
+				{/* ... */}
 		)
 	}
 }

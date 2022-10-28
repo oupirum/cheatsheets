@@ -172,7 +172,7 @@ React ==========================================================================
 	React.createRef(): RefObject
 		// ref.current - target Element
 	React.forwardRef(func(props, ref) : VNode) : VNode
-		// create component that forwards ref below in the tree
+		// create component that forwards ref down the tree
 
 	React.createContext(defVal) : Context
 

@@ -585,7 +585,7 @@ Processes ======================================================================
 
 	<some_command> &  # run command in background
 
-	$!  # stores PID of recently started background task
+	$!  # contains PID of recently started background task
 		# Ex:
 			( sleep 10; ) & p=$!  # run and save pid
 			kill -INT $p
@@ -762,6 +762,9 @@ FS =============================================================================
 			# then select option "a" to set boot flag
 		mlabel -i /dev/sdb1 ::LIVE
 
+	# Disable journaling on HFS+ to make it writable in GNU/Linux:
+	diskutil disableJournal /path/to/volume
+
 ================================================================================
 Files ==========================================================================
 
@@ -825,8 +828,8 @@ Files ==========================================================================
 
 	dd  # copy and convert bytes
 		bs=<c>  # read|write up to <c> bytes at a time (e.g. "1M")
-		if=<source>  # file or device
-		of=<dest>  # file or device
+		if=<source>  # input file or device
+		of=<dest>  # input file or device
 
 	cp <source>... <target>  # copy file|dir
 		-r  # recursive - to copy directory
@@ -938,6 +941,7 @@ Files ==========================================================================
 		-d <file>...  # delete files from archive
 		-r  # recursively
 		-u  # update mode
+		-e  # encrypt
 		# Ex:
 			zip -r ./archive.zip ./file1 ./file2 ./dir
 	unzip <archive>
@@ -1334,6 +1338,9 @@ Tmux ===========================================================================
 
 	# In Tmux press the ctrl+b, then:
 		d  # detach
+		[  # switch to scroll mode
+		q  # quit current mode
+
 		s  # list sessions
 		$  # rename session
 
@@ -1509,6 +1516,7 @@ Miscellaneous ==================================================================
 	usermod <username>  # edit user
 		-L  # lock user
 		-U  # unlock
+	chsh <username>
 	passwd <username>  # change password
 	userdel <username>
 		-r  # delete home dir

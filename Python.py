@@ -57,8 +57,14 @@ Basics =========================================================================
         #   from src.package.file1 import SomeFunc;
 
     # dependencies
-        # specify module's dependencies in requirements.txt and
-        # use pip install -r requirements.txt to install them.
+        # specify module's dependencies in requirements.txt
+
+        # Install deps lister in requirements.txt:
+            pip install -r requirements.txt
+
+        # Search for avaialble versions:
+            pip index versions <package>
+
 
     ================================
     Variables

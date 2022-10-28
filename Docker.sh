@@ -56,7 +56,10 @@ docker
 		-i  # interactive
 		-t  # allocate pseudo tty
 		-e <key>=<val>  # set environment variable
-	attach <container>  # back to foreground
+
+	attach <container>  # connect to container's process
+		# press ctrl+p, ctrl+q to detach
+
 	stop <container>    # gracefully stop running container
 	kill <container>    # force stop
 
@@ -86,6 +89,8 @@ docker
 		# if does not exist: create dir and copy contents into it
 	cp <dir_path>/. <container>:/<dir_path>
 		# copy dir contents into dir
+
+
 
 ################################################################################
 # Dockerfile - config defining the steps needed to create the image and run it.
@@ -225,6 +230,8 @@ docker-compose
 		-s <signal>
 	restart [<service>...]
 
+
+
 ################################################################################
 # docker-compose.yml example:
 
@@ -252,6 +259,9 @@ services:
 		networks:  # networks to join (referencing entries of top-level networks)
 			- frontend
 
+		stdin_open: true  # to make an interactive shell available
+		tty: true
+
 	db:
 		build:
 			context: ./dir
@@ -268,3 +278,43 @@ networks:
 	frontend:
 		driver: bridge
 		name: frontend
+
+my_volume:
+	driver: local
+	driver_opts:
+		type: none
+		device: ./path/to/host/dir
+		o: bind
+
+
+
+################################################################################
+# Dump and restore Postgres DB
+
+# Manually
+	$ docker exec -ti <container> pg_dumpall -c -U <pg-user> <file>.sql
+	$ cat <file>.sql | docker exec -i <container> psql -U <pg-user>
+
+# Backup automatically within a given time interval
+services:
+	pgbackups:
+		container_name: Backup
+		image: prodrigestivill/postgres-backup-local
+		restart: always
+		volumes:
+			- ./backup:/backups
+		links:
+			- db:db
+		depends_on:
+			- db
+		environment:
+			- POSTGRES_HOST=db
+			- POSTGRES_DB=${DB_NAME}
+			- POSTGRES_USER=${DB_USER}
+			- POSTGRES_PASSWORD=${DB_PASSWORD}
+			- POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+			- SCHEDULE=@every 0h30m00s
+			- BACKUP_KEEP_DAYS=7
+			- BACKUP_KEEP_WEEKS=4
+			- BACKUP_KEEP_MONTHS=6
+			- HEALTHCHECK_PORT=81

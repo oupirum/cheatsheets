@@ -10,9 +10,10 @@ Basic ==========================================================================
 	<script defer src="script.js" type="text/javascript"></script>  // inject
 		// script from external file
 		// src - script file
-		// defer - defer script execution until page will be fully loaded
+		// async - load script asynchronous
+		// defer - load script asynchronous and defer script execution
+		// until DOM constructed
 		// type - mimetype (application/javascript, or text/javascript for IE 8)
-		// async - load script asynchronous (html5, IE >= 10)
 
 	// strict mode
 	"use strict";  // This directive defines that script should be used in
@@ -24,6 +25,7 @@ Basic ==========================================================================
 	// Objects, functions, arrays are passing by reference
 	// others - primitives - by value
 
+	symbol
 	number
 	string
 	boolean
@@ -67,20 +69,24 @@ Basic ==========================================================================
 		NaN
 		// others - true
 
+		// Because implicitly casted to number:
 		0 == ""   // true
 		0 == " "  // true
 		0 == "0"  // true
-
 		false == ""   // true
 		false == " "  // true
 		false == "0"  // true
 		false == 0    // true
 
+		// null, undefined will not be casted
+		// null equal only to null or undefined
 		null == 0  // false
 		null == ""  // false
+		null == " "  // false
 		null == false  // false
 		undefined == 0  // false
 		undefined == ""  // false
+		undefined == " "  // false
 		undefined == false  // false
 
 		null == undefined  // true
@@ -137,9 +143,8 @@ Basic ==========================================================================
 					alert(i);
 				}
 
-		while (condition) {  // Cycle. While condition is true will repeat
-			// iterations
-			// body...
+		while (condition) {
+			// ...
 		}
 
 		break  // return from cycle
@@ -193,7 +198,7 @@ Basic ==========================================================================
 					// ...
 					const stop = confirm("Stop looping?", "");
 					if (stop) {
-						break labl;  // quit from whole labeled block (labl)
+						break labl;  // quit from labeled block (labl)
 					}
 				}
 			}
@@ -229,6 +234,7 @@ Basic ==========================================================================
 		new Error([message] [, filename] [, linenumber])  // base class for
 			// exceptions
 
+			// Fields:
 			name : string
 			message : string
 			stack : string
@@ -266,7 +272,7 @@ Basic ==========================================================================
 			console.log(v);  // undefined
 			var v = "v";
 		}
-		// is same as:
+		// is the same as:
 		function() {
 			var v;
 			console.log(v);  // undefined
@@ -290,7 +296,7 @@ Basic ==========================================================================
 			// three - 'c'
 		let [one, ...rest] = ['a', 'b', 'c'];  // spread operator
 			// rest - ['b', 'c']
-		let arr2 = [...arr1, 'c', 'd']  // expanding
+		let arr2 = [...arr1, 'c', 'd']  // extending
 
 	// Object:
 		// by name
@@ -299,7 +305,7 @@ Basic ==========================================================================
 		let {a, b=defVal} = {a: 'a'};  // with default value
 		let {a: one, b: two} = {a: 'a', b: 'b'};  // changing names
 			// one - 'a', two - 'b'
-		let obj2 = {...obj1, c: 'c', d: 'd'}  // expanding
+		let obj2 = {...obj1, c: 'c', d: 'd'}  // extending
 
 ================================
 // Functions
@@ -447,7 +453,7 @@ Basic ==========================================================================
 			// method:
 			method2() {  // ES6
 				// ...
-				super.parMeth();  // from prototype
+				super.parentMethod();  // from prototype
 			},
 
 			set fullName(name) {  // ES6
@@ -459,7 +465,7 @@ Basic ==========================================================================
 		};
 
 		// access to field|method by class name:
-		Cls.method(par, other);
+		Cls.method(param, other);
 
 		Cls.fullName = "nm snm";
 
@@ -490,44 +496,55 @@ Basic ==========================================================================
 ================================
 // Prototype inheritance
 
-	var Par = function() {
-		console.info("Par constructor invoked", "this:", this);
+	// Constructor function has a 'prototype' property.
+	// It can contain an object that will be a prototype (__proto__ property) of
+	// object constructed by this constructor function.
+	// Default prototype - { constructor: Func }.
+	// When access property or method of object, engine will search it on object's
+	// properties and in prototype chain.
+	// Top level prototype - Object.prototype.__proto__ - is null.
+
+	var Parent = function() {
+		console.info("Parent constructor invoked", "this:", this);
 
 		this.a = "parent field a";
 		this.b = "parent field b";
 	};
-	Par.prototype.method = function() {
-		console.log("Par.method()", this.a);
+	Parent.prototype.method = function() {
+		console.log("Parent.method()", this.a);
 	};
-	Par.st = "static field";
+	Parent.st = "static field";
 
 	var Child = function() {
 		console.info("Child constructor invoked", "this:", this);
-		Par.apply(this, arguments);
+		Parent.apply(this, arguments);
 
 		// Override field:
 		this.a = "child field a";
 	};
+
 	// Inherit all methods and fields:
-	Child.prototype = Object.create(Par.prototype);
+	Child.prototype = Object.create(Parent.prototype);
 	Child.prototype.constructor = Child;
+		// or use setPrototypeOf(). It will preserve constructor property.
+
 	// Override method:
 	Child.prototype.method = function() {
 		console.log("Child.method()", this.a);
 	};
 
 	// Result:
-		var par = new Par();  // Par constructor invoked this: Par {}
-		var child = new Child();  // Child constructor invoked this: Child {}
-			// Par constructor invoked this: Child {}
+		var parent = new Parent();  // Parent constructor invoked, this: Parent {}
+		var child = new Child();  // Child constructor invoked, this: Child {}
+			// Parent constructor invoked, this: Child {}
 
-		console.log(par.a);  // parent field a
+		console.log(parent.a);  // parent field a
 		console.log(child.a);  // child field a
 		console.log(child.b);  // parent field b
-		par.method();    // Par.method() parent field a
+		parent.method();    // Parent.method() parent field a
 		child.method();    // Child.method() child field a
 
-		console.log("child is instance of Par:", child instanceof Par);
+		console.log("child is instance of Parent:", child instanceof Parent);
 			// true
 		console.log("child is instance of Child:", child instanceof Child);
 			// true
@@ -542,6 +559,7 @@ Basic ==========================================================================
 	}
 
 	class ClassB extends ClassA {
+
 		constructor() {
 			super("val");
 		}
@@ -550,11 +568,13 @@ Basic ==========================================================================
 			return this.val;
 		}
 
-		method() {
+		method() {  // method defined on prototype
 			// ...
 		}
 
-		static staticMethod() {
+		instMethod = () => {}  // instance method
+
+		static staticMethod() {  // class method
 			// ...
 		}
 	}
@@ -584,13 +604,36 @@ Basic ==========================================================================
 		import three from "./module/file";
 
 ================================================================================
+Event loop =====================================================================
+================================================================================
+
+	// Event loop - infinite loop that waits for new tasks in queue and brings
+	// them to callstack to execute.
+
+	// (Macro)Task queue - queue of tasks from setTimeout, setInterval,
+		// DOM, XHR.
+
+	// Microtask queue - tasks from process.nextTick, promise callback,
+		// queueMicrotask, MutationObserver.
+
+	// Order of execution:
+		// 1. Pop one task from Task queue onto the callstack and execute.
+		// 2. When callstack is empty, pop all queued up Microtasks onto the
+			// callstack one by one.
+			// Microtasks themselves can also return new microtasks, effectively
+			// creating an infinite microtask loop.
+		// 3. Render UI changes.
+		// 4. Wait for new Task.
+		// 5. Go to step 1.
+
+================================================================================
 Promise ========================================================================
 ================================================================================
 	// ES6
 
 	// Promise - object that stores state of async operation and callbacks.
 	// There 3 states: pending, fulfilled, rejected.
-	// To promise can be binded two callbacks: onFulfilled, onRejected
+	// Accepts two handlers: for fulfil and reject
 
 	new Promise(constr(resolve, reject))
 		// constr must invoke one (and only one) of resolve(res) or
@@ -605,8 +648,8 @@ Promise ========================================================================
 		// onResolved or onRejected can return value or new promise to chain
 		// promises
 
-	Promise.all(promise[]) : promise  // res - array of results
-	Promise.race(promise[]) : promise  // res - result of first
+	Promise.all(promise[]) : promise  // res - array of results if all resolved
+	Promise.race(promise[]) : promise  // res - result of first resolved
 	Promise.resolve(res) : promise  // directly resolved
 	Promise.reject(res) : promise  // directly rejected
 
@@ -624,17 +667,20 @@ Promise ========================================================================
 				// or:
 				// throw new Error("someerr");
 			});
-		}).then(function(res) {
-			// will not be executed
-			return new Promise(function(resolve, reject) {
-				// ...
-				resolve("someres3");
-			});
-		}, function(err) {
-			return "error catched";  // swallow error
-			// or:
-			// throw err; // pass error to next catcher
-		}).then(function(res) {
+		}).then(
+			function(res) {
+				// will not be executed
+				return new Promise(function(resolve, reject) {
+					// ...
+					resolve("someres3");
+				});
+			},
+			function(err) {
+				return "error catched";  // swallow error
+				// or:
+				// throw err; // pass error to next catcher
+			}
+		).then(function(res) {
 			// ...
 			console.log(res);  // "error catched"
 		}).catch(function(err) {
@@ -643,7 +689,7 @@ Promise ========================================================================
 		});
 
 	// Async/await
-		// To make promise-returning function synchronous
+		// To use promise synchronous-like way
 
 		// Ex:
 			async function f() {
@@ -750,7 +796,7 @@ Strings, numbers ===============================================================
 			}
 
 ================================================================================
-Array, object ==================================================================
+Array, Object ==================================================================
 ================================================================================
 
 	================================
@@ -760,10 +806,15 @@ Array, object ==================================================================
 		var obj = {key: value, ...};
 			// key - only strings
 
-		Object.create(prototype [, obj]) : object  // clone object
+		Object.create(prototype [, propertyDescriptors]) : object  // clone object
 		Object.assign(target, source1, ...) : object  // merge props into target
 			// object and return it
+
 		Object.keys(obj) : array  // get array of keys
+		Object.values(obj) : array  // get array of values
+
+		Object.getPrototypeOf(obj)
+		Object.getOwnPropertyDescriptors(obj)
 
 		obj[key] // get|set by key
 		obj.key  // same
@@ -778,10 +829,12 @@ Array, object ==================================================================
 				}
 
 		delete obj.key  // remove property
-			// returns false if property exists, but could not be removed
+			// returns false if property exists but could not be removed
 
 		constructor : function
-		__proto__ : object
+		__proto__ : object   // object in every class instance that points to
+			// the prototype it was created from.
+			// Deprecated. Use Object.getPrototypeOf(obj).
 		toString() : string  // string representation of object
 		valueOf() : any  // primitive value of object
 		hasOwnProperty(key) : bool  // whether property exist on this object
@@ -797,7 +850,7 @@ Array, object ==================================================================
 
 				function Temp() {};
 				Temp.prototype = proto;
-				var obj = new Temp;
+				var obj = new Temp();
 				Temp.prototype = null;
 
 				if (props !== undefined) {
@@ -880,10 +933,10 @@ Array, object ==================================================================
 			function sort(arr) {
 				for (var i = 1; i < arr.length; i++) {
 					var el = arr[i];
-					for (var n = i-1; n >= 0; n--) {
-						if (arr[n] > el) {
-							arr.splice(n + 1, 1);
-							arr.splice(n, 0, el);
+					for (var j = i-1; j >= 0; j--) {
+						if (arr[j] > el) {
+							arr.splice(j + 1, 1);
+							arr.splice(j, 0, el);
 						} else {
 							break;
 						}
@@ -1100,9 +1153,13 @@ Events =========================================================================
 ================================================================================
 
 	// Event listener can be defined by:
-		elem.addEventListener('click', function(event) {
-			// ...
-		});
+		elem.addEventListener(
+			'click',  // name
+			function(event) {  // handler
+				// ...
+			},
+			useCapture  // handle on capture phase or on bubbling phase
+		);
 	// or:
 		elem.onclick = function(event) {...}
 
@@ -1134,6 +1191,7 @@ Events =========================================================================
 		// in handler function
 	// To stop bubbling event:
 		event.stopPropagation()
+		  // or stopImmediatePropagation() to stop also on current node
 	// For both:
 		return false
 		// from handler function
@@ -1147,7 +1205,8 @@ Events =========================================================================
 	================================
 	// Event object attributes:
 
-		target  // reference to the object that dispatched the event
+		target  // node where the event occured
+		currentTarget  // node where handler attached
 		clientX|clientY  // coords of event relative to window
 		pageX|pageY  // coords of event relative to document
 		keyCode  // key code (by keydown, keypress, keyup)
@@ -1244,7 +1303,7 @@ AJAX ===========================================================================
 
 	================================
 	// CORS
-		// To allow cross-domain requests target script must setup header:
+		// To allow cross-domain requests server must respond with header:
 		"Access-Control-Allow-Origin: http://domain.net"  // allow from
 			// domain.com
 		"Access-Control-Allow-Origin: *"  // allow from any domain
@@ -1485,7 +1544,7 @@ Canvas =========================================================================
 			document.body.appendChild(img);
 
 ================================================================================
-Local Storage ==================================================================
+Storage ========================================================================
 ================================================================================
 
 	// LocalStorage
@@ -1513,15 +1572,15 @@ Local Storage ==================================================================
 	// WebSQL
 
 		// Open or create DB:
-			openDatabase(name, versionNumber, showingName, size)  // retirns
+			openDatabase(name, versionNumber, showingName, size)  // returns
 				// DB ref. May overflow size
 
-		// Do new transact to DB:
+		// Run new transaction:
 			DBref.transaction(function(tx) {
-				// transaction process
+				// ...
 			});
 
-		// Send SQL request:
+		// Send SQL query:
 			tx.executeSql(queryString, val[], success, error)
 
 		// Example:
@@ -1545,7 +1604,7 @@ Local Storage ==================================================================
 						report(result.rows[0].title, result.rows[0].author);
 					});
 
-		// Get data from request result object:
+		// Get data from query result object:
 			result.rows.item(i)[fieldName]
 
 			// Example:
@@ -1580,3 +1639,52 @@ Local Storage ==================================================================
 		TIME		time in format HH:MM:SS
 		DATETIME	date and time YYYY-MM-DD HH:MM:SS
 		TIMESTAMP	date and time as timestamp
+
+
+================================================================================
+Debounce, throttle =============================================================
+================================================================================
+
+	// Two methods of optimizing performance by controlling how often an event
+	// is called.
+
+	// Debouncing will bunch a series of sequential calls to a function into a
+	// single call to that function. It ensures that one notification is made
+	// for an event that fires multiple times.
+
+	// Throttling will delay executing a function. It will reduce the
+	// notifications of an event that fires multiple times.
+
+	function debounce(cb, delay) {
+		let timer;
+		return (...args) => {
+			clearTimeout(timer);
+			timer = setTimeout(() => cb(...args), delay);
+		}
+	}
+
+	function throttle(cb, delay) {
+		let shouldWait = false;
+		let waitingArgs = null;
+
+		function postponedCall() {
+			if (waitingArgs) {
+				cb(...waitingArgs);
+				waitingArgs = null;
+				setTimeout(postponedCall, delay);
+			} else {
+				shouldWait = false;
+			}
+		}
+
+		return (...args) => {
+			if (shouldWait) {
+				waitingArgs = args;
+				return;
+			} else {
+				cb(...args);
+				shouldWait = true;
+				setTimeout(postponedCall, delay);
+			}
+		}
+	}
