@@ -1493,7 +1493,10 @@ Miscellaneous ==================================================================
 
 	while true; do
 		inotifywait -r -e MODIFY <some_dir> && <some_cmd>
-	done  # watch on directory and run command when any file changed
+	done  # watch directory and run command when any file changed
+
+	fswatch -o <dir> | xargs -n1 <cmd>
+		# watch directory and run cmd when any file changed
 
 	date +%T  # print time (%H:%M:%S)
 	date +%s  # print timestamp

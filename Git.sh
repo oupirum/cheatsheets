@@ -42,6 +42,7 @@ Config =========================================================================
 		pushit = !git push origin $(git rev-parse --abbrev-ref HEAD)
 		pullit = !git pull origin $(git rev-parse --abbrev-ref HEAD)
 		pulldev = !git pull origin dev
+		upd = "!f() { git fetch origin $1:$1 --recurse-submodules=no --progress --prune; }; f"
 
 ================================================================================
 Create repo ====================================================================
