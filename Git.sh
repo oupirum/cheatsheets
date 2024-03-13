@@ -106,6 +106,7 @@ Stashing =======================================================================
 		-m <message>
 		-u  # include untracked
 			# (stash and then clean up)
+		-S|--staged  # only staged changes
 		--all    # include also ignored files
 			# (stash and then clean up)
 		-p|--patch  # interactively select hanks

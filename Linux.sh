@@ -377,6 +377,7 @@ Regex ==========================================================================
 		# There spec characters:
 			*   # any number of any chars (exclude "/" when matching filenames)
 			**  # any dir|file and its subdirs (recursive *)
+					# Should be enabled by `shopt -s globstar`
 			?   # any single char
 			[a-z]   # single char from range
 			[^a-z]  # inversed
