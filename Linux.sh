@@ -564,7 +564,7 @@ History ========================================================================
 	history <N>  # print list of N last commands
 
 	!<N>   # run command number N
-	!-<N>  # -N'th command
+	!-<N>  # -N'th command'
 	!<str>    # last command beginning with str
 	!<str>:p  # print instead of run
 
@@ -1019,7 +1019,7 @@ Text processing ================================================================
 			<addr1>,<addr2>  # lines range [addr1; addr2]
 			<addr1>,+<n>   # line <addr1> and next <n> lines
 			<n>~<step>    # line <n> and every <step>'th line
-			!  # invert address restriction
+			!  # invert address restriction.'
 
 			{ <commands> }  # group commands
 
@@ -1339,7 +1339,7 @@ Tmux ===========================================================================
 
 	# In Tmux press the ctrl+b, then:
 		d  # detach
-		[  # switch to scroll mode
+		[  # switch to scroll mode`
 		q  # quit current mode
 
 		s  # list sessions
