@@ -31,7 +31,7 @@ Config =========================================================================
 		rs = reset
 		rsh = reset --hard HEAD
 		stm = stash push -m
-		stmp = stash push -p -m
+		stmp = stash push --patch -m
 		stl = stash list
 		sts = "!f() { git stash show -p stash@{${1:-0}}; }; f"
 		sta = "!f() { git stash apply stash@{${1:-0}}; }; f"
@@ -39,9 +39,10 @@ Config =========================================================================
 		std = "!f() { git stash drop -p stash@{${1:-0}}; }; f"
 		c = commit
 		ca = commit --amend
-		pushit = !git push origin $(git rev-parse --abbrev-ref HEAD)
-		pullit = !git pull origin $(git rev-parse --abbrev-ref HEAD)
-		pulldev = !git pull origin dev
+		psit = !git push origin $(git rev-parse --abbrev-ref HEAD)
+		plit = !git pull origin $(git rev-parse --abbrev-ref HEAD)
+		pldev = !git pull origin dev
+  		plmas = !git pull origin master
 		upd = "!f() { git fetch origin $1:$1 --recurse-submodules=no --progress --prune; }; f"
 
 ================================================================================
@@ -178,6 +179,7 @@ Branches =======================================================================
 		-i [HEAD~<N>]  # interactive mode (e.g. for squashing)
 			# N - number of last commits to rebase
 		-s|--strategy recursive|resolve|octopus|ours|subtree
+  		# Do `git config core.hooksPath .no-hooks` to skip hooks. Dont forget to restore when done.
 	git rebase --continue  # continue rebase (e.g. after fixing conflicts)
 	git rebase --skip  # skip step
 	git rebase --abort  # cancel rebase
