@@ -217,7 +217,7 @@ git stash drop stash@{<N>}
 ```
 
 ---
-Useful shortcuts for referring stash entries by index [here](https://github.com/oupirum/cheatsheets/blob/master/Git.md#L42).
+Useful shortcuts for referring stash entries by index [here](https://github.com/oupirum/cheatsheets/blob/master/Git.md?plain=true#L57).
 
 
 ================================================================================
