@@ -146,7 +146,7 @@ git rm <file>
 
 Remove untracked files:
 ```sh
-git clean [<path>]  # recursively remove untracked files
+git clean [<path>]
 	-n  # only show what would be done
 	-d  # remove directories too
 	-f  # force
@@ -539,7 +539,12 @@ if [ $(echo $BRANCH_NAME | grep -cEi "^(feature|bugfix)\/([a-z]+-[0-9]+)_.*") -e
 fi
 ```
 
-Enable:
+Make it executable:
+```sh
+chmod a+x .githooks/prepare-commit-msg
+```
+
+And enable:
 ```sh
 git config core.hooksPath .githooks
 ```
