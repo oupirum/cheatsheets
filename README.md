@@ -1,4 +1,3 @@
 # cheatsheets
-Cheatsheets for some languages, tools, frameworks.
 
-Frontend (Javascript, React, Webpack, Jasmine, etc.), Linux commands, Python, Node, and some other.
+Developer cheatsheets for `Unix shell`, `Git`, `Go`, `Docker`, `Python`, `Node`, `Javascript`, `Typescript` and some others.
