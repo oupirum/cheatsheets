@@ -1,6 +1,6 @@
 # Unix shell cheatsheet
 
-Table of contents:
+### Table of contents:
 * [Terminal hotkeys](#hotkeys)
 * [Filesystem Hierarchy Standard](#fhs)
 * [Package management](#package-management)
@@ -34,7 +34,7 @@ Table of contents:
 	* [Usage](#fs-usage)
 	* [Devices](#fs-devices)
 	* [Mount](#fs-mount)
-	* [Parittioning](#fs-partitions)
+	* [Partitioning](#fs-partitions)
 * [Files, directories](#files-dirs)
 	* [Access rights](#files-access)
 	* [Working directory](#files-cwd)

@@ -1,6 +1,6 @@
 # Golang cheatsheet
 
-Table of contents:
+### Table of contents:
 - [Run & Build](#run-and-build)
 - [Dependencies](#deps)
 	- [Import](#deps-import)
@@ -76,6 +76,7 @@ Table of contents:
 Further reading:<br/>
 * [Effective Go](https://go.dev/doc/effective_go)<br/>
 * [Docs](https://go.dev/doc/)<br/>
+
 
 ========================================================================================================================
 
