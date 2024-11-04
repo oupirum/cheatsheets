@@ -1,7 +1,6 @@
 # Docker cheatsheet
 
 `Docker` is a platform for containerization.<br/>
-Version: 19.03<br/>
 
 `Image`: read-only template with instructions for creating a docker container.<br/>
 `Container`: runnable instance of an image.<br/>
@@ -22,10 +21,10 @@ sudo usermod -aG docker $(whoami)
 	* [Copy files into container](#docker-cli-copy-files)
 * [Dockerfile](#dockerfile)
 	* [Commands](#dockerfile-commands)
-	* [Example](#dockerfile-example)
-* [docker-compose](#docker-compose)
-	* [CLI](#docker-compose-cli)
-	* [docker-compose.yml](#docker-compose-yml)
+	* [Dockerfile example](#dockerfile-example)
+* [Compose](#compose)
+	* [Compose CLI](#compose-cli)
+	* [compose.yaml](#compose-yaml)
 * [Dump and restore Postgres DB](#dump-restore-pg)
 
 
@@ -49,7 +48,7 @@ docker inspect <name|id>
 -----------------------------------------
 ### Images <a id="docker-cli-images"></a>
 
-Build a new image with version tag:
+Build a new image with a version tag:
 ```sh
 docker build -t <name>:<tag> <src_path>
 ```
@@ -240,6 +239,7 @@ ARG <name>=<default>
 ```
 Can be passed using `--build-arg <name>=<value>` and can be referenced in Dockerfile as `$name`.
 
+---
 Set environment variable:
 ```
 ENV <name> <value>
@@ -331,12 +331,10 @@ CMD pytest -sv ./
 
 
 ===================================================================================
-# docker-compose <a id="docker-compose"></a>
-
-Version: 1.24<br/>
+# Compose <a id="compose"></a>
 
 Compose is a tool for defining and running multi-container Docker applications.<br/>
-Use a YAML file to configure your application’s services, then, with a single command, create and start all the services.<br/>
+Use a YAML file to configure your application's services, then, with a single command, create and start all the services.<br/>
 
 Features:
 * Multiple isolated environments on a single host.
@@ -345,22 +343,21 @@ Features:
 * Variables and moving a composition between environments.
 
 ---
-### CLI <a id="docker-compose-cli"></a>
+### Compose CLI <a id="compose-cli"></a>
 
 https://docs.docker.com/reference/cli/docker/compose/
 
 ```sh
-docker-compose
+docker compose
 	-f|--file <path>  # Alternative compose file
-		# Default: "./docker-compose.yml"
+		# Default: "./compose.yml"
 		# Multiple files can be specified, so latter will extend previous
 	--project-directory <path>  # Alternative working directory
 		# Default: path to the compose file
 	-p|--project-name <name>  # Default: directory name
-	--log-level DEBUG|INFO|WARNING|ERROR|CRITICAL
 ```
 
-### Subcommands
+### Subcommands:
 
 Build or rebuild services:
 ```sh
@@ -388,20 +385,22 @@ Build, (re)create and start services:
 up [<service>...]
 	-d  # Detached mode
 	--no-deps  # Don't start linked services
-	--build    # Build images before starting containers
+	--build    # (Re)build images before starting containers
+	--no-recreate  # Do not pick up changes
 	--scale <service>=<n>  # Scale <service> to <n> instances
 ```
 
 Stop and remove containers:
 ```sh
-down
-	-v|--volumes
+down [<service>...]
+	-v|--volumes  # Remove volumes
 ```
 
 List running containers:
 ```sh
-ps
-	--services
+ps [<service>...]
+	-a|--all  # Include stopped
+	--services  # Display services
 ```
 
 Get logs:
@@ -446,10 +445,13 @@ kill [<service>...]
 ```
 
 --------------------------------------------------
-### `docker-compose.yml` <a id="docker-compose-yml"></a>
+### `compose.yaml` <a id="compose-yaml"></a>
 
+https://docs.docker.com/reference/compose-file/
+
+Example:
 ```yaml
-version: "3.7"
+name: myapp
 
 services:
   webapp:      # Service name
@@ -470,7 +472,7 @@ services:
       - .env
     restart: on-failure  # Auto restart policy
       # Possible values: "no", "always", "on-failure", "unless-stopped"
-    networks:  # Networks to join (referencing entries of top-level networks)
+    networks:  # Networks to join (referencing entries of top-level `networks`)
       - frontend
 
     stdin_open: true  # To make an interactive shell available
@@ -512,7 +514,7 @@ cat <file>.sql | docker exec -i <container> psql -U <pg-user>
 ```
 
 ### Backup automatically within a given time interval:
-docker-compose.yml:
+compose.yaml:
 ```yaml
 services:
   pgbackups:
