@@ -447,53 +447,53 @@ kill [<service>...]
 version: "3.7"
 
 services:
-	webapp:      # Service name
-		build: ./        # Path to Dockerfile
-		container_name: web
-		ports:  # Expose ports <host>:<container>
-			- 8000:8000
-		volumes:
-			- ./:/app/     # Mount project directory to /app/ inside container
-		environment:
-			- APP_ENV=dev
-		command: python manage.py runserver  # Override the default CMD
-		depends_on:  # Specify service's dependencies
-			- redis
-		dns:
-			- 8.8.8.8
-		env_file:
-			- .env
-		restart: on-failure  # Auto restart policy
-			# Possible values: "no", "always", "on-failure", "unless-stopped"
-		networks:  # Networks to join (referencing entries of top-level networks)
-			- frontend
+  webapp:      # Service name
+    build: ./        # Path to Dockerfile
+    container_name: web
+    ports:  # Expose ports <host>:<container>
+      - 8000:8000
+    volumes:
+      - ./:/app/     # Mount project directory to /app/ inside container
+    environment:
+      - APP_ENV=dev
+    command: python manage.py runserver  # Override the default CMD
+    depends_on:  # Specify service's dependencies
+      - redis
+    dns:
+      - 8.8.8.8
+    env_file:
+      - .env
+    restart: on-failure  # Auto restart policy
+      # Possible values: "no", "always", "on-failure", "unless-stopped"
+    networks:  # Networks to join (referencing entries of top-level networks)
+      - frontend
 
-		stdin_open: true  # To make an interactive shell available
-		tty: true
+    stdin_open: true  # To make an interactive shell available
+    tty: true
 
-	db:
-		build:
-			context: ./dir
-			dockerfile: Dockerfile-alternate
-			args:    # Build time arguments
-				key: val
-		entrypoint: ./start_db.sh  # Override the default ENTRYPOINT
-		network_mode: bridge
+  db:
+    build:
+      context: ./dir
+      dockerfile: Dockerfile-alternate
+      args:    # Build time arguments
+        key: val
+    entrypoint: ./start_db.sh  # Override the default ENTRYPOINT
+    network_mode: bridge
 
-	redis:
-		image: redis:alpine
+  redis:
+    image: redis:alpine
 
 networks:
-	frontend:
-		driver: bridge
-		name: frontend
+  frontend:
+    driver: bridge
+    name: frontend
 
 my_volume:
-	driver: local
-	driver_opts:
-		type: none
-		device: ./path/to/host/dir
-		o: bind
+  driver: local
+  driver_opts:
+    type: none
+    device: ./path/to/host/dir
+    o: bind
 ```
 
 
@@ -510,25 +510,25 @@ cat <file>.sql | docker exec -i <container> psql -U <pg-user>
 docker-compose.yml:
 ```yaml
 services:
-	pgbackups:
-		container_name: Backup
-		image: prodrigestivill/postgres-backup-local
-		restart: always
-		volumes:
-			- ./backup:/backups
-		links:
-			- db:db
-		depends_on:
-			- db
-		environment:
-			- POSTGRES_HOST=db
-			- POSTGRES_DB=${DB_NAME}
-			- POSTGRES_USER=${DB_USER}
-			- POSTGRES_PASSWORD=${DB_PASSWORD}
-			- POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
-			- SCHEDULE=@every 0h30m00s
-			- BACKUP_KEEP_DAYS=7
-			- BACKUP_KEEP_WEEKS=4
-			- BACKUP_KEEP_MONTHS=6
-			- HEALTHCHECK_PORT=81
+  pgbackups:
+    container_name: Backup
+    image: prodrigestivill/postgres-backup-local
+    restart: always
+    volumes:
+      - ./backup:/backups
+    links:
+      - db:db
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+      - SCHEDULE=@every 0h30m00s
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+      - HEALTHCHECK_PORT=81
 ```
