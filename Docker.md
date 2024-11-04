@@ -32,6 +32,8 @@ sudo usermod -aG docker $(whoami)
 ===================================================================================
 # Docker CLI <a id="docker-cli"></a>
 
+https://docs.docker.com/reference/cli/docker/
+
 ### Info <a id="docker-cli-info"></a>
 
 View details about installed docker, images, containers:
@@ -203,7 +205,8 @@ docker cp <dir_path>/. <container>:/<dir_path>
 Dockerfile is a config defining the steps needed to create the image and run it.<br/>
 Each instruction in Dockerfile creates a layer in the image. <br/>
 When you change the Dockerfile and rebuild the image, only those layers which have changed are rebuilt.<br/>
-https://docs.docker.com/reference/dockerfile/<br/>
+
+https://docs.docker.com/reference/dockerfile/
 
 ---
 ### Commands <a id="dockerfile-commands"></a>
@@ -343,6 +346,8 @@ Features:
 
 ---
 ### CLI <a id="docker-compose-cli"></a>
+
+https://docs.docker.com/reference/cli/docker/compose/
 
 ```sh
 docker-compose
