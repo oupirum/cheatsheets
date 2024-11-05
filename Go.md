@@ -11,6 +11,7 @@
 	- [if/else](#control-sts-if)
 	- [switch/case](#control-sts-switch)
 - [Operators](#operators)
+	- [`==` equality](#operators-equality)
 - [Variables](#vars)
 	- [Define](#vars-define)
 	- [Zero value](#vars-zero)
@@ -344,6 +345,20 @@ Go uses *short circuit evaluation*:
 ```go
 if true && f() { // `f` will never be called
 ```
+
+---
+### `==` equality <a id="operators-equality">#</a>
+
+* Pointers: are equal when they both point to the same address.
+* Channels: both created by the same call to `make`.
+* Structs: all corresponding fields are equal.
+* Arrays: all corresponding elements are equal.
+* Strings: all corresponding bytes are equal.
+
+Functions, maps and slices are not comparable by `==`.<br/>
+Use `bytes.EqualFord` or `reflect.DeepEqual` to compare them.
+
+`Diff` function from `github.com/google/go-cmp/cmp` package can be used to get diff of two objects.
 
 
 ========================================================================================================================
