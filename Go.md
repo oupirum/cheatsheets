@@ -11,6 +11,7 @@
 	- [if/else](#control-sts-if)
 	- [switch/case](#control-sts-switch)
 - [Operators](#operators)
+	- [Precedence](#operators-precedence)
 	- [`==` equality](#operators-equality)
 - [Variables](#vars)
 	- [Define](#vars-define)
