@@ -322,21 +322,23 @@ Case conditions can be a dynamic expressions.
 ========================================================================================================================
 # Operators <a id="operators">#</a>
 
+### Precedence <a id="operators-precedence">#</a>
+
 In the order of precedence from hight to low:<br/>
-Pistfix:		`()` `[]` `->` `.` `++` `--`<br/>
-Unary:		`+` `-` `!` `~` `++` `--` `(type)*` `&` `sizeof`<br/>
-Multiplicative:		`*` `/` `%`<br/>
-Additive:		`+` `-`<br/>
-Shift:			`<<` `>>`<br/>
-Relational:		`<` `<=` `>` `>=`<br/>
-Equality:			`==` `!=`<br/>
-Bitwise AND:	`&`<br/>
-Bitwise XOR:	`^`<br/>
-Bitwise OR:		`|`<br/>
-Logical AND:	`&&`<br/>
-Logical OR:		`||`<br/>
-Assignment:		`=` `+=` `-=` `*=` `/=` `%=` `>>=` `<<=` `&=` `^=` `|=`<br/>
-Comma:			`,`<br/>
+Pistfix:	`()` `[]` `->` `.` `++` `--` <br/>
+Unary:		`+` `-` `!` `~` `++` `--` `(type)*` `&` `sizeof` <br/>
+Multiplicative:		`*` `/` `%` <br/>
+Additive:	`+` `-` <br/>
+Shift:		`<<` `>>` <br/>
+Relational:		`<` `<=` `>` `>=` <br/>
+Equality:		`==` `!=` <br/>
+Bitwise AND:		`&` <br/>
+Bitwise XOR:		`^` <br/>
+Bitwise OR:		`|` <br/>
+Logical AND:		`&&` <br/>
+Logical OR:		`||` <br/>
+Assignment:		`=` `+=` `-=` `*=` `/=` `%=` `>>=` `<<=` `&=` `^=` `|=` <br/>
+Comma:		`,` <br/>
 
 Expressions can be grouped by parenthesis to change order of evaluation.
 
