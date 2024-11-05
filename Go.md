@@ -367,6 +367,10 @@ Use `bytes.EqualFord` or `reflect.DeepEqual` to compare them.
 ========================================================================================================================
 # Variables <a id="vars">#</a>
 
+Everything in Go is passed by value.<br/>
+E.g., passing a struct into a function will create a local copy (until pointer is used).
+
+---
 ### Define <a id="vars-define">#</a>
 
 ```go
@@ -470,9 +474,6 @@ sp.field = value
 ========================================================================================================================
 # Types <a id="types">#</a>
 
-All assignments and passing arguments - by value (except pointers).
-
----
 ## Basic types <a id="types-basic">#</a>
 
 ```go
