@@ -17,9 +17,6 @@
 	- [Define](#vars-define)
 	- [Zero value](#vars-zero)
 	- [Scope](#vars-scope)
-- [Pointers](#pointers)
-	- [Create](#pointers-create)
-	- [Access](#pointers-access)
 - [Types](#types)
 	- [Basic](#types-basic)
 	- [Types conversion](#types-conversion)
@@ -28,6 +25,10 @@
 	- [Struct](#types-struct)
 	- [Generics](#types-generics)
 	- [Reflection](#types-reflection)
+- [Pointers](#pointers)
+	- [Create](#pointers-create)
+	- [Access](#pointers-access)
+	- [Passing by value vs Pointer](#pointer-vs-value)
 - [Function](#function)
 	- [Defer](#function-defer)
 	- [Method](#method)
@@ -124,7 +125,7 @@ func main() {
 
 
 ========================================================================================================================
-# Run & Build <a id="run-and-build">#</a>
+# Run & Build <a id="run-and-build"></a>
 
 Run:
 ```sh
@@ -150,13 +151,13 @@ go install
 
 
 ========================================================================================================================
-# Dependencies <a id="deps">#</a>
+# Dependencies <a id="deps"></a>
 
 https://go.dev/doc/modules/managing-dependencies<br/>
 https://go.dev/doc/modules/developing
 
 ---
-### Import <a id="deps-import">#</a>
+### Import <a id="deps-import"></a>
 
 ```go
 import "module/path"
@@ -193,7 +194,7 @@ SomeFunc()
 ```
 
 ---
-### Install <a id="deps-install">#</a>
+### Install <a id="deps-install"></a>
 
 To install third party library:
 ```sh
@@ -219,7 +220,7 @@ go list -m -u example.com/theirmodule
 ```
 
 ---
-### Update <a id="deps-update">#</a>
+### Update <a id="deps-update"></a>
 
 ```sh
 go mod tidy
@@ -233,9 +234,9 @@ To enable auto importing, use `GoImports` instead of `GoFmt`.
 
 
 ========================================================================================================================
-# Control statements <a id="control-sts">#</a>
+# Control statements <a id="control-sts"></a>
 
-## for <a id="control-sts-for">#</a>
+## for <a id="control-sts-for"></a>
 
 ```go
 for i := 0; i < n; i++ {
@@ -281,7 +282,7 @@ contunue
 ```
 
 ---
-## if/else <a id="control-sts-if">#</a>
+## if/else <a id="control-sts-if"></a>
 
 ```go
 if b < c {
@@ -303,7 +304,7 @@ if i := b; i < c {
 Variables from init statement are only accessible in the scope of current `if-else` block.
 
 ---
-## switch/case <a id="control-sts-switch">#</a>
+## switch/case <a id="control-sts-switch"></a>
 
 ```go
 switch os := runtime.GOOS; os {
@@ -321,9 +322,9 @@ Case conditions can be a dynamic expressions.
 
 
 ========================================================================================================================
-# Operators <a id="operators">#</a>
+# Operators <a id="operators"></a>
 
-### Precedence <a id="operators-precedence">#</a>
+### Precedence <a id="operators-precedence"></a>
 
 In the order of precedence from hight to low:<br/>
 Pistfix:	`()` `[]` `->` `.` `++` `--` <br/>
@@ -350,7 +351,7 @@ if true && f() { // `f` will never be called
 ```
 
 ---
-### `==` equality <a id="operators-equality">#</a>
+### `==` equality <a id="operators-equality"></a>
 
 * Pointers: are equal when they both point to the same address.
 * Channels: both created by the same call to `make`.
@@ -365,13 +366,9 @@ Use `bytes.EqualFord` or `reflect.DeepEqual` to compare them.
 
 
 ========================================================================================================================
-# Variables <a id="vars">#</a>
+# Variables <a id="vars"></a>
 
-Everything in Go is passed by value.<br/>
-E.g., passing a struct into a function will create a local copy (until pointer is used).
-
----
-### Define <a id="vars-define">#</a>
+### Define <a id="vars-define"></a>
 
 ```go
 var name Type
@@ -410,7 +407,7 @@ var noNeedToQuote = `'"\`
 ```
 
 ---
-### Zero value <a id="vars-zero">#</a>
+### Zero value <a id="vars-zero"></a>
 
 Variables declared without an explicit initial value are given their zero value:
 * `0`				for numeric types
@@ -419,7 +416,7 @@ Variables declared without an explicit initial value are given their zero value:
 *	`nil`			for other types
 
 ---
-### Scope <a id="vars-scope">#</a>
+### Scope <a id="vars-scope"></a>
 
 * Block - members declared within a code block, such as `if` statement or function.<br/>
 		Accessible whithin that block.<br/>
@@ -433,48 +430,9 @@ Inner-scoped variable *shadows* the outer variable with the same name.
 
 
 ========================================================================================================================
-# Pointers <a id="pointers">#</a>
+# Types <a id="types"></a>
 
-A pointer holds the memory address of a value.
-
-```go
-*Type
-```
-e.g.:
-```go
-var p *int
-```
-
----
-### Create <a id="pointers-create">#</a>
-
-Create pointer:
-```go
-p = &value
-```
-
----
-### Access <a id="pointers-access">#</a>
-
-Access value by pointer:
-```go
-*p = newvalue
-	// now p value equals newvalue
-```
-It is a *dereferencing* or *indirecting*.
-
-Indirection for accessing fields and methods of named type is transparent:
-```go
-var sp = &Struct{}
-sp.field = value
-	// explicit dereference `(*sp)` is not needed
-```
-
-
-========================================================================================================================
-# Types <a id="types">#</a>
-
-## Basic types <a id="types-basic">#</a>
+## Basic types <a id="types-basic"></a>
 
 ```go
 bool
@@ -498,7 +456,7 @@ any   // alias for empty interface `interface{}`
 
 
 --------------------------------------------------
-## Types conversion <a id="types-conversion">#</a>
+## Types conversion <a id="types-conversion"></a>
 
 Assignment between items of different type requires an explicit conversion.
 
@@ -512,7 +470,7 @@ var floatval = float32(123)
 
 
 --------------------------------------------------------
-## Type assertion <a id="types-assertion">#</a>
+## Type assertion <a id="types-assertion"></a>
 
 A *type assertion* provides access to an interface value's underlying concrete type.
 
@@ -541,7 +499,7 @@ default:
 
 
 --------------------------------------------------
-## Interface <a id="types-interface">#</a>
+## Interface <a id="types-interface"></a>
 
 An interface type is defined as a set of method signatures.<br/>
 A value of interface type can hold any value that implements those methods.<br/>
@@ -591,7 +549,7 @@ fmt.Printf("(%v, %T)\n", i, i)
 
 
 ---------------------------------------------------
-## Struct <a id="types-struct">#</a>
+## Struct <a id="types-struct"></a>
 
 Is a collection of fields.
 
@@ -646,7 +604,7 @@ It allocates zeroed storage for a new item of type `Type` and returns its addres
 
 
 -----------------------------------------------------
-## Generics <a id="types-generics">#</a>
+## Generics <a id="types-generics"></a>
 
 *Type parameters* allows function to accept arguments of multiple types, e.g.:
 ```go
@@ -687,7 +645,7 @@ type Number64 interface {
 
 
 -------------------------------------------------------
-## Reflection <a id="types-reflection">#</a>
+## Reflection <a id="types-reflection"></a>
 
 Package `"reflect"` implements runtime reflection.
 
@@ -720,7 +678,55 @@ https://pkg.go.dev/reflect
 
 
 ========================================================================================================================
-# Function <a id="function">#</a>
+# Pointers <a id="pointers"></a>
+
+A pointer holds the memory address of a value.
+
+```go
+*Type
+```
+e.g.:
+```go
+var p *int
+```
+
+---
+### Create <a id="pointers-create"></a>
+
+Create pointer:
+```go
+p = &value
+```
+
+---
+### Access <a id="pointers-access"></a>
+
+Access value by pointer:
+```go
+*p = newvalue
+	// now p value equals newvalue
+```
+It is a *dereferencing* or *indirecting*.
+
+Indirection for accessing fields and methods of named type is transparent:
+```go
+var sp = &Struct{}
+sp.field = value
+	// explicit dereference `(*sp)` is not needed
+```
+
+---
+### Passing by value vs Pointer <a id="pointer-vs-value"></>
+
+Everything in Go is passed by value.<br/>
+Even pointers assigned the value of the memory address. So they are values too.<br/>
+E.g., passing a struct into a function will create a local copy.<br/>
+
+However, there are six types that actually hold pointer values, and using a pointer to these types (i.e., a pointer to a pointer) is not efficient: pointers, slices, maps, channels, interfaces, function.
+
+
+========================================================================================================================
+# Function <a id="function"></a>
 
 ```go
 func Some(param Type, ...) ReturnType {
@@ -767,7 +773,7 @@ func parent() func() int {
 ```
 
 --------------------------------------------
-## Defer <a id="function-defer">#</a>
+## Defer <a id="function-defer"></a>
 
 `defer` statement inside of a function defers a call until a surrounding function returns.
 ```go
@@ -785,7 +791,7 @@ Useful for some clean-up actions.
 
 
 --------------------------------------------
-## Method <a id="method">#</a>
+## Method <a id="method"></a>
 
 Go does not have classes. However, you can define methods on types.<br/>
 Method is a function with a special `receiver` argument.
@@ -818,7 +824,7 @@ Method with value receiver **can** take either **value or pointer** receiver whi
 
 
 ========================================================================================================================
-# Error <a id="error">#</a>
+# Error <a id="error"></a>
 
 `Error` is an interface which value are functions often returns as a second value.<br/>
 `nil` indicates success.
@@ -834,7 +840,7 @@ fmt.Println("Converted integer:", i)
 ```
 
 ---
-### Create <a id="error-create">#</a>
+### Create <a id="error-create"></a>
 
 To create own error type need to implement `Error` interface:
 ```go
@@ -868,7 +874,7 @@ func Hello(name string) (string, error) {
 ```
 
 -----------------------------------------
-## Throw <a id="error-throw">#</a>
+## Throw <a id="error-throw"></a>
 
 ```go
 panic(error any)
@@ -876,7 +882,7 @@ panic(error any)
 But all `defer`ed functions will be invoked before return.
 
 ---
-## Catch <a id="error-catch">#</a>
+## Catch <a id="error-catch"></a>
 
 ```go
 recover() any
@@ -887,7 +893,7 @@ https://go.dev/doc/effective_go#recover
 
 
 ========================================================================================================================
-# Array, Slice <a id="array-slice">#</a>
+# Array, Slice <a id="array-slice"></a>
 
 https://go.dev/blog/slices-intro
 
@@ -897,7 +903,7 @@ https://go.dev/blog/slices-intro
 ```
 
 ----------------------------------
-### Create <a id="slice-create">#</a>
+### Create <a id="slice-create"></a>
 
 Array (fixed length):
 ```go
@@ -924,7 +930,7 @@ var tail = []arr{1, 2, 3}[1:]  // 2, 3
 ```
 
 ------------------------------------
-### Access <a id="slice-access">#</a>
+### Access <a id="slice-access"></a>
 
 By index:
 ```go
@@ -940,7 +946,7 @@ cap(arr []Type) int // capacity - length of underlying array
 `nil` slice has both length and capacity of 0.
 
 -------------------------------------
-### Append <a id="slice-append">#</a>
+### Append <a id="slice-append"></a>
 
 ```go
 append(slice []Type, values ...Type) []Type // append values and return new slice
@@ -956,7 +962,7 @@ slice1 = append(slice1, slice2...)
 ```
 
 --------------------------------------
-### Copy <a id="slice-copy">#</a>
+### Copy <a id="slice-copy"></a>
 
 From slice to slice:
 ```go
@@ -975,7 +981,7 @@ copy(c, slice)
 
 
 ========================================================================================================================
-# Map <a id="map">#</a>
+# Map <a id="map"></a>
 
 https://go.dev/blog/maps
 
@@ -986,7 +992,7 @@ map[KeyType]ValueType
 Key can be an integer, float, string, pointer, interface, struct or array.<br/>
 
 ---
-### Create <a id="map-create">#</a>
+### Create <a id="map-create"></a>
 
 ```go
 var m = map[KeyType]ValueType { key: value, ... } // allocate map of specified key-values
@@ -994,7 +1000,7 @@ var m = make(map[KeyType]ValueType) // allocate empty map
 ```
 
 ---
-### Get/set value by key <a id="map-get-set">#</a>
+### Get/set value by key <a id="map-get-set"></a>
 
 ```go
 m[key] = value
@@ -1003,7 +1009,7 @@ var value, isExist = m[key]
 ```
 
 ---
-### Delete value <a id="map-delete">#</a>
+### Delete value <a id="map-delete"></a>
 
 ```go
 delete(m map, key Type)
@@ -1011,7 +1017,7 @@ delete(m map, key Type)
 
 
 ========================================================================================================================
-# String <a id="string">#</a>
+# String <a id="string"></a>
 
 Substring like an array:
 ```go
@@ -1026,7 +1032,7 @@ var str = string(bytes)
 ```
 
 -----------------------------------------
-## To string <a id="to-string">#</a>
+## To string <a id="to-string"></a>
 
 Default string representation:
 ```go
@@ -1043,7 +1049,7 @@ func (st *Type) String() string {
 ```
 
 ------------------------------------------
-## Package "strings" <a id="package-strings">#</a>
+## Package "strings" <a id="package-strings"></a>
 
 ```go
 Contains(str, substr string) bool
@@ -1062,7 +1068,7 @@ NewReader(str string) *strings.Reader
 ```
 
 ------------------------------------------
-## Package "fmt" <a id="package-fmt">#</a>
+## Package "fmt" <a id="package-fmt"></a>
 
 ```go
 Sprintf(format string, values ...any) string  // Format and return
@@ -1093,7 +1099,7 @@ Scanln(a ...any) int, error  // same but stops at newline
 ```
 
 -----------------------------------------
-## Package "strconv" <a id="package-strconv">#</a>
+## Package "strconv" <a id="package-strconv"></a>
 
 ```go
 ParseInt(s string, base int, bitSize int) int64, error
@@ -1110,9 +1116,9 @@ Itoa(n int) string // shorthand for `FormatInt(int64(n), 10)`
 ```
 
 ========================================================================================================================
-# Math <a id="math">#</a>
+# Math <a id="math"></a>
 
-## Package "math" <a id="package-math">#</a>
+## Package "math" <a id="package-math"></a>
 
 ```go
 IsNaN(x float64) bool
@@ -1156,7 +1162,7 @@ var perm = 0o644  // int 420
 ```
 
 --------------------------------------
-## Package "math/rand" <a id="package-math-rand">#</a>
+## Package "math/rand" <a id="package-math-rand"></a>
 
 ```go
 Float32() float32  // [0.0, 1.0)
@@ -1167,12 +1173,12 @@ Intn(n int) int // [0, n)
 
 
 ========================================================================================================================
-# Async <a id="async">#</a>
+# Async <a id="async"></a>
 
 https://go.dev/doc/effective_go#concurrency
 
 -----------------------------------------
-## Goroutine <a id="goroutine">#</a>
+## Goroutine <a id="goroutine"></a>
 
 Goroutine is a lightweight thread.<br/>
 Goroutines run in the same address space, so access to shared memory must be synchronized.
@@ -1186,7 +1192,7 @@ Arguments will be evaluated in the current thread, not in the new goroutine.
 
 
 ------------------------------------------
-## Channel <a id="channel">#</a>
+## Channel <a id="channel"></a>
 
 Channel is a typed conduit through which values can be sent between goroutines.<br/>
 By default, sends and receives block until other side is ready.<br/>
@@ -1255,7 +1261,7 @@ It will iterate until channel is closed.
 
 
 --------------------------------------------
-## `Mutex` <a id="mutex">#</a>
+## `Mutex` <a id="mutex"></a>
 
 Mutual exclusion locker.
 
@@ -1283,9 +1289,9 @@ func SyncedF() {
 
 
 ========================================================================================================================
-# Date, Time <a id="date-time">#</a>
+# Date, Time <a id="date-time"></a>
 
-## Package "time" <a id="package-time">#</a>
+## Package "time" <a id="package-time"></a>
 
 Constants:
 ```go
@@ -1318,7 +1324,7 @@ NewTimer(d Duration) *Timer
 ```
 
 ----------------------------------
-### `Time` <a id="time">#</a>
+### `Time` <a id="time"></a>
 
 Represents an instant in time with nanosecond precision.
 
@@ -1339,7 +1345,7 @@ Format(layout string) string
 ```
 
 -----------------------------------
-### `Duration` <a id="duration">#</a>
+### `Duration` <a id="duration"></a>
 
 Built-in type for setting time amount.
 
@@ -1354,7 +1360,7 @@ Nanoseconds() float64
 ```
 
 -----------------------------------
-### `Ticker` <a id="ticker">#</a>
+### `Ticker` <a id="ticker"></a>
 
 Provides channel that delivers Time *ticks*.
 
@@ -1369,7 +1375,7 @@ Stop()
 ```
 
 -----------------------------------
-### `Timer` <a id="timer">#</a>
+### `Timer` <a id="timer"></a>
 
 Provides channel that deliver Time once after dalay.
 
@@ -1386,9 +1392,9 @@ Stop() bool
 
 
 ========================================================================================================================
-# OS, IO <a id="os-io">#</a>
+# OS, IO <a id="os-io"></a>
 
-## Package "os" <a id="package-os">#</a>
+## Package "os" <a id="package-os"></a>
 
 Stop program execution:
 ```go
@@ -1403,7 +1409,7 @@ Stdout *File
 ```
 
 ---
-### Env <a id="os-env">#</a>
+### Env <a id="os-env"></a>
 
 ```go
 Getenv(key string) string, error
@@ -1415,7 +1421,7 @@ Chdir(path string) error
 ```
 
 ------------------------------------------------------
-### Manipulate files and directories <a id="os-files-dirs">#</a>
+### Manipulate files and directories <a id="os-files-dirs"></a>
 
 ```go
 Mkdir(path string, perm FileMode)    error
@@ -1451,7 +1457,7 @@ var _, err = os.OpenFile("name", os.O_RDWR|os.O_CREATE, 0o644)
 ```
 
 -------------------------------------------------------
-### `File` <a id="os-file">#</a>
+### `File` <a id="os-file"></a>
 
 ```go
 Close() error
@@ -1472,7 +1478,7 @@ WriteString(str string)    int, error
 // they are returns n readen/written bytes
 ```
 
-### `FileInfo` <a id="os-fileinfo">#</a>
+### `FileInfo` <a id="os-fileinfo"></a>
 
 ```go
 Name() string 	// basename
@@ -1484,7 +1490,7 @@ ModeTime() time.Time
 
 
 ------------------------------------------------------
-### `UGO` permissions format <a id="ugo-permissions">#</a>
+### `UGO` permissions format <a id="ugo-permissions"></a>
 
 User, Group, Others
 ```
@@ -1509,7 +1515,7 @@ var mode = os.FileMode(0o755)
 
 
 --------------------------------------------
-## Package "io" <a id="package-io">#</a>
+## Package "io" <a id="package-io"></a>
 
 Reader:
 ```go
@@ -1544,7 +1550,7 @@ WriteString(w Writer, s string)    int, error
 ```
 
 ----------------------------------------------
-## Package "path" <a id="package-path">#</a>
+## Package "path" <a id="package-path"></a>
 
 For paths separated by forward slashes, such as the paths in URLs.
 
@@ -1560,7 +1566,7 @@ Split(path string)    dir, filename string
 
 
 -----------------------------------
-## Package "path/filepath" <a id="package-path-filepath">#</a>
+## Package "path/filepath" <a id="package-path-filepath"></a>
 
 For filename paths in a way compatible with the target operating system-defined file paths.
 
@@ -1582,7 +1588,7 @@ Walk(path string, func(path string, fi FileInfo, e error) error) // recursively 
 
 
 -------------------------------------------
-## Package "flag" <a id="package-flag">#</a>
+## Package "flag" <a id="package-flag"></a>
 
 For parsing command line flags.
 
@@ -1607,7 +1613,7 @@ fmt.Println("-num value:", *num)
 
 
 ========================================================================================================================
-# Testing <a id="testing">#</a>
+# Testing <a id="testing"></a>
 
 To test function `SomeFunc(...)` from `file.go` need to create function `TestSomeFunc(t *testing.T)` in `file_test.go`.<br/>
 When test failed need to invoke `t.Error`, `t.Fatal`, `tFatalf`, etc. from this test function to indicate failure.
