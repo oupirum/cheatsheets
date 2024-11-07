@@ -716,7 +716,7 @@ sp.field = value
 ```
 
 ---
-### Passing by value vs Pointer <a id="pointer-vs-value"></>
+### Passing by value vs Pointer <a id="pointer-vs-value"></a>
 
 Everything in Go is passed by value.<br/>
 Even pointers assigned the value of the memory address. So they are values too.<br/>
