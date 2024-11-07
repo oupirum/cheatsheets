@@ -25,9 +25,9 @@
 	- [Struct](#types-struct)
 	- [Generics](#types-generics)
 	- [Reflection](#types-reflection)
-- [Pointers](#pointers)
-	- [Create](#pointers-create)
-	- [Access](#pointers-access)
+- [Pointer](#pointer)
+	- [Create](#pointer-create)
+	- [Access](#pointer-access)
 	- [Passing by value vs Pointer](#pointer-vs-value)
 - [Function](#function)
 	- [Defer](#function-defer)
@@ -678,7 +678,7 @@ https://pkg.go.dev/reflect
 
 
 ========================================================================================================================
-# Pointers <a id="pointers"></a>
+# Pointer <a id="pointer"></a>
 
 A pointer holds the memory address of a value.
 
@@ -691,7 +691,7 @@ var p *int
 ```
 
 ---
-### Create <a id="pointers-create"></a>
+### Create <a id="pointer-create"></a>
 
 Create pointer:
 ```go
@@ -699,7 +699,7 @@ p = &value
 ```
 
 ---
-### Access <a id="pointers-access"></a>
+### Access <a id="pointer-access"></a>
 
 Access value by pointer:
 ```go
