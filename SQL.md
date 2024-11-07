@@ -2,6 +2,7 @@
 
 * [Data types](#data-types)
 * [Conditional operators](#conditional-operators)
+* [Constraints](#constraints)
 * [Search](#search)
 * [Select](#select)
 	* [Join](#join)
@@ -74,26 +75,42 @@ Multiple queries must be separated by `;`.<br/>
 =========================================================================
 # Conditional operators <a id="conditional-operators"></a>
 
-Are using with `WHERE`
-
+### Compare
 `=`	-- e.g., *WHERE id=3*<br/>
 `<`	<br/>
 `>`	<br/>
 `<=`	<br/>
 `>=`	<br/>
 `!=` or `<>`	<br/>
+
+### Nullity
 `IS NOT NULL`	-- e.g., *WHERE id IS NOT NULL*<br/>
 `IS NULL`	<br/>
-`BETWEEN m AND n`	<br/>
+
+### Range
+`BETWEEN m AND n`	-- in range [m, n]<br/>
 `NOT BETWEEN m AND n`	-- e.g., *WHERE id NOT BETWEEN 2 AND 4*<br/>
-`IN(value1, value2, ...)`	-- equal to any of provided values, e.g., *WHERE id IN(1, 3, 4)*<br/>
+
+### Logical
 `OR`	-- e.g., *WHERE id>3 OR name='name'*<br/>
 `AND`	<br/>
+`IN(values...)`	-- equal to any of provided values, e.g., *WHERE catid IN(1, 3, 4)*<br/>
+
+=========================================================================
+# Constraints <a id="constraints"></a>
+
+`CHECK (condition)`	-- control the column value, e.g., *CHECK(discount < 50)*, *CHECK(catid BETWEEN 1 AND 10)*<br/>
+`NOT NULL` <br/>
+`UNIQUE (colname, ...)` <br/>
+
+`PRIMARY KEY (colname, ...)`	-- column (or group of columns) contains unique identifier of the row <br/>
+`FOREIGN KEY (colname, ...)`	-- values corresponds to a value from another table<br/>
 
 =========================================================================
 # Search <a id="search"></a>
 
-`LIKE`, `NOT LIKE`<br/>
+`LIKE someval`	<br/>
+`NOT LIKE someval`	<br/>
 
 Wildcards:<br/>
 `%`	-- any sequence<br/>
@@ -101,8 +118,8 @@ Wildcards:<br/>
 
 E.g.:
 ```sql
-	... WHERE field LIKE 'lo%' 	-- will find "London", but not "slow"
-	... WHERE field LIKE '_low'	-- will find "slow", but not "clown"
+	... WHERE col LIKE 'lo%'	-- will find "London", but not "slow"
+	... WHERE col LIKE '_low'	-- will find "slow", but not "clown"
 ```
 
 =========================================================================
@@ -110,7 +127,7 @@ E.g.:
 
 ```sql
 SELECT
-	field1, field2
+	col1, ...
 	FROM table
 	WHERE condition;
 ```
@@ -119,8 +136,8 @@ SELECT
 
 ```sql
 SELECT
-	table0.id, table1.id
-	FROM table0, table1;
+	table1.id, ...,
+	FROM table1, ...;
 ```
 
 ---
@@ -129,7 +146,8 @@ SELECT
 To combine rows from multiple tables based on a related column between them. Retrieving related data in a single query.
 
 ```sql
-SELECT fields
+SELECT
+	col, ...
 	FROM table1
 	JOIN_TYPE JOIN table2 ON condition
 ```
@@ -140,14 +158,16 @@ where *JOIN_TYPE* is:<br/>
 
 E.g.:
 ```sql
-SELECT table1.fld1, table2.fld2
+SELECT
+	table1.fld1, table2.fld2
 	FROM table1
 	LEFT JOIN table2 ON table1.id = table2.id
 -- Returns all rows from table1 with associated values from table2 (NULL for non-existing values).
 ```
 
 ```sql
-SELECT table1.fld1, table2.fld2
+SELECT
+	table1.fld1, table2.fld2
 	FROM table1
 	INNER JOIN table2 ON table1.id = table2.id
 -- Rows with appropriate id.
@@ -160,31 +180,30 @@ To combine the result set of multiple SELECT statements into single result set.
 
 ```sql
 SELECT
-	field
-	FROM table0
-	WHERE (table0.id=?)
+	colname, ...
+	FROM table1
 UNION
 SELECT
-	field
+	colname, ...
 	FROM table1
-	WHERE (table1.id=?);
 ```
+Selects only distinct values by default. `UNION ALL` allows duplications.
 
 ---
 ### Sort results <a id="sort"></a>
 
 ```sql
-ORDER BY field0 ASC|DESC, field1 ASC|DESC
+ORDER BY colname ASC|DESC, ...
 ```
 where:<br/>
-`ASC`		ascending order (from low to high).<br/>
-`DESC`	descending order (from high to low).<br/>
+`ASC`		-- ascending order (from low to high)<br/>
+`DESC`	-- descending order (from high to low)<br/>
 
 ---
-### Group by specific field <a id="group"></a>
+### Group by specific column <a id="group"></a>
 
 ```sql
-GROUP BY field
+GROUP BY colname
 ```
 
 ---
@@ -201,7 +220,7 @@ OFFSET n
 
 E.g.:
 ```sql
-... WHERE filed='value' LIMIT 3	-- always at end of query
+... WHERE filed='value' LIMIT 3	-- first 3 rows
 ... LIMIT 10 OFFSET 5
 	-- 10 rows from 5
 ```
@@ -211,22 +230,24 @@ E.g.:
 
 ```sql
 INSERT INTO
-	table(
-		field1,
-		field2
-		)
-		VALUES(
-			'value1',
-			'value2'
-		);
+	tablename
+	(
+		col1,
+		...
+	)
+	VALUES(
+		value1,
+		...
+	);
 ```
 
 =========================================================================
 # Update rows <a id="update"></a>
 
 ```sql
-UPDATE table
-	SET field1='value1', field2='value2'
+UPDATE
+	tablename
+	SET col1=value1, ...
 	WHERE condition;
 ```
 
@@ -235,7 +256,7 @@ UPDATE table
 
 ```sql
 DELETE FROM
-	table
+	tablename
 	WHERE condition;
 ```
 
@@ -245,22 +266,22 @@ DELETE FROM
 Rename column:
 ```sql
 ALTER TABLE
-	table0
-	CHANGE field_old field_new TEXT NULL DEFAULT NULL;
+	tablename
+	CHANGE col_old col_new TEXT NULL DEFAULT NULL;
 ```
 
 Change column type:
 ```sql
 ALTER TABLE
-	table0
-	MODIFY COLUMN field datatype_new
+	tablename
+	MODIFY COLUMN colname datatype_new
 ```
 
 Add column:
 ```sql
 ALTER TABLE
-	table0
-	ADD field_new datatype
+	tablename
+	ADD col_new datatype
 ```
 
 Set charset for database:
@@ -273,11 +294,24 @@ ALTER DATABASE dbname CHARACTER SET utf8;
 
 ```sql
 CREATE TABLE
-	table (
+	tablename (
+		columnname type constraints,
+		...
+	)
+	attributes
+```
+
+E.g.:
+```sql
+CREATE TABLE
+	products (
 		id INT NOT NULL AUTO_INCREMENT,
 		PRIMARY KEY (id),
-		field1 VARCHAR(30) DEFAULT 'default value',
-		field2 TYPE PARAMS
+		category_id INT NOT NULL,
+		FOREIGN KEY (category_id) REFERENCES product_category(id),
+		seller VARCHAR(30) DEFAULT 'no seller',
+		price INT NOT NULL,
+		CHECK(price BETWEEN 1, 100000)
 	)
 	DEFAULT CHARSET=utf8;
 ```
@@ -286,7 +320,7 @@ CREATE TABLE
 # Drop table <a id="drop-table"></a>
 
 ```sql
-DROP TABLE table
+DROP TABLE tablename
 ```
 
 =========================================================================
