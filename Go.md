@@ -1300,6 +1300,7 @@ Methods:<br/>
 
 Context allows to execute goroutines in some *context*.<br/>
 For carrying deadlines, cancelation signals, and other task-scoped values.<br/>
+https://pkg.go.dev/context<br/>
 
 Functions:
 ```go
@@ -1362,7 +1363,7 @@ go doRequestCancellable(ctx, url, response)
 cancel(errors.New("operation is canceled"))
 ```
 
-E.g., nesting value:
+E.g., nesting a value:
 ```go
 type CtxKey string
 
