@@ -56,13 +56,16 @@
 - [Async](#async)
 	- [Goroutine](#goroutine)
 	- [Channel](#channel)
-	- [`Mutex`](#mutex)
+	- [Package "sync"](#package-sync)
+		- [`Mutex`](#mutex)
+	- [Package "context"](#package-context)
+		- [`Context`](#context)
 - [Date, Time](#date-time)
 	- [Package "time"](#package-time)
-	- [`Time`](#time)
-	- [`Duration`](#duration)
-	- [`Ticker`](#ticker)
-	- [`Timer`](#timer)
+		- [`Time`](#time)
+		- [`Duration`](#duration)
+		- [`Ticker`](#ticker)
+		- [`Timer`](#timer)
 - [OS, IO](#os-io)
 	- [Package "os"](#package-os)
 		- [Env](#os-env)
@@ -722,7 +725,7 @@ Everything in Go is passed by value.<br/>
 Even pointers assigned the value of the memory address. So they are values too.<br/>
 E.g., passing a struct into a function will create a local copy.<br/>
 
-However, there are six types that actually hold pointer values, and using a pointer to these types (i.e., a pointer to a pointer) is not efficient: pointers, slices, maps, channels, interfaces, function.
+However, there are six types that actually hold pointer values, and using a pointer to these types (i.e., a pointer to a pointer) is not efficient: pointer, slice, map, channel, interface, function.
 
 
 ========================================================================================================================
@@ -1261,10 +1264,13 @@ It will iterate until channel is closed.
 
 
 --------------------------------------------
-## `Mutex` <a id="mutex"></a>
+## Package "sync" <a id="package-sync"></a>
 
-Mutual exclusion locker.
+https://pkg.go.dev/sync<br/>
 
+### `Mutex` <a id="mutex"></a>
+
+Mutual exclusion locker.<br/>
 To make a code block to be executed in mutual exclusion, <br/>
 surround it with calls to `Lock` and `Unlock` methods of `sync.Mutex`.<br/>
 
@@ -1284,8 +1290,90 @@ func SyncedF() {
 }
 ```
 
+Methods:<br/>
 `Lock()` will block current goroutine if mutex already locked.<br/>
 `Unlock()` will unblock, also from any other goroutine. Throws error if not locked.<br/>
+
+
+---------------------------------------------
+## Package "context" <a id="package-context"></a>
+
+Context allows to execute goroutines in some *context*.<br/>
+For carrying deadlines, cancelation signals, and other task-scoped values.<br/>
+
+Functions:
+```go
+Background()  Context  // create an empty context
+	// Should be used at top level
+TODO()  Context  // empty context too
+	// Should be used when it's unclear which Context to use or it is not yet available
+
+WithValue(parent Context, key, val any)   Context  // create a copy of parent in which the value associated with `key` is `val`
+	// The `key` must be comparable and should not be of built-in type to avoid collisions between packages
+
+WithCancel(parent Context)   Context, CancelFunc  // copy of parent with a new Done channel,
+	// which is closed when the CancelFunc is called or when the parent context's Done channel is closed (which first)
+WithCancelCause(parent Context)   Context, CancelCauseFunc  // same but cancelation func accepts an error,
+	// which can be retrieved by `Cause(ctx)`
+
+WithDeadline(parent Context, d time.Time)   Context, CancelFunc  // same with a timeout
+WithTimeout(parent Context, d time.Duration)   Context, CancelFunc  // same with a duration
+
+Cause(ctx Context)  // returns a cause of the ctx cancelation,
+	// nil if not yet canceled
+```
+
+### `Context` <a id="context"></a>
+
+Methods:
+```go
+Value(key any) any  // returns the value associated with this context for `key`
+	// nil if no value is assotiated
+
+Done() <-chan  // returns the channel which is closed when context or its parent is closed
+Err() error  // error explaining why this context is closed:
+	// `Canceled` if the context was canceled, `DeadlineExceeded` if the context's deadline passed,
+	// `nil` if not yet closed
+Deadline() time.Time, ok bool  // time of deadline
+	// ok == false if no deadline is set
+```
+
+E.g., cancelable request:
+```go
+func doRequestCancelable(ctx context.Context, url string, resCancelable chan Response) {
+	var res = make(chan Response)
+
+	go doRequest(url, res)
+
+	// mark as canceled or return a server response, whichever happened first:
+	select {
+	case <- ctx.Done():
+		fmt.Println(context.Cause(ctx))
+		resCancelable <- Response{ Url: url, Status: "canceled" }
+	case r := <- res:
+		resCancelable <- r
+	}
+}
+
+var ctx, cancel = context.WithCancelCause(context.Background())
+
+go doRequestCancellable(ctx, url, response)
+// ...
+cancel(errors.New("operation is canceled"))
+```
+
+E.g., nesting value:
+```go
+type CtxKey string
+
+ctxRu := context.WithValue(ctx, CtxKey("lang"), "ru")
+ctxCounter := context.WithValue(ctxRu, CtxKey("counter"), 2)
+
+ctxRu.Value(CtxKey("lang"))  // ru
+ctxRu.Value(CtxKey("counter"))  // nil
+ctxCounter.Value(CtxKey("lang"))  // ru
+ctxCounter.Value(CtxKey("counter"))  // 2
+```
 
 
 ========================================================================================================================
@@ -1319,8 +1407,8 @@ After(delay Duration) <-chan Time // message to channel will be sent after delay
 AfterFunc(delay Duration, f func()) *Timer  // run func after delay
 	// func will be invoked in a new goroutine.
 
-NewTicker(interval Duration) *Ticker
-NewTimer(d Duration) *Timer
+NewTicker(interval Duration)  *Ticker
+NewTimer(d Duration)  *Timer
 ```
 
 ----------------------------------
@@ -1347,7 +1435,7 @@ Format(layout string) string
 -----------------------------------
 ### `Duration` <a id="duration"></a>
 
-Built-in type for setting time amount.
+Built-in type for setting the time amount.
 
 Methods:
 ```go
@@ -1362,7 +1450,7 @@ Nanoseconds() float64
 -----------------------------------
 ### `Ticker` <a id="ticker"></a>
 
-Provides channel that delivers Time *ticks*.
+Provides a channel that delivers `Time` *ticks*.
 
 ```go
 C <-chan Time
@@ -1377,7 +1465,7 @@ Stop()
 -----------------------------------
 ### `Timer` <a id="timer"></a>
 
-Provides channel that deliver Time once after dalay.
+Provides a channel that deliver `Time` once after dalay.
 
 ```go
 C <-chan Time
