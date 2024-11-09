@@ -248,7 +248,21 @@ for i := 0; i < n; i++ {
 	// ...
 }
 ```
-Variables from init statement are only available in the scope of this `for` block.
+Variables from init statement are only available in the scope of this `for` block.<br/>
+
+Since v1.22 each iteration has its own copies of init variables.<br/>
+E.g.:
+```go
+var printN func()
+for n := 0; n < 9; n++ {
+	if n == 2 {
+		printN = func() {
+			fmt.Println(n)
+		}
+	}
+}
+printN()  // will print 2, not 9
+```
 
 ---
 Init and post statements are optional:
