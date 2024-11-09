@@ -58,6 +58,7 @@
 	- [Channel](#channel)
 	- [Package "sync"](#package-sync)
 		- [`Mutex`](#mutex)
+		- [`WaitGroup`](#wait-group)
 	- [Package "context"](#package-context)
 		- [`Context`](#context)
 - [Date, Time](#date-time)
@@ -1268,31 +1269,79 @@ It will iterate until channel is closed.
 
 https://pkg.go.dev/sync<br/>
 
+---
 ### `Mutex` <a id="mutex"></a>
 
 Mutual exclusion locker.<br/>
 To make a code block to be executed in mutual exclusion, <br/>
 surround it with calls to `Lock` and `Unlock` methods of `sync.Mutex`.<br/>
 
-E.g.:
 ```go
-import "sync"
-
-var m sync.Mutex
-
-func SyncedF() {
-	m.Lock()
-	defer m.Unlock()
-	// some_code...
-	// Only one goroutine at a time can execute these lines.
-	// ...
-	return ...
-}
+var m sync.Mutex  // no need to initialize, zero value is ready to use
 ```
 
 Methods:<br/>
 `Lock()` will block current goroutine if mutex already locked.<br/>
 `Unlock()` will unblock, also from any other goroutine. Throws error if not locked.<br/>
+
+---
+### `WaitGroup` <a id="wait-group"></a>
+
+WaitGroup waits for a collection of goroutines to finish.<br/>
+When the counter becomes zero, all goroutines blocked on `Wait` are released.<br/>
+
+```go
+var wg sync.WaitGroup
+```
+
+Methods:
+```go
+Add(delta int)  // increase/decrease counter
+Done()  // decrease counter by 1
+
+Wait()  // blocks until the counter is zero
+```
+
+---
+E.g.:
+```go
+import (
+	"sync"
+)
+
+type Container struct {
+	mu       sync.Mutex
+	counters map[string]int
+}
+
+func (c *Container) inc(name string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.counters[name]++
+}
+
+func main() {
+	c := Container{
+		counters: map[string]int{"a": 0, "b": 0},
+	}
+	var wg sync.WaitGroup
+
+	doIncrement := func(name string, n int) {
+		for i := 0; i < n; i++ {
+			c.inc(name)
+		}
+		wg.Done()
+	}
+
+	wg.Add(3)
+	go doIncrement("a", 10000)
+	go doIncrement("a", 10000)
+	go doIncrement("b", 10000)
+
+	wg.Wait()
+	fmt.Println(c.counters)
+}
+```
 
 
 ---------------------------------------------
