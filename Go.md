@@ -1461,7 +1461,7 @@ func main() {
 	
 	go doRequest(ctx, url, response)
 	// ...
-	cancel(errors.New("Operation is canceled"))
+	cancel(errors.New("operation is canceled"))
 }
 
 func doRequest(ctx context.Context, url string, ch chan Response) {
