@@ -1339,28 +1339,74 @@ Deadline() time.Time, ok bool  // time of deadline
 	// ok == false if no deadline is set
 ```
 
-E.g., cancelable request:
+E.g., timeout:
 ```go
-func doRequestCancelable(ctx context.Context, url string, resCancelable chan Response) {
-	var res = make(chan Response)
+import (
+	"time"
+	"math/rand"
+)
 
-	go doRequest(url, res)
-
-	// mark as canceled or return a server response, whichever happened first:
+func main () {
+	var result = make(chan string)
+	var ctx, cancel = context.WithTimeout(context.Background(), 5 * time.Second)
+ 	
+	defer cancel()
+	
+	go doLongOperation(result)
+	
 	select {
 	case <- ctx.Done():
-		fmt.Println(context.Cause(ctx))
-		resCancelable <- Response{ Url: url, Status: "canceled" }
-	case r := <- res:
-		resCancelable <- r
+		fmt.Println("Timeout reached")
+	case r := <- result:
+		fmt.Println(r)
 	}
 }
 
-var ctx, cancel = context.WithCancelCause(context.Background())
+func doLongOperation(result chan string) {
+	time.Sleep(time.Duration(rand.Intn(10)) * time.Second)
+	result <- "Completed"
+}
+```
 
-go doRequestCancellable(ctx, url, response)
-// ...
-cancel(errors.New("operation is canceled"))
+E.g., cancelable request:
+```go
+import (
+	"context"
+	"net/http"
+)
+
+func main() {
+	var ctx, cancel = context.WithCancelCause(context.Background())
+	
+	go doRequest(ctx, url, response)
+	// ...
+	cancel(errors.New("Operation is canceled"))
+}
+
+func doRequest(ctx context.Context, url string, ch chan Response) {
+	var req, err = http.NewRequestWithContext(
+		ctx,
+		"GET",
+		url,
+		nil,
+	)
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		ch <- Response{ Url: url, Status: "Failed", Err: err }
+	}
+
+	res, err := http.DefaultClient.Do(req)
+
+	if err != nil || res.StatusCode != 200 {
+		var status = "Failed"
+		if ctx.Err() == context.Canceled {
+			status = "Canceled"
+		}
+		ch <- Response{ Url: url, Status: status, Err: err }
+	} else {
+		ch <- Response{ Url: url, Status: "OK" }
+	}
+}
 ```
 
 E.g., nesting a value:
