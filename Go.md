@@ -1339,6 +1339,7 @@ Deadline() time.Time, ok bool  // time of deadline
 	// ok == false if no deadline is set
 ```
 
+---
 E.g., timeout:
 ```go
 import (
