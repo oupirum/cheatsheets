@@ -837,9 +837,9 @@ s.setV("")
 // It interprets as `(&s).setV("")`.
 ```
 
-## ---
+***
 Function with value parameter **must** take a **value** argument.<br/>
-Method with value receiver **can** take either **value or pointer** receiver which interprets as  `*p` implicitly.
+Method with value receiver **can** take either **value or pointer** receiver which interprets as `*p` implicitly.
 
 
 ========================================================================================================================
