@@ -1343,6 +1343,7 @@ Deadline() time.Time, ok bool  // time of deadline
 E.g., timeout:
 ```go
 import (
+	"context"
 	"time"
 	"math/rand"
 )
