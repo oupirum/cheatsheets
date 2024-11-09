@@ -38,7 +38,7 @@
 	- [Catch](#error-catch)
 - [Array, Slice](#array-slice)
 	- [Create](#slice-create)
-	- [Access](#slice-access)
+	- [Get/set](#slice-get-set)
 	- [Append](#slice-append)
 	- [Copy](#slice-copy)
 - [Map](#map)
@@ -949,7 +949,7 @@ var tail = []arr{1, 2, 3}[1:]  // 2, 3
 ```
 
 ------------------------------------
-### Access <a id="slice-access"></a>
+### Get/set <a id="slice-get-set"></a>
 
 By index:
 ```go
@@ -968,14 +968,15 @@ cap(arr []Type) int // capacity - length of underlying array
 ### Append <a id="slice-append"></a>
 
 ```go
-append(slice []Type, values ...Type) []Type // append values and return new slice
+append(slice []Type, values ...Type) []Type // append values and return a new slice
 ```
-`append()` is not changing the original **slice** but can change original **underlying array**.<br/>
-When capacity is not enough it allocates a new array via `make()` under the hood.<br/>
-So, new slice **can** refer to the new underlying array after `append`.
+
+`append()` does not change the original **slice** but may change the original **underlying array**.<br/>
+When capacity is not enough, it allocates a new array using `make()` under the hood.<br/>
+Therefore, the new slice **may** refer to a new underlying array after `append`.
 
 ---
-To append slice to slice (concat) use `v...` syntax to interpret slice as list of args:
+To append a slice to slice (concat) use `v...` syntax to interpret slice as list of args:
 ```go
 slice1 = append(slice1, slice2...)
 ```
