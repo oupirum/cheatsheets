@@ -57,8 +57,9 @@
 	- [Goroutine](#goroutine)
 	- [Channel](#channel)
 	- [Package "sync"](#package-sync)
-		- [`Mutex`](#mutex)
-		- [`WaitGroup`](#wait-group)
+		- [`Once`](#sync-once)
+		- [`Mutex`](#sync-mutex)
+		- [`WaitGroup`](#sync-wait-group)
 	- [Package "context"](#package-context)
 		- [`Context`](#context)
 - [Date, Time](#date-time)
@@ -1267,17 +1268,32 @@ It will iterate until channel is closed.
 --------------------------------------------
 ## Package "sync" <a id="package-sync"></a>
 
+Provides basic synchronization primitives such as mutual exclusion locks.<br/>
+Other than the *Once* and *WaitGroup* types, most are intended for use by low-level library routines. Higher-level synchronization is better done via channels and communication.<br/>
+Values containing the types defined in this package should not be copied.<br/>
 https://pkg.go.dev/sync<br/>
 
 ---
-### `Mutex` <a id="mutex"></a>
+### `Once` <a id="sync-once"></a>
+
+To safely invoke a function only once, even if called concurrently multiple times.<br/>
+
+```go
+OnceFunc(f func())  func()   // returns a function that invokes f only once
+OnceValue[T any](f func() T)  func() T   // the same with returning value
+OnceValues[T1, T2 any](f func() (T1, T2))  func() (T1, T2)
+```
+
+---
+### `Mutex` <a id="sync-mutex"></a>
 
 Mutual exclusion locker.<br/>
 To make a code block to be executed in mutual exclusion, <br/>
 surround it with calls to `Lock` and `Unlock` methods of `sync.Mutex`.<br/>
 
 ```go
-var m sync.Mutex  // no need to initialize, zero value is ready to use
+var m sync.Mutex
+	// no need to initialize, zero value is ready to use
 ```
 
 Methods:<br/>
@@ -1285,7 +1301,7 @@ Methods:<br/>
 `Unlock()` will unblock, also from any other goroutine. Throws error if not locked.<br/>
 
 ---
-### `WaitGroup` <a id="wait-group"></a>
+### `WaitGroup` <a id="sync-wait-group"></a>
 
 WaitGroup waits for a collection of goroutines to finish.<br/>
 When the counter becomes zero, all goroutines blocked on `Wait` are released.<br/>
