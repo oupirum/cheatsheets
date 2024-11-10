@@ -166,7 +166,10 @@ https://go.dev/doc/modules/developing
 
 ```go
 import "module/path"
+// or with alias:
+import p "module/path"
 ```
+
 Import by full path, but invoke by declared package name.<br/>
 By convention package name is the last element of import path.
 
