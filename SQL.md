@@ -10,6 +10,7 @@
 	* [Sort](#sort)
 	* [Group](#group)
 	* [Limit](#limit)
+	* [Filter](#filter)
 * [Insert row](#insert)
 * [Update rows](#update)
 * [Delete rows](#delete)
@@ -126,18 +127,16 @@ E.g.:
 # Select <a id="select"></a>
 
 ```sql
-SELECT
-	col1, ...
-	FROM table
-	WHERE condition;
+SELECT col1, ...
+FROM table
+WHERE condition;
 ```
 
 ### Select from multiple tables
 
 ```sql
-SELECT
-	table1.id, ...,
-	FROM table1, ...;
+SELECT table1.id, ...,
+FROM table1, ...;
 ```
 
 ---
@@ -146,10 +145,9 @@ SELECT
 To combine rows from multiple tables based on a related column between them. Retrieving related data in a single query.
 
 ```sql
-SELECT
-	col, ...
-	FROM table1
-	JOIN_TYPE JOIN table2 ON condition
+SELECT col, ...
+FROM table1
+JOIN_TYPE JOIN table2 ON condition
 ```
 where *JOIN_TYPE* is:<br/>
 `INNER`			rows that have matching values in both tables.<br/>
@@ -158,19 +156,28 @@ where *JOIN_TYPE* is:<br/>
 
 E.g.:
 ```sql
-SELECT
-	table1.fld1, table2.fld2
-	FROM table1
-	LEFT JOIN table2 ON table1.id = table2.id
+SELECT table1.fld1, table2.fld2
+FROM table1
+LEFT JOIN table2 ON table1.id = table2.id
 -- Returns all rows from table1 with associated values from table2 (NULL for non-existing values).
 ```
 
 ```sql
-SELECT
-	table1.fld1, table2.fld2
-	FROM table1
-	INNER JOIN table2 ON table1.id = table2.id
+SELECT table1.fld1, table2.fld2
+FROM table1
+INNER JOIN table2 ON table1.id = table2.id
 -- Rows with appropriate id.
+```
+
+E.g.:
+```sql
+SELECT DISTINCT u.id, firstname, lastname, p.item_id
+FROM users u
+	JOIN purchase p ON u.id = p.user_id
+	LEFT JOIN ban_list bl ON u.id = bl.user_id
+WHERE bl.user_id IS NULL                  
+	OR bl.date_from > p.date               
+ORDER BY lastname, firstname, u.id, p.item_id  
 ```
 
 ---
@@ -179,13 +186,11 @@ SELECT
 To combine the result set of multiple SELECT statements into single result set.
 
 ```sql
-SELECT
-	colname, ...
-	FROM table1
+SELECT colname, ...
+FROM table1
 UNION
-SELECT
-	colname, ...
-	FROM table1
+SELECT colname, ...
+FROM table1
 ```
 Selects only distinct values by default. `UNION ALL` allows duplications.
 
@@ -214,6 +219,7 @@ LIMIT n
 ```
 
 ### Offset
+
 ```sql
 OFFSET n
 ```
@@ -225,39 +231,53 @@ E.g.:
 	-- 10 rows from 5
 ```
 
+---
+### Filter <a id="filter"></a>
+
+```sql
+WHERE condition  -- filter individual row
+HAVING condition  -- filter by aggregation
+```
+
+E.g.:
+```sql
+SELECT ...
+FROM purchases p
+GROUP BY p.id
+HAVING SUM(p.price) > 5000
+```
+
+
 =========================================================================
 # Insert row <a id="insert"></a>
 
 ```sql
-INSERT INTO
-	tablename
-	(
-		col1,
-		...
-	)
-	VALUES(
-		value1,
-		...
-	);
+INSERT INTO tablename
+(
+	col1,
+	...
+)
+VALUES(
+	value1,
+	...
+);
 ```
 
 =========================================================================
 # Update rows <a id="update"></a>
 
 ```sql
-UPDATE
-	tablename
-	SET col1=value1, ...
-	WHERE condition;
+UPDATE tablename
+SET col1=value1, ...
+WHERE condition;
 ```
 
 =========================================================================
 # Delete rows <a id="delete"></a>
 
 ```sql
-DELETE FROM
-	tablename
-	WHERE condition;
+DELETE FROM tablename
+WHERE condition;
 ```
 
 =========================================================================
@@ -265,55 +285,53 @@ DELETE FROM
 
 Rename column:
 ```sql
-ALTER TABLE
-	tablename
-	CHANGE col_old col_new TEXT NULL DEFAULT NULL;
+ALTER TABLE tablename
+CHANGE col_old col_new TEXT NULL DEFAULT NULL;
 ```
 
 Change column type:
 ```sql
-ALTER TABLE
-	tablename
-	MODIFY COLUMN colname datatype_new
+ALTER TABLE tablename
+MODIFY COLUMN colname datatype_new
 ```
 
 Add column:
 ```sql
-ALTER TABLE
-	tablename
-	ADD col_new datatype
+ALTER TABLE tablename
+ADD col_new datatype
 ```
 
 Set charset for database:
 ```sql
-ALTER DATABASE dbname CHARACTER SET utf8;
+ALTER DATABASE dbname
+CHARACTER SET utf8;
 ```
 
 =========================================================================
 # Create table <a id="create-table"></a>
 
 ```sql
-CREATE TABLE
-	tablename (
-		columnname type constraints,
-		...
-	)
-	attributes
+CREATE TABLE tablename
+(
+	columnname type constraints,
+	...
+)
+attributes
 ```
 
 E.g.:
 ```sql
-CREATE TABLE
-	products (
-		id INT NOT NULL AUTO_INCREMENT,
-		PRIMARY KEY (id),
-		category_id INT NOT NULL,
-		FOREIGN KEY (category_id) REFERENCES product_category(id),
-		seller VARCHAR(30) DEFAULT 'no seller',
-		price INT NOT NULL,
-		CHECK(price BETWEEN 1, 100000)
-	)
-	DEFAULT CHARSET=utf8;
+CREATE TABLE products
+(
+	id INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (id),
+	category_id INT NOT NULL,
+	FOREIGN KEY (category_id) REFERENCES product_category(id),
+	seller VARCHAR(30) DEFAULT 'no seller',
+	price INT NOT NULL,
+	CHECK(price BETWEEN 1, 100000)
+)
+DEFAULT CHARSET=utf8;
 ```
 
 =========================================================================
@@ -337,17 +355,17 @@ DROP DATABASE dbname
 Query can contain subqueries:
 ```sql
 SELECT
-	item_id,
-	(SELECT price from item where id=follower.item_id) AS price,
-	(SUM(paid) * 100 / (SELECT price from item where id=follower.item_id)) AS percents
-	FROM follower
-	WHERE (
-		(SELECT complete
-			FROM item
-			WHERE id=follower.item_id)=false
-	)
-	GROUP BY item_id
-	ORDER BY percents DESC;
+item_id,
+(SELECT price from item where id=follower.item_id) AS price,
+(SUM(paid) * 100 / (SELECT price from item where id=follower.item_id)) AS percents
+FROM follower
+WHERE (
+	(SELECT complete
+	FROM item
+	WHERE id=follower.item_id)=false
+)
+GROUP BY item_id
+ORDER BY percents DESC;
 ```
 
 *WHERE* condition will be processed before other parts,<br/>
