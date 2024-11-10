@@ -1039,9 +1039,17 @@ delete(m map, key Type)
 ========================================================================================================================
 # String <a id="string"></a>
 
-Substring like an array:
+String is a readonly slice of runes.<br/>
+Strings can be concatenated with `+` and `+=` operators.<br/>
+Comparable by `<`, `>=`, `==`, `!=` (the underlying bytes will be compared).<br/>
+Can be resliced or iterated like a normal slice.<br/>
+
+E.g.:
 ```go
-var substr = str[fromIndex:toIndex]
+str := "test"
+firstByte := str[0] // 116
+substr := str[1:] // "est"
+conc := "R" + substr // "Rest"
 ```
 
 ---
