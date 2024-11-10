@@ -169,7 +169,6 @@ INNER JOIN table2 ON table1.id = table2.id
 -- Rows with appropriate id.
 ```
 
-E.g.:
 ```sql
 SELECT DISTINCT u.id, firstname, lastname, p.item_id
 FROM users u
