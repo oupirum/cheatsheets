@@ -625,6 +625,39 @@ var stPtr = new(Type)
 It allocates zeroed storage for a new item of type `Type` and returns its address, a value of type `*Type`.
 
 
+---
+### Embedding
+
+*Struct embedding* creates a form of inheritance or composition.<br/>
+It gives direct access to embedded struct's fields an methods. Own fields and methods takes precedence.<br/>
+E.g.:
+```go
+type A struct {
+	F string
+	a string
+}
+func (a *A) M() {}
+
+type B struct {
+	A
+	F int
+}
+func (b *B) M() {}
+
+var b = B{
+	F: 1,
+	A: A{
+		F: "AF",
+		a: "a",
+	},
+}
+b.M() // B's method
+b.F  // "1", because A.F is hidden by B.F
+b.a    // "a", direct access to A's field
+b.A.F  // "AF", indirect to A's hidden field
+```
+
+
 -----------------------------------------------------
 ## Generics <a id="types-generics"></a>
 
