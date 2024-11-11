@@ -629,7 +629,7 @@ It allocates zeroed storage for a new item of type `Type` and returns its addres
 ### Embedding
 
 *Struct embedding* creates a form of inheritance or composition.<br/>
-It gives direct access to embedded struct's fields an methods. Own fields and methods takes precedence.<br/>
+It gives direct access to embedded struct's fields and methods. Own fields and methods takes precedence.<br/>
 E.g.:
 ```go
 type A struct {
