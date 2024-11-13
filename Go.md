@@ -206,7 +206,7 @@ SomeFunc()
 
 To install third party library:
 ```sh
-go get some_lib_path"
+go get some_lib_path
 
 // Specific version:
 go get some_lib_path@v1.2.3
