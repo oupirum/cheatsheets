@@ -207,8 +207,11 @@ SomeFunc()
 To install third party library:
 ```sh
 go get some_lib_path"
+
+# Specific version:
+go get some_lib_path@v1.2.3
 ```
-including a remote, e.g. "_github.com/user/my_library_"
+including a remote, e.g. "github.com/user/my_library_"
 
 ---
 To use local module instead of remote:
