@@ -1923,36 +1923,65 @@ will execute Test* functions in *_test.go files.<br/>
 
 https://github.com/uber-go/mock
 
-Add to the source file:
+Install:
+```sh
+go install go.uber.org/mock/mockgen@latest
+go get go.uber.org/mock/mockgen/model
+```
+
+Add generate instruction to the source file:
 ```go
-//go:generate mockgen -source=./<file>.go -destination=./mocks/<file>.go -package=mocks
+//go:generate mockgen -source=./<file>.go -destination=./mocks/<file>.go -package=<package>_mocks
+	// source mode: generate mocks from all interfaces in file.
+// or:
+//go:generate mockgen -destination=./mocks/<file>.go -package=<package>_mocks <path/to/package> <Interface>,...
+	// package mode: generate mocks from specified interfaces only.
 ```
 
 Then run:
-```go
+```sh
 go generate -x ./...
 ```
-It will create mocks from all defined interfaces.
+it recursively executes `//go:generate ...` instructions in project.
 
 Then use, e.g.:
 ```go
+package gym
+import (
+	context "context"
+	"errors"
+	"testing"
+	"github.com/stretchr/testify/assert"
+	auth_mocks "gitlab.ozon.ru/klopyrev/onboarding-klopyrev/internal/auth/mocks"
+	s3_mocks "gitlab.ozon.ru/klopyrev/onboarding-klopyrev/internal/s3/mocks"
+	"gitlab.ozon.ru/klopyrev/onboarding-klopyrev/internal/pb/gitlab.ozon.ru/klopyrev/onboarding-klopyrev/api/gym"
+	"go.uber.org/mock/gomock"
+)
+
+func Test_BossOfThisGym(t *testing.T) {
 	t.Parallel()
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	t.Run("Returns nil on success", func(t *testing.T) {
+	t.Run("Responds with `Unauthenticated` when token is invalid", func(t *testing.T) {
 		t.Parallel()
+
 		ctx := context.Background()
-		mc := mock_minio_client.NewMockMinioClient(ctrl)
+		authMock := auth_mocks.NewMockIAuthProvider(ctrl)
+		s3Mock := s3_mocks.NewMockIS3Provider(ctrl)
+		service := New(authMock, s3Mock)[0]
+		i, _ := service.(*Implementation)
 
-		mc.EXPECT().PutObject(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(minio.UploadInfo{}, nil)
+		authMock.EXPECT().GetUserFromToken(gomock.Any()).Return(nil, errors.New("has no token"))
 
-		p := MinioProvider{
-			mc,
-		}
+		res, err := i.WhoIsTheBossOfThisGym(ctx, &gym.WhoIsTheBossOfThisGymRequest{
+			Action: "kick",
+		})
 
-		err := p.SaveObject(ctx, "bucket-1", "object-1", []byte("test object"), &domain.SaveObjectsOptions{})
-
-		assert.Nil(t, err)
+		assert.Nil(t, res)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "code = Unauthenticated")
 	})
+}
 ```
