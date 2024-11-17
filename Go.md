@@ -1916,3 +1916,43 @@ go test
 ```
 will execute Test* functions in *_test.go files.<br/>
 `-v`   - flag for verbose output.
+
+
+---
+### Mocks
+
+https://github.com/uber-go/mock
+
+Add to the source file:
+```go
+//go:generate mockgen -source=./<file>.go -destination=./mocks/<file>.go -package=mocks
+```
+
+Then run:
+```go
+go generate -x ./...
+```
+It will create mocks from all defined interfaces.
+
+Then use, e.g.:
+```go
+	t.Parallel()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("Returns nil on success", func(t *testing.T) {
+		t.Parallel()
+		ctx := context.Background()
+		mc := mock_minio_client.NewMockMinioClient(ctrl)
+
+		mc.EXPECT().PutObject(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(minio.UploadInfo{}, nil)
+
+		p := MinioProvider{
+			mc,
+		}
+
+		err := p.SaveObject(ctx, "bucket-1", "object-1", []byte("test object"), &domain.SaveObjectsOptions{})
+
+		assert.Nil(t, err)
+	})
+```
