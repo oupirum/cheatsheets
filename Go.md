@@ -1,6 +1,7 @@
 # Golang cheatsheet
 
 ### Table of contents:
+- [Workspace structure](#workspace)
 - [Run & Build](#run-and-build)
 - [Dependencies](#deps)
 	- [Import](#deps-import)
@@ -87,20 +88,30 @@ Further reading:<br/>
 
 
 ========================================================================================================================
+# Workspace structure <a id="workspace"></a>
 
-Workspace structure:
 ```
-bin/   // generated executables
-pkg/   // generated packages for libraries
-src/
-    github.com/user/projectname/
+cmd/    // Entry point(s), i.e., main.go importing and running internal/ and pkg/
+configs/
+bin/     // Generated executables
+pkg/     // Packages for external use
+api/     // OpenAPI/Swagger, JSON schema, etc
+internal/     // Internal packages
+    github.com/user/somemodule/
         main.go
         somepackage/.../
             ...
         .../
+    ...
 ```
 https://go.dev/doc/tutorial/workspaces<br/>
 https://pkg.go.dev/cmd/go#hdr-Workspace_maintenance<br/>
+
+`Package` is a directory of .go files.<br/>
+It's a basic unit of code organization and reuse.
+
+`Module` is a collection of packages.<br/>
+Modules are defined by a `go.mod` file in the root directory, which specifies the module path and its dependencies.<br/>
 
 ---
 Create module:
