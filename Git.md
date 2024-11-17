@@ -331,7 +331,7 @@ Reapply current branch's commits on top of specified branch:
 ```sh
 git rebase <branch>
 	-i [HEAD~<N>]  # interactive mode (e.g., for squashing)
-		# N - number of last commits to rebase
+		# <N> - number of recent commits to rebase
 	-s|--strategy recursive|resolve|octopus|ours|subtree
 		# Do `git config core.hooksPath .no-hooks` to skip hooks. Dont forget to restore it when done.
 
