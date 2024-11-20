@@ -1982,6 +1982,12 @@ diff <file1> <file2>
 	-r   # Recursively compare files in subdirectories
 ```
 
+E.g.:
+```sh
+# Replace double-spaces by tabs, then diff:
+diff ./scroller.vue -u <(cat ./scroller-v2.vue | sed "/.*/ s/  /\t/g")
+```
+
 Apply diff file:
 ```sh
 patch < <patch_file>
