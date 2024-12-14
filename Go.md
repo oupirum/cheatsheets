@@ -1584,6 +1584,7 @@ Now() Time
 Date(year int, month Month, day, hour, min, sec, nsec int, loc *Location) Time
 Since(t Time) Duration
 Unix(sec int64) Time
+Parse(layout string, value string)   Time, error
 
 ParseDuration(str string) Duration, error // e.g. "300ms", "-1.5h", "2h45m"
 LoadLocation(name string) *Location, error // e.g. "", "UTC", "Europe/Moscow"
