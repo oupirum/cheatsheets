@@ -31,7 +31,7 @@
 #### Hide other windows
 `Cmd Option H`
 
-#### Minimize widow (collapse to dock)
+#### Minimize window (collapse to dock)
 `Cmd M`
 
 #### Close app window
